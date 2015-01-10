@@ -1,0 +1,255 @@
+\ProvidesPackage{mycommands}
+
+\addto\captionsenglish{\renewcommand{\chaptername}{Lecture}}
+\addto\captionsenglish{\renewcommand{\bibname}{References and Further Reading}}
+\def\thesection{\arabic{section}}
+
+\newcommand{\Note}[1]{\marginpar{\footnotesize\bfseries #1}}
+
+\newcounter{homework}[chapter]
+\def\thehomework{\thechapter.\arabic{homework}}
+
+\newenvironment{homework}[1][\unskip]{%
+    \refstepcounter{homework}%
+    \noindent\ignorespaces%
+    \textbf{#1Homework \thehomework} \quad%
+}%
+{\par\noindent%
+    \ignorespacesafterend}
+
+\newcommand{\DangerSymbol}{\ensuremath{\skull}}
+\newcommand{\difficultsymbol}{\ensuremath{\skull}}
+\newcommand{\difficult}{\difficultsymbol\ }
+
+% \setof - set with auto-sized brackets
+\newcommand{\setof}[1]{\ensuremath{\left \{ #1 \right \}}}
+
+% \tuple - tuple with auto-sized brackets
+\newcommand{\tuple}[1]{\ensuremath{\left \langle #1 \right \rangle }}
+\newcommand{\ftuple}[1]{\tuple{\mathrm{#1}}}
+\newcommand{\ttuple}[1]{\tuple{\text{#1}}}
+
+% Defines
+\newcommand{\is}{\ensuremath{\mathrel{\mathop:}=}}
+
+% emptystring
+\newcommand{\emptystring}{\ensuremath{\varepsilon}}
+
+\newcommand{\mlex}[2]{\ensuremath{\text{#1} ::\thinspace \mathrm{#2}}}
+\newcommand{\SelEq}{\ensuremath{\mathop{=}}}
+\newcommand{\fsel}[1]{\ensuremath{\SelEq\mathrm{#1}}}
+
+\newcommand{\restrictor}{\ensuremath{\upharpoonright}}
+
+\newcommand{\idom}{\ensuremath{\triangleleft}}
+\newcommand{\pdom}{\ensuremath{\triangleleft^+}}
+\newcommand{\rdom}{\ensuremath{\triangleleft^*}}
+\newcommand{\word}[1]{\emph{#1}}
+
+% citations - various macros for citations
+% I got those from the class stylesheet of the Semantics & Pragmatics Open Publishing Journal;
+% see their guide for authors on how to put them to good use
+\newcommand{\posscitet}[1]{\citeauthor{#1}'s (\citeyear{#1})}
+\newcommand{\possciteauthor}[1]{\citeauthor{#1}'s}
+\newcommand{\pgposscitet}[2]{\citeauthor{#1}'s (\citeyear{#1}:~#2)}
+\newcommand{\secposscitet}[2]{\citeauthor{#1}'s (\citeyear{#1}:~$\S$#2)}
+\newcommand{\pgcitealt}[2]{\citealt{#1}:~#2}
+\newcommand{\seccitealt}[2]{\citealt{#1}:~$\S$#2}
+\newcommand{\pgcitep}[2]{(\citealt{#1}:~#2)}
+\newcommand{\seccitep}[2]{(\citealt{#1}:~$\S$#2)}
+\newcommand{\pgcitet}[2]{\citeauthor{#1} (\citeyear{#1}:~#2)}
+\newcommand{\seccitet}[2]{\citeauthor{#1} (\citeyear{#1}:~$\S$#2)}
+
+% example box environment
+\tikzstyle{examplebox} = [draw=black, fill=white, very thick,
+    rectangle, rounded corners, inner sep=10pt, inner ysep=20pt]
+\tikzstyle{exampletitle} = [fill=black, text=white]
+
+% code for an examplebox
+% first we need a background layer
+\pgfdeclarelayer{background}
+\pgfsetlayers{background,main}
+
+% we define a couple of macros for parts of the box:
+% box on entire page, top, middle, bottom
+\def\ExampleboxframeTotal#1{
+    \tikz{
+        \node[inner sep=10pt, inner ysep=20pt] (text) {#1};
+        \begin{pgfonlayer}{background}
+        \draw[black, very thick, rounded corners] 
+            (text.south west) -- (text.north west) --
+            (text.north east) -- (text.south east) -- cycle;
+        \end{pgfonlayer}
+    }
+}
+
+
+\def\ExampleboxframeTop#1{
+    \tikz{
+        \node[inner sep=10pt, inner ysep=20pt] (text) {#1};
+        \begin{pgfonlayer}{background}
+        \draw[black, very thick, rounded corners] 
+            (text.south west) -- (text.north west) --
+            (text.north east) -- (text.south east);
+        \end{pgfonlayer}
+    }
+}
+
+\def\ExampleboxframeMiddle#1{
+    \tikz{
+        \node[inner sep=10pt, inner ysep=20pt] (text) {#1};
+        \begin{pgfonlayer}{background}
+        \draw[black, very thick, rounded corners] 
+            (text.south west) -- (text.north west); 
+        \draw[black, very thick, rounded corners] 
+            (text.north east) -- (text.south east);
+        \end{pgfonlayer}
+    }
+}
+
+\def\ExampleboxframeBottom#1{
+    \tikz{
+        \node[inner sep=10pt, inner ysep=20pt] (text) {#1};
+        \begin{pgfonlayer}{background}
+        \draw[black, very thick, rounded corners] 
+            (text.north west) -- (text.south west) --
+            (text.south east) -- (text.north east);
+        \end{pgfonlayer}
+    }
+}
+
+% define a new list via tocloft
+% \newcounter{examplebox}[chapter]
+% \def\theexamplebox{\thechapter.\arabic{examplebox}}
+\newlistof[chapter]{examplebox}{exs}{List of Examples}
+\cftsetindents{examplebox}{1.5em}{2.3em}
+
+\newenvironment{examplebox}[1][\unskip]{
+    \refstepcounter{examplebox}
+    \def\FrameCommand{\ExampleboxframeTotal}
+    \def\FirstFrameCommand{\ExampleboxframeTop}
+    \def\MidFrameCommand{\ExampleboxframeMiddle}
+    \def\LastFrameCommand{\ExampleboxframeBottom}
+    \vskip\baselineskip
+    \MakeFramed {\FrameRestore}
+    \noindent
+    \tikz\node[fill=black,text=white,anchor=west,overlay]
+        at (0em,2.5em) {Example \theexamplebox \quad #1};%
+    \addcontentsline{exs}{examplebox}{\protect\numberline{\theexamplebox} #1}%
+    \ignorespaces
+}
+{\endMakeFramed}
+
+\newenvironment{dexamplebox}[1][\unskip]{
+    \refstepcounter{examplebox}
+    \def\FrameCommand{\ExampleboxframeTotal}
+    \def\FirstFrameCommand{\ExampleboxframeTop}
+    \def\MidFrameCommand{\ExampleboxframeMiddle}
+    \def\LastFrameCommand{\ExampleboxframeBottom}
+    \vskip\baselineskip
+    \MakeFramed {\FrameRestore}
+    \noindent
+    \tikz\node[fill=black,text=white,anchor=west,overlay]
+        at (0em,2.5em) {Example \theexamplebox\quad #1 \quad\DangerSymbol};%
+    \addcontentsline{exs}{examplebox}{\protect\numberline{\theexamplebox} #1 \DangerSymbol}%
+    \ignorespaces
+}
+{\endMakeFramed}
+
+\theoremstyle{plain}
+\theoremheaderfont{\normalfont\bfseries}
+\theorembodyfont{\normalfont\upshape}
+\theoremseparator{.}
+\theoremsymbol{\ensuremath{\Box}}
+\newtheorem{theorem}{Theorem}[chapter]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+
+\theorembodyfont{\normalfont\itshape}
+\theoremsymbol{}
+\newtheorem{conjecture}[theorem]{Conjecture}
+\newtheorem{problem}[theorem]{Problem}
+
+\theorembodyfont{\normalfont\upshape}
+\theoremprework{\bigskip\hrule}
+\theorempostwork{\hrule\bigskip}
+\newtheorem{definition}[theorem]{Definition}
+
+\theoremstyle{nonumberplain}
+\theoremheaderfont{\normalfont\itshape}
+\theoremprework{}
+\theorempostwork{}
+\newcommand{\QED}{\ensuremath{\blacksquare}}
+\qedsymbol{\QED}
+\theoremsymbol{\ensuremath{\QED}}
+\newtheorem{proof}{Proof}
+
+\theoremsymbol{\ensuremath{\bigcirc}}
+\newtheorem{remark}{Remark}
+\newtheorem{example}{Example}
+
+\theoremsymbol{}
+\theoremheaderfont{\normalfont\scshape}
+\theoremindent1.5em
+\newtheorem{ucase}{Case}
+
+\theoremstyle{plain}
+\newtheorem{case}{Case}
+\theoremindent1.5em
+\newtheorem{subcase}{Case}
+\numberwithin{subcase}{case}
+
+\newcommand{\ltr}{\noindent\textsc{Left to right}.\ }
+\newcommand{\rtl}{\noindent\textsc{Right to left}.\ }
+
+
+\newcommand{\Automaton}[4][3]{%
+    \begin{tikzpicture}
+        \Tree
+            [.\node(root){#3};
+                #4
+            ]
+
+        \node (label) at ($(root)+(-#1em,0)$) {#2};
+        \draw[dashed] (label) to (root);
+    \end{tikzpicture}
+}
+\newcommand{\Transducer}[6][3]{%
+    \begin{tikzpicture}
+        \Tree
+            [.\node(root){#3};
+                #4
+            ]
+
+        \node (label) at ($(root)+(-#1em,0)$) {#2};
+        \node (tree) at ($(root)+(#1em,0)$) {%
+            \Tree
+                [.\node{#5};
+                    #6
+                ]
+            };
+        \foreach \Node in {label,tree}
+            \draw[dashed] (\Node) to (root);
+    \end{tikzpicture}
+}
+
+\newenvironment{Example}{\noindent\textit{Example.}}{}
+
+\newcommand{\rewrite}{\ensuremath{\rightarrow}\xspace}
+
+\newcommand{\tsb}[1]{\ensuremath{_{\textrm{#1}}}}
+
+\newcommand{\FType}[1]{\text{\textsc{#1}}}
+\newcommand{\Cat}{\FType{Cat}}
+\newcommand{\Phon}{\FType{Phon}}
+\newcommand{\Compound}{\FType{Compound}}
+\newcommand{\Subcat}{\FType{Subcat}}
+\newcommand{\Address}{\FType{Add}}
+\newcommand{\Num}{\FType{Num}}
+\newcommand{\Pers}{\FType{Pers}}
+\newcommand{\Gender}{\FType{Gender}}
+\newcommand{\Type}{\FType{Type}}
+\newcommand{\Target}{\FType{Target}}
+\newcommand{\Displace}{\FType{Displace}}
+\newcommand{\emptyhead}{\ensuremath{\varepsilon}}

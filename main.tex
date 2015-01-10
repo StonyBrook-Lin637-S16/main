@@ -1,0 +1,45 @@
+%=================================================================
+%				preamble
+%=================================================================
+\documentclass[11pt,letterpaper]{book}
+
+\newcommand{\theauthor}{Thomas Graf}		        
+\newcommand{\university}{Stony Brook University}	
+\newcommand{\emailaddress}{lin637@thomasgraf.net}
+\newcommand{\coursenumber}{Lin637}
+\newcommand{\coursename}{Computational Linguistics 2}
+\newcommand{\thetitle}{\texorpdfstring{\coursenumber\\ \coursename}{\coursenumber --- \coursename}}
+\newcommand{\thekeywords}{graduate level, lecture, computational linguistics, phonology, syntax}
+\newcommand{\thedate}{}
+
+\usepackage{mypackages}
+\usepackage{mycommands}
+
+
+
+%=================================================================
+%			title format
+%=================================================================
+\author{\theauthor}
+\title{\thetitle}
+\date{\thedate}
+
+%=================================================================
+%			content
+%=================================================================
+% \includeonly{./tex/ConstituencyTests}
+
+\begin{document}
+\raggedbottom
+\pagenumbering{Roman}
+\maketitle
+\tableofcontents
+\clearpage
+
+\include{./tex/syllabus}
+\pagenumbering{arabic}
+
+\pagestyle{empty}
+% \include{./tex/h1}
+
+\end{document}

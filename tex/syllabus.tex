@@ -1,0 +1,183 @@
+\setcounter{chapter}{-1}
+\chapter{Syllabus --- You Better Read it!}
+\label{cha:syllabus}
+\setcounter{page}{1}
+\pagestyle{fancy}
+
+\fcolorbox{gray!25}{gray!25}{%
+    \centering
+    \begin{tabular}{ll}
+        \textbf{Course:} Computational Linguistics 2\quad\qquad\qquad&
+        \textbf{Name:} Thomas Graf\\
+        \textbf{Course\#:} Lin637 &
+        \textbf{Email:} lin637@thomasgraf.net\\
+        \textbf{Time:} TR 10:00--11:20am &
+        \textbf{Office hours:} Tue 11:30--2:30pm\\
+        \textbf{Location:} tba & %fixme
+        \textbf{Office:} SBS N249\\
+        \textbf{Course Website:} tba & %fixme
+        \textbf{Personal Website:} \url{http://thomasgraf.net}
+    \end{tabular}
+}
+
+\section{What This Course is About}
+
+\begin{dot2tex}[file=ProgramOverview]
+    \input{../img/dot/ProgramOverview.dot}
+\end{dot2tex}
+
+\begin{table}
+    \centering
+    \begin{tabular}{rlp{4.5cm}p{4.5cm}p{4cm}}
+        \hline
+        \hline
+        \emph{Wk} & \emph{Classes} & \emph{Formal} & \emph{Linguistics} & \emph{Algorithms}\\\hline
+        1         & Jan 27, 29     & What is computation? & History\\
+        2         & Feb 3, 5       & Formalizing phonology & Why formalize?\\
+        3         & Feb 10, 12     & Strictly local languages & Local dependencies\\
+        4         & Feb 17, 19     & Subregular hierarchy & How powerful is phonology?\\
+        5         & Feb 24, 26     & Regular languages & Abstractness\\
+        6         & (DGFS)         & & \\
+        7         & Mar 10, 12     & String transductions & SPE-OT equivalence\\
+        \hline                       
+        8         & (Spring Break) & & \\
+        \hline                       
+        9         & Mar 24, 26     & Weak Generative Capacity & $\text{Phonology} < \text{Syntax}$\\
+        10        & Mar 31, Apr 2  & Tree languages & \\
+        11        & Apr 7, 9       & Local tree languages & \\
+        12        & (GLOW)         & & \\
+        13        & Apr 21, 23     & Recognizable tree languages & \\
+        14        & Apr 28, 30     & TAG and MGs & \\
+        15        & May 5, 7       & Tree transductions & Reinterpreting the T-model\\
+        \hline
+        \hline
+    \end{tabular}
+\caption{Tentative course outline}
+\end{table}
+
+
+\section{Teaching Goals}
+\begin{itemize}
+    \item \textbf{General Skills}
+        \begin{itemize}
+            \item construct a logically sound argument
+            \item evaluate the predictions and implications of an argument with respect to a given set of data
+            \item compare and weigh different arguments
+            \item knowledge of common logical fallacies and unsound reasoning steps
+            \item disprove an empirically wrong or logically flawed argument 
+            \item ability to detect and succinctly describe patterns in a given data sample
+            \item understand the interplay of data and theory in the sciences
+        \end{itemize}
+    \item \textbf{Linguistic Skills}
+        \begin{itemize}
+            \item knowledge of a wide range of parts of speech
+            \item familiarity with phrase structure rules
+            \item writing phrase structure grammars to account for a given phenomenon
+            \item lexicalizing rules
+            \item a general understanding why computers still fail miserably at linguistic tasks
+        \end{itemize}
+    \item \textbf{What is it good for?}
+        \begin{itemize}
+            \item Argumentation and reasoning skills are the most important skill out there.
+                People try to trick you all the time --- reasoning skills are your primary means of intellectual self-defense.
+            \item Phrase structure grammars are widely used in the IT industry, e.g.\ by \emph{Xerox}, \emph{Nuance}, \emph{IBM} and \emph{Google}.
+            \item Writing good grammars is difficult and an important skill in the construction of tree banks (text corpora where each sentence is annotated with syntactic structure). Tree banks are an essential tool for all areas of natural language processing by computers, e.g.\ machine translation, text generation and summarization, dialog systems and so on.
+            \item Familiarity with syntactic structure and dependencies makes learning new languages easier.
+        \end{itemize}
+\end{itemize}
+
+
+\section{Grading}
+\begin{itemize}
+    \item \textbf{Homework}\\
+        weekly exercises and/or programming assignments; a random sample of homeworks will be collected and graded; solutions will be made available online after the due date
+    \item \textbf{Readings}\\
+        assigned on a weekly basis; you have to collectively write a summary for each reading in the course wiki (remember, it's a wiki, so everyone can tell from the editing history how much you contributed) 
+    \item \textbf{Lecture Evaluations}\\
+    \item \textbf{Presentation}\\
+        everyone has to pick a research topic and present it at a workshop during finals week
+\end{itemize}
+
+
+\section{Policies}
+
+\subsection{Contacting me}
+\begin{itemize}
+    \item Emails should be sent to lin637@thomasgraf.net to make sure they go to my high priority inbox.
+        Disregarding this policy means late replies and is a sure-fire way to get on my bad side.
+    \item Reply time < 24h in simple cases, possibly more if meddling with bureaucracy is involved.
+    \item If you want to come to my office hours and anticipate a longer meeting, please email me so that we can set apart enough time and avoid collisions with other students.
+\end{itemize}
+
+\subsection{Attendance}
+\begin{itemize}
+    \item You do not have to show up for the lecture. However, asking questions and participating in discussions during class will improve your grade.
+    \item Handouts and homeworks are posted on Blackboard.
+\end{itemize}
+
+\subsection{Homework}
+\begin{itemize}
+    \item Weekly homeworks, posted on Blackboard every Wednesday by 11:59pm
+    \item Due the following Wednesday by 7pm (student office drop-off box)
+    \item No late hand-ins!
+    \item Homeworks must be typed up and printed!
+    \item Collaboration on homework problems is encouraged as long as you write up the solutions by yourself, using your own words and examples.
+        Most homework exercises will be fairly open ended, so it will be easy for us to see if you simply copied somebody's answer.
+        Copying another student's solutions is considered cheating, with all the unpleasant consequences this entails.
+\end{itemize}
+
+\subsection{Special Needs \& Retaking the Course}
+\begin{itemize}
+    \item If you have any special needs that might impact your class performance (learning disabilities, impaired sight or hearing, etc.), please come to my office hours or contact me via mail so we can make suitable arrangements.
+    \item If you already know that you'll be missing recitation or an exam due to religious holidays or other binding commitments, please send me an email with the specific dates.
+    \item If you've taken this course before, I invite you to come to my office hours this week so we can identify problem areas and discuss how to address them.
+\end{itemize}
+
+\section{How to Ace This Course}
+
+\begin{itemize}
+    \item \textbf{Do the homeworks!}\\
+        Do every single homework.
+        Each homework is about 5\% of your grade.
+        %
+    \item \textbf{Chase those bonus points!}\\
+        Try the challenge exercises, even if you aren't quite sure what the answer is.
+        You might still get some points, and wrong answers aren't penalized.
+        Similarly, take every single quiz to minimize the risk of a bad final dragging down your grade.
+        %
+    \item \textbf{Don't rush into things!}\\
+        Read every question carefully (this goes for homeworks as well as quizzes).
+        Make sure you know what it is you are asked to do.
+        Whenever you feel like starting the solution, stop for a moment, paraphrase the question you think you are answering, and double check that this is indeed what the exercise is asking.
+        %
+    \item \textbf{Reflect on what you are doing!}\\
+        Think about why certain exercises are on the homework.
+        We're not trying to torture you, there is a reason for every single exercise, some important insight waiting to be discovered by you.
+        Rote memorization is not enough for this course, you must understand the tools and how to use them.
+        %
+    \item \textbf{Collaborate!}\\
+        Don't be a lone wolf, discuss the homework with your peers.
+        That way, you make sure that you aren't misinterpreting the question, and by explaining your answer to others you can see whether it actually works, and why.
+        But don't just copy somebody's answers.
+        %
+    \item \textbf{Ask for help before it's too late!}\\
+        If you feel that you're falling behind, act immediately.
+        Go to your TAs or come to my office hours so that we can go over the material you are struggling with.
+        This is not like an introductory survey course where you can skip a session and start fresh on a new topic the week after that.
+        Everything builds on the material that came before.
+        Treat it like learning a foreign language, programming or calculus.
+        Any knowledge gaps you have will grow at a rapid pace if you don't act fast.
+\end{itemize}
+
+\medskip
+\begin{flushright}
+    \begin{minipage}[b]{28em}
+        \flushright
+        \emph{The mind is not a vessel to be filled but a fire to be kindled.}\\
+        Plutarch\\
+
+        \medskip
+        \emph{Learning is exploring.}\\
+        Yours truly
+    \end{minipage}
+\end{flushright}
