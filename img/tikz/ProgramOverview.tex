@@ -1,0 +1,47 @@
+\begin{tikzpicture}[
+    every node/.style = { draw, thick },
+    every path/.style = { ->, thick },
+    sug/.style = { dashed },
+    req/.style = { },
+    ]
+    \node (CL2) at (0,0) [align=center] {Computational Linguistics 2\\ (Lin 637)};
+
+    % Prereqs
+    \node (Phon) [above=of CL2, xshift=-8em, align=center] {Phonology 1 (Lin 522)\\
+                                                                \emph{or}\\
+                                                            Phonetics (Lin 523)
+                                                        };
+    \node (Syntax) [left=of Phon, align=center] {Syntax 1\\ (Lin 521)};
+    \node (Math)   [above=of CL2, xshift=8em, align=center] {Statistics (Lin 538)\\
+                                                                \emph{or}\\
+                                                            Mathematical Methods (Lin 539)
+                                                        };
+    \node (CL1) [right=of Math, align=center] {CompLing 1\\ (Lin 537)};
+
+    % CS branch
+    \node (NLP) [below right=of CL2, xshift= 8em, align=center] {Introduction to NLP\\ (CSE 628)};
+    \node (Machine) [below=of NLP, xshift=-8em, align=center]  {Machine Learning\\ (CSE 512)};
+    \node (Speech)  [below=of NLP, xshift= 8em, align=center] {Speech Processing\\ (CSE 542)};
+
+    % Linguistics branch
+    \node (CompSem) [below=of CL2, xshift=-16em, align=center] {Computational Semantics\\ (Lin 626)};
+    \node (CompPhon) [below=of CompSem, align=center] {Computational Phonology\\ (Lin 627)};
+    \node (CompSyn) [below=of CompPhon, align=center] {Computational Syntax\\ (Lin 628)};
+
+    \node (Learn) [right=of CompSem, xshift=4em, align=center]  {Learnability\\ (Lin 629)};
+    \node (Parse) [right=of CompPhon, xshift=4em, align=center] {Parsing and Processing\\ (Lin 630)};
+
+    % Branches
+    \draw[sug] (Syntax) |- (CL2);
+    \draw[sug] (Phon) to (CL2);
+    \draw[sug] (Math) to (CL2);
+    \draw[req] (CL1) |- (CL2);
+    \draw[req] (CL1.south -| NLP.north) -- (NLP);
+    \draw[sug] (NLP) -| (Machine);
+    \draw[sug] (NLP) -| (Speech);
+    \draw[sug] (Learn |- CL2.south) -- (Learn); 
+    \draw[sug, transform canvas={xshift=2em}] (Parse |- CL2.south) -- (Parse);
+    \draw[sug] ($(CL2.south)-(6em,0)$) |- (CompSem);
+    \draw[sug] ($(CL2.south)-(5em,0)$) |- (CompPhon);
+    \draw[sug] ($(CL2.south)-(4em,0)$) |- (CompSyn);
+\end{tikzpicture}
