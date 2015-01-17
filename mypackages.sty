@@ -30,6 +30,7 @@
 %=================================================================
 \usepackage[utf8]{inputenc}	% does not work with ð and þ; use \eth and \thorn instead
 \usepackage[T1]{fontenc}	% scalable EC fonts
+\usepackage{tipx}
 \usepackage[bitstream-charter]{mathdesign}% math fonts matched for charter, garamond, times, utopia
 \DeclareMathAlphabet{\mathsc}{T1}{mdbch}{m}{fsc}
 \usepackage{skull}  % for a dangerous skull
@@ -42,6 +43,7 @@
 \ifpdf
     \usepackage[kerning=true, draft=false]{microtype}
 \fi
+
 
 %=================================================================
 %			glosses
@@ -79,7 +81,7 @@
 \usepackage{framed} % for nice paragraph styles
 \usepackage{tikz}
 \usetikzlibrary{arrows,automata,backgrounds,calc,chains,decorations.pathmorphing,decorations.text,external,fadings,fit,matrix,scopes,shadows,shapes,through,trees}
-\tikzexternalize
+\tikzexternalize[optimize=false]
 \tikzsetexternalprefix{./build/tikz/}
 \usepackage{forest}
 
@@ -103,11 +105,17 @@
 %=================================================================
 %			misc
 %=================================================================
+\usepackage{booktabs}
 \usepackage{mdwlist}
 \usepackage[titles]{tocloft}
 \usepackage{multirow}
 \usepackage{subcaption}
 \usepackage{xspace}
+
+%=================================================================
+%			programming
+%=================================================================
+\usepackage{minted}
 
 
 %=================================================================

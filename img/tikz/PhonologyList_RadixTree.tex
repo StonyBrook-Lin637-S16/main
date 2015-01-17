@@ -1,0 +1,32 @@
+\begin{tikzpicture}[
+    state/.style = {circle, fill=blue!15, inner sep = 0pt, minimum width = 2em},
+    final/.style = {circle, fill=red!15, inner sep = 0pt, minimum width= 2em},
+    keylabel/.style = {black},
+    arc/.style = {->,gray!75}
+    ]
+    
+    \node[state] (root) at (0,0) {};
+
+    \node[final] (blind) [xshift=-13em,below=of root] {2};
+    \node[final] (du) [right=of blind] {5};
+    \node[final] (er) [right=of du] {6};
+    \node[final] (Es) [right=of er] {8};
+    \node[final] (ich) [right=of Es] {4};
+    \node[state] (r) [right=of ich] {};
+    \node[final] (sii) [right=of r] {7};
+
+    \foreach \Target in {blind,du,er,Es,ich,r,sii}
+        \draw[arc] (root) to node [above, keylabel, pos=0.75] {\Target} (\Target);
+
+    \node[final] (b-e) [below=of blind] {3};
+
+    \draw[arc] (blind) to node [left, keylabel] {e} (b-e);
+
+    \node[final] (r-a) [below=of r] {0};
+
+    \node[final] (r-") [right=of r-a] {1};
+
+    \draw[arc] (r) to node [left, keylabel] {ad} (r-a);
+    \draw[arc] (r) to node [right, keylabel] {"ader} (r-");
+\end{tikzpicture}
+

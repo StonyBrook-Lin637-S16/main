@@ -1,39 +1,9 @@
 ## Who am I
 
-## How does the course fit into the program?
-
-
-CompLing1             Mathematical Methods
- |  |                       |
- |  |                       |
- |  -------------------------
- |              |
- |              |
-NLP         CompLing2
-                |
-                |
-    -------------------------------------------------
-    |           |           |           |           |
-    |           |           |           |           |
-CompPhon     CompSyn     CompSem    Processing   Learnability
-
-
-
 ## What is Computational Linguistics?
-
-- it is not about 
-    - computers as tools for linguistic research
-    - programming
 
 - what we barely cover
     - probabilistic methods (JurafskyMartin, ManningSchütze, GemanJohnson2003)
-
-- what we do not cover, but will profit from what we talk about
-    - speech recognition
-    - OCR
-    - parsing
-    - semantic analysis
-    - machine translation
 
 - language as a computational problem
     - how is language computed
@@ -87,7 +57,7 @@ CompPhon     CompSyn     CompSem    Processing   Learnability
             - k-factor; local interpretation
             - conjunction of negated literals; string as model of formula
             - "if you can't say it in two different ways, then you can't say it at all"
-            - closure properties: complementation, union, intersection, not relabeling ( b --> a; (ab)* --> (aa)* )
+            - closure properties: complementation, intersection, not union, relabeling ( b --> a; (ab)* --> (aa)* )
             - local substring substitution closure
             - boolean algebra of grammars
             - learnability
@@ -155,6 +125,7 @@ CompPhon     CompSyn     CompSem    Processing   Learnability
         - Kozen
         - HopcroftUllman
         - RegMSO equivalence (Morawietz)
+        - Kenstowicz06 Phonology survey paper
 
 - syntax
     

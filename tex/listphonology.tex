@@ -1,0 +1,198 @@
+\chapter{Implementing Phonology as a List}
+\label{cha:ListPhonology}
+
+Word-final devoicing is a very common process which turns voiced consonants (\textipa{/b/}, \textipa{/d/}, \textipa{/g/}, \textipa{/z/}, \ldots) that occur at the end of a word into their voiceless counterparts (\textipa{/p/}, \textipa{/t/}, \textipa{/k/}, \textipa{/s/}, \ldots).
+It usually applies only to a proper subclass of a given language's full inventory of voiced sounds.
+Final devoicing is attested in a rich variety of languages, from Indo-European ones like Catalan (Romance), German (Germanic), and Russian (Slavic) to Turkish (Turkic, Altaic) and Wolof (Senegambian, Niger-Congo).
+
+\begin{center}
+    \begin{tabular}{r@{\hskip 4em}ll}
+        \toprule
+        \textbf{Language} & \textbf{Voiced} & \textbf{Devoiced}\\
+        \toprule
+        Catalan & \emph{grize} `gray (\gloss{f})' & \emph{gris} `gray (\gloss{m})'\\
+        German & \emph{räder} `bikes' & \emph{rat} `bike'\\
+        Russian & \emph{kniga} `book (\gloss{Nom.Sg.}) & \emph{knik} `book (\gloss{Gen.Pl.})'\\
+        Turkish & \emph{sarabi} `wine (\gloss{Acc.Sg.})' & \emph{sarap} `wine (\gloss{Nom.Sg.})'\\
+        Wolof &  does anybody know & the data?\\
+        \bottomrule
+    \end{tabular}
+\end{center}
+
+What kind of computational resources must a native speaker possess that has successfully learned this process for their language and can apply it correctly during speech?
+As innocent as this question may seem, it is actually very difficult to answer because it is unclear what the process of word-final devoicing is.
+
+The way it was described above --- which is the standard view among phonologists --- it is a process that takes a word as an input and returns an output where any word-final voiced consonants have been devoiced.
+That is a complex idea that involves three distinct components:
+%
+\begin{enumerate*}
+    \item an input form,
+    \item an output form,
+    \item a process translating the former into the latter.
+\end{enumerate*}
+%
+It is far from obvious that this is indeed what speakers are doing; all we can tell for sure is that speakers produce the correct output forms.
+So rather than jumping immediately into the deep waters of sophisticated phonological machinery, let's see what the \textbf{simplest empirically adequate} solution might be.
+It might well turn out that speakers are actually doing something more complicated, but at least we will have a better understanding of the problem and a computational baseline that we can compare speakers' behavior to.
+
+
+\section{The Simplest Model: Phonology as a List}
+
+Arguably the simplest conceivable solution is that there are no phonological processes at all, speakers simply memorize all the output forms.
+This would reduce phonology to a long list of fully inflected words and speakers simply pick that item from the list that they want to pronounce.
+It explains speakers' ability to produce the correct output form purely via memorization, no computational machinery is required beyond a mechanism for storing and retrieving phonetic strings. 
+Such a solution is certainly simple, but is it empirically adequate?
+
+\subsection{Storage and Retrieval Speed of Lists}
+
+Let's first think about whether speakers could possibly have such a list stored somewhere in their brain.
+Psychologists and neuroscientists still know very little about how the brain stores information, so for the sake of argument we will look at this through the lens of Python data structures.
+Python has lists as a data type, so we could instantiate a phonology list for a given language, say German:
+%
+%fixme: margins
+
+\begin{pythoncode}
+    german_phonology = ['rat', 'r"ada', 'blint', 'blinde',\
+                        'ich', 'du', 'ea', 'sii', 'Es']
+\end{pythoncode}
+%fixme: add comment about notation
+%
+The problem is that items in a list are not readily accessible.
+If you know the index of an item, you can readily access it as below.
+
+\begin{pythoncode}
+    german_phonology[4]
+\end{pythoncode}
+%
+But with long lists you do not know which position a specific item occupies.
+In order to retrieve this item, then, one has to search through the entire list until one finds the correct item.
+So the longer the list, the longer it takes to find an item towards its end.
+If we simply search through the list from left to right, finding the $n$-th item takes $n$ steps.
+
+%fixme: add part about BigO notation
+
+This does not seem at all plausible from a psycholinguistic perspective.
+Experiments have shown that frequent words are retrieved more quickly than rarer ones, but % fixme: expand how we don't see linear search, add references
+
+\subsection{Hash Tables and Python Dictionaries}
+
+Quick access and storage of information is crucial in various applications, and thus it is no surprise that computer scientists have developed data structures which allow any given item to be stored and retrieved in constant time.
+A particularly popular one is the \emph{hash table}.
+The basic idea behind a hash table is that the problem with lists is the arbitrary and volatile connection between an item in a list and its index.
+Not only is there no particular reason why \emph{blint} has index $2$ and \emph{ea} index $1$, their indices can also change, e.g. if elements are added to the list or if the entries in the list are reordered.
+In a hash table, each entry has a key that uniquely identifies it, and this key is translated into the correct index via a \emph{hash function}.
+Hence the order of elements in a hash table is irrelevant for their retrieval.
+As long as we have the key, lookup takes only the amount of time required to compute the index from the key.
+A smart hash function can do this in constant time for any given key irrespective of how many keys there are or how long they are --- the conversion from indices to keys always takes a fixed number of steps.
+It follows that lookup in hash table takes constant time, much more efficient than the linear time lookup in a list.
+%fixme: hash tables are more complicated
+%fixme: add O(1)
+
+Python dictionaries are an implementation of hash tables, so we can improve the performance of our list implementation simply by switching to a different data structure.
+That requires only minor changes in the code.
+First, we change to curly braces to signal that we are constructing a dictionary.
+Then each item is assigned a unique key, for which we choose the underlying form posited by phonologists.
+
+\begin{pythoncode}
+    german_phonology = {'rad':'rat', 'r"ader':'r"ada',\
+                        'blind':'blint', 'blinde':'blinde',\
+                        'ich':'ich', 'du':'du', 'er':'ea',\
+                        'sii':'sii', 'Es':'Es'}
+\end{pythoncode}
+
+But now that lookup is constant time thanks to the use of a dictionary we outperform the psycholinguistic reality that not all words are equally easy to retrieve.
+It is conceivable, though, that humans use a hash function that prioritizes quick retrieval of common items to the detriment of less frequent ones.
+After all, a hash function that takes one step on very frequent items and five steps on rare ones might be preferable to one that takes 3 steps for all of them.
+From the perspective of computational complexity the two are the same because $\BigO(1) = \BigO(3) = \BigO(5)$, but that does not preclude that one is noticeably faster than the other in practice, at least when run on \emph{wetware}, i.e.\ the human brain.
+Or maybe frequent words are stored in a faster type of memory (just like you might have your OS installed on an SSD while keeping your media files on a conventional hard drive).
+So let's graciously assume that this aspect of human performance can be modeled (and possibly explained) by the phonology list approach.
+
+\subsection{Memory Usage}
+
+The next question one might ask is whether it is feasible that humans do indeed store all words in their fully inflected forms.
+Remember that this is a crucial assumption for the model under discussion, which treats phonology as nothing more than an inventory of the well-formed outputs.
+We can do some rough estimates regarding memory usage.
+
+Let's make the conservative estimate that the speaker's language has 30 different allophones. 
+So each sound in a word can be represented by a number between 0 and 29.
+For instance, \emph{rad} may correspond to \emph{21 5 13}.
+How many bits does it take to store one of these numbers?
+Since a bit can be either $0$ or $1$, the number of bits is exactly the number of digits used in the binary representation. 
+The highest number we need is $29$, which is represented as 11011 in binary, so each number (= sound) requires at most $5$ bits.
+We will take $4$ as the average (assuming that some sounds are more common than others, a smart coding strategy could push this down quite a bit).
+We furthermore assume that the speaker's vocabulary contains about 20,000 words, which expands to about 50,000 fully inflected word forms, with an average word length of $8$.
+Hence we have 50,000 words that take $8 \cdot 4$ bits on average.
+Overall then, we need $\frac{50000 \cdot 8 \cdot 4}{8 \cdot 1024} \approx 196 $ Kilobytes to store all these forms.
+To put this number into perspective, the collected works of Shakespeare take up about 20 times as much (2 to 5 Megabytes depending on character encoding) and fits on 1500 densely printed pages.
+The phonology list model, then, would take up about 75 pages, which doesn't seem to outrageous --- humans are certainly capable of memorizing longer passages. 
+%fixme: remark about indian oral tradition
+
+Things do not get much worse as the number of allophones increases.
+Some languages like Ubyx have over 70 allophones for consonants alone.
+In this case, we may need number ranges between 0 and 80 or even higher, which implies an increase in the maximum number of bits per sound to 7, so with an average of 6 bits we would end up using 292 Kilobytes, or 111 pages.
+
+\subsection{Prefix Trees}
+
+Notice that these are only the storage requirements for the output forms, not for the keys and the (negligible) hash function.
+With no further optimizations, the keys will double the memory usage.
+The keys we use, though, have the property that many of them are very similar.
+For instance, the keys \emph{blind} and \emph{blinde} are almost exactly the same.
+The latter is an extension of the former, or the other way round, \emph{blind} is a \emph{prefix} of \emph{blinde}.
+%
+\begin{definition}[Prefix]
+    Given strings $u$ and $w$, $u$ is a \emph{prefix} of $w$ iff there is some (possibly empty) string $v$ such that $w$ is the concatenation of $u$ and $v$.
+\end{definition}
+%
+Keep in mind that this usage of prefix has nothing to do with its linguistic meaning as an affix that precedes the stem of a word.
+Furthermore, since $v$ in the definition is allowed to be empty, i.e.\ a string that contains no symbols whatsoever, every string is its own prefix.
+For instance, the prefixes of \emph{blinde} are \emph{b}, \emph{bl}, \emph{bli}, \emph{blin}, \emph{blind}, and \emph{blinde} itself.
+
+Considering that morphology in many languages relies on suffixes, it is very likely that the keys in the phonology list of a given language show a great amount of overlap.
+This allows us to represent them in a more memory-efficient way via a \emph{prefix tree} (also called \emph{trie}) like the one below.
+%
+\begin{center}
+    \input{./img/tikz/PhonologyList_PrefixTree.tex}
+\end{center}
+%
+Nodes in red represent specific keys.
+For instance, the red node labeled two corresponds to the key \emph{blind}, for if we follow the path from the root to this node, the branches spell out b-l-i-n-d.
+The node is labeled $2$ because that is the index of the entry with key \emph{blind}.
+If we move one branch further down we get the key \emph{blinde}, which references the item with index $3$.
+Notice that since the tree already encodes the key \emph{blinde}, we already have all the nodes and branches that are required to encode \emph{blind}.
+So the addition of this key only requires 2 more bits so that we can link the corresponding node to the index $2$.
+If the keys were stored independently of each other, then \emph{blind} would be one among $n$ elements, where $n$ is the number of items in the phonology list.
+Our toy example has 9 different elements, so we would need $4$ bits to uniquely identify \emph{blind}.
+If there's 20,000 different keys, we would need $15$ bits.
+Representing one as a prefix of the other saves us a lot of memory via structure sharing.
+
+The prefix tree also renders the hash function obsolete as it already encodes the mapping from keys to indices.
+A prefix tree thus is a viable alternative to a hash table that saves quite a bit of memory as long as the majority of keys have common prefixes.
+%fixme: it also gets around certain shortcoming of hash tables
+That is actually not the case in our toy example, where we find many unary branching nodes.
+This is unfortunate because it means that a single key like \emph{du}, which shares no prefixes with any other keys, has to reserve memory for the characters \emph{d} and \emph{u}.
+In the standard ASCII encoding, that's 7 bits per character, and in UTF-16 it would be 16 bits per character.
+So instead of the $4$ bits the hash function needs for \emph{du} in our toy example, we now have to reserve 14 or even 32 bits.
+This is a general problem with prefix trees: they are only memory efficient if most of the branches in the tree are at least binary branching.
+
+We can somewhat mitigate the problem by truncating sequences of unary branches into a single branch, yielding a \emph{compacted prefix tree} (also known as \emph{radix trie}).
+%
+\begin{center}
+    \input{./img/tikz/PhonologyList_RadixTree.tex}
+\end{center}
+
+% hw
+    % draw prefixtree
+    % write program to compact prefix tree
+    % compute prefixes
+    % which one of the following could benefit from being stored as prefix trees? Explain why!
+        % English dictionary
+        % list of dates that are holidays from 2000 to 2020, in format YY-MM-DD
+        % list of dates that are holidays from 2000 to 2020, in format DD.MM.YY
+        % list of English affixes 
+        % list of all logically possible IP addresses
+        % list of all IP addresses on a given network
+
+
+\begin{itemize}
+    \item bad idea: list of words; no generalization, fails for nonce words; everything equally natural, equally difficult
+\end{itemize}

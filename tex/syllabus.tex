@@ -1,5 +1,5 @@
 \setcounter{chapter}{-1}
-\chapter{Syllabus --- You Better Read it!}
+\chapter{Syllabus}
 \label{cha:syllabus}
 \setcounter{page}{1}
 \pagestyle{fancy}
@@ -13,90 +13,164 @@
         \textbf{Email:} lin637@thomasgraf.net\\
         \textbf{Time:} TR 10:00--11:20am &
         \textbf{Office hours:} Tue 11:30--2:30pm\\
-        \textbf{Location:} tba & %fixme
+        \textbf{Location:} Psychology A 144 &
         \textbf{Office:} SBS N249\\
         \textbf{Course Website:} tba & %fixme
         \textbf{Personal Website:} \url{http://thomasgraf.net}
     \end{tabular}
 }
 
-\section{What This Course is About}
 
-\rotatebox{0}{
-    \footnotesize
-    \input{./img/tikz/ProgramOverview.tex}
-}
+\section{Course Outline}
+
+\subsection{Contents}
+
+This course serves a specific purpose in our program (see Fig.~\vref{fig:Syllabus_Program}):
+it acts as the bridge from introductory courses in linguistics (Syntax 1, Phonology 1, Phonetics) and computational methods (Statistics, Mathematical Methods in Linguistics, Computational Linguistics 1) to advanced courses and seminars in computational\slash mathematical linguistics.
+In contrast to the NLP courses offered by the department of computer science, our courses focus on studying the properties of natural language from a computationally informed perspective.
+The question is not how computers can solve linguistic tasks, but how language can be conceptualized as a computational problem.
+This emphasis is also reflected in the selection of topics for this course.
+
+\begin{itemize}
+    \item \textbf{What this course is not about}
+        \begin{itemize}
+            \item Computers as tools for linguistic research
+            \item Programming
+            \item Software development for natural language tasks
+        \end{itemize}
+    \item \textbf{What is not covered but profits from what is covered}
+        \begin{itemize}
+            \item Speech recognition
+            \item OCR
+            \item Text generation
+            \item Parsing
+            \item Semantic analysis
+            \item Machine translation
+        \end{itemize}
+    \item \textbf{List of topics}
+        \begin{itemize}
+            \item \emph{Phonology}
+                \begin{itemize}
+                    \item The role of formalization
+                    \item String languages
+                    \item Subregular hierarchy
+                    \item Regular languages
+                    \item Generative capacity of phonology
+                    \item String transductions
+                    \item 2-level morphology
+                    \item Equivalence of SPE and OT
+                \end{itemize}
+            \item \emph{Syntax}
+                \begin{itemize}
+                    \item Tree languages
+                    \item Syntax is more complex than phonology
+                    \item Mildly context-sensitive formalisms (TAG, MGs)
+                    \item Tree transductions
+                    \item Regular representations of MCS formalisms
+                    \item Reinterpreting the T-model
+                \end{itemize}
+        \end{itemize}
+\end{itemize}
+
+A detailed outline of the course is given in Tab.~\ref{tab:Syllabus_CourseOutline}.
 
 \begin{table}
     \centering
-    \begin{tabular}{rlp{4.5cm}p{4.5cm}p{4cm}}
-        \hline
-        \hline
-        \emph{Wk} & \emph{Classes} & \emph{Formal} & \emph{Linguistics} & \emph{Algorithms}\\\hline
-        1         & Jan 27, 29     & What is computation? & History\\
+    \begin{tabular}{rlp{4.5cm}p{4.5cm}}
+        \toprule
+        \emph{Wk} & \emph{Classes} & \emph{Formal} & \emph{Linguistics} \\
+        \toprule
+        1         & Jan 27, 29     & What is computation? & Marr's Three Levels\\
         2         & Feb 3, 5       & Formalizing phonology & Why formalize?\\
         3         & Feb 10, 12     & Strictly local languages & Local dependencies\\
         4         & Feb 17, 19     & Subregular hierarchy & How powerful is phonology?\\
         5         & Feb 24, 26     & Regular languages & Abstractness\\
         6         & (DGFS)         & & \\
         7         & Mar 10, 12     & String transductions & SPE-OT equivalence\\
-        \hline                       
+        \midrule
         8         & (Spring Break) & & \\
-        \hline                       
+        \midrule
         9         & Mar 24, 26     & Weak Generative Capacity & $\text{Phonology} < \text{Syntax}$\\
-        10        & Mar 31, Apr 2  & Tree languages & \\
-        11        & Apr 7, 9       & Local tree languages & \\
+        10        & Mar 31, Apr 2  & Tree languages & Headedness, feature percolation\\
+        11        & Apr 7, 9       & Local tree languages & GPSG\\
         12        & (GLOW)         & & \\
-        13        & Apr 21, 23     & Recognizable tree languages & \\
-        14        & Apr 28, 30     & TAG and MGs & \\
+        13        & Apr 21, 23     & Recognizable tree languages & GB\\
+        14        & Apr 28, 30     & TAG and MGs & Minimalist syntax\\
         15        & May 5, 7       & Tree transductions & Reinterpreting the T-model\\
-        \hline
-        \hline
+        \bottomrule
     \end{tabular}
 \caption{Tentative course outline}
+\label{tab:Syllabus_CourseOutline}
 \end{table}
 
+\begin{figure}
+    \rotatebox{0}{
+        \footnotesize
+        \input{./img/tikz/ProgramOverview.tex}
+    }
+\caption{Computational Linguistics 2 in the curriculum (dashed lines indicate recommendations rather than prerequisites)}
+\label{fig:Syllabus_Program}
+\end{figure}    
+
+\subsection{Prerequisites}
+
+The only official prerequisite is Computational Linguistics 1 (Lin 537) or comparable programming skills in Python.
+It is also helpful to have some basic familiarity with linguistics (phonemes, phrase structure rules, syntactic trees) and mathematics (sets, functions, relations, and propositional logic as covered in Semantics 1, for instance).
+You can take an online survey to identify weaknesses, and several introductory readings on these topics are available on the course website.
 
 \section{Teaching Goals}
 \begin{itemize}
-    \item \textbf{General Skills}
+    \item \textbf{Practical Skills}
         \begin{itemize}
-            \item construct a logically sound argument
-            \item evaluate the predictions and implications of an argument with respect to a given set of data
-            \item compare and weigh different arguments
-            \item knowledge of common logical fallacies and unsound reasoning steps
-            \item disprove an empirically wrong or logically flawed argument 
-            \item ability to detect and succinctly describe patterns in a given data sample
-            \item understand the interplay of data and theory in the sciences
+            \item conceptualize a problem in mathematical terms
+            \item optimize your programs through the use of adequate algorithms and data structures (dynamic programming techniques, hash tables, etc.)
+            \item a more abstract and theoretically informed perspective on current tools and techniques in NLP
+            \item an understanding for how linguistic insights can be invoked to simplify NLP tasks
         \end{itemize}
-    \item \textbf{Linguistic Skills}
+    \item \textbf{Research Skills}
         \begin{itemize}
-            \item knowledge of a wide range of parts of speech
-            \item familiarity with phrase structure rules
-            \item writing phrase structure grammars to account for a given phenomenon
-            \item lexicalizing rules
-            \item a general understanding why computers still fail miserably at linguistic tasks
-        \end{itemize}
-    \item \textbf{What is it good for?}
-        \begin{itemize}
-            \item Argumentation and reasoning skills are the most important skill out there.
-                People try to trick you all the time --- reasoning skills are your primary means of intellectual self-defense.
-            \item Phrase structure grammars are widely used in the IT industry, e.g.\ by \emph{Xerox}, \emph{Nuance}, \emph{IBM} and \emph{Google}.
-            \item Writing good grammars is difficult and an important skill in the construction of tree banks (text corpora where each sentence is annotated with syntactic structure). Tree banks are an essential tool for all areas of natural language processing by computers, e.g.\ machine translation, text generation and summarization, dialog systems and so on.
-            \item Familiarity with syntactic structure and dependencies makes learning new languages easier.
+            \item assess linguistic phenomena from a computational perspective
+            \item evaluate linguists' claims about computational efficiency
+            \item basic overview of current research in theoretical computational linguistics
+            \item use computational concepts to identify new empirical generalizations
+            \item bring linguistic data to bear on computational claims
+            \item mathematically informed understanding of linguistic theories
         \end{itemize}
 \end{itemize}
 
 
 \section{Grading}
 \begin{itemize}
-    \item \textbf{Homework}\\
-        weekly exercises and/or programming assignments; a random sample of homeworks will be collected and graded; solutions will be made available online after the due date
-    \item \textbf{Readings}\\
-        assigned on a weekly basis; you have to collectively write a summary for each reading in the course wiki (remember, it's a wiki, so everyone can tell from the editing history how much you contributed) 
-    \item \textbf{Lecture Evaluations}\\
-    \item \textbf{Presentation}\\
-        everyone has to pick a research topic and present it at a workshop during finals week
+    \item \textbf{Homework}
+        \begin{itemize}
+            \item weekly exercises, programming assignments, or critical evaluations of assigned readings
+            \item a random sample of homeworks will be collected and graded
+            \item solutions will be made available online after the due date
+            \item Collaboration on homework problems is encouraged as long as you write up the solutions by yourself, using your own words, examples, notation, and code.
+        \end{itemize}
+        %
+    \item \textbf{Readings}
+        \begin{itemize}
+            \item about two readings per week
+            \item you have to collectively write a summary for each reading in the course wiki
+        \end{itemize}
+        %
+    \item \textbf{Survey Squibs}
+        \begin{itemize}
+            \item By the end of the course, the wiki should contain survey articles on a number of topics not covered in this course (or not covered at the same depth).
+            \item You have to pick a topic and write the corresponding survey article.
+            \item These articles should be succinct and simple enough that they are comprehensible to a researcher with little exposure to computational linguistics, yet at the same time include enough technical detail that the claims can be verified by somebody with the appropriate background.
+                (Why this weird requirement?
+                Because that's the recipe for writing a computational paper that can be published in a linguistics journal!)
+        \end{itemize}
+        %
+    \item \textbf{Workload per Credits}
+        \begin{itemize}
+            \item \emph{3 credits}: homework, readings, squib
+            \item \emph{2 credits}: homework, readings
+            \item \emph{1 credit}: readings
+            \item \emph{0 credits}: none, but I highly recommend that you at least read the assigned papers as they will be important for following the lectures
+        \end{itemize}
 \end{itemize}
 
 
@@ -110,75 +184,5 @@
     \item If you want to come to my office hours and anticipate a longer meeting, please email me so that we can set apart enough time and avoid collisions with other students.
 \end{itemize}
 
-\subsection{Attendance}
-\begin{itemize}
-    \item You do not have to show up for the lecture. However, asking questions and participating in discussions during class will improve your grade.
-    \item Handouts and homeworks are posted on Blackboard.
-\end{itemize}
-
-\subsection{Homework}
-\begin{itemize}
-    \item Weekly homeworks, posted on Blackboard every Wednesday by 11:59pm
-    \item Due the following Wednesday by 7pm (student office drop-off box)
-    \item No late hand-ins!
-    \item Homeworks must be typed up and printed!
-    \item Collaboration on homework problems is encouraged as long as you write up the solutions by yourself, using your own words and examples.
-        Most homework exercises will be fairly open ended, so it will be easy for us to see if you simply copied somebody's answer.
-        Copying another student's solutions is considered cheating, with all the unpleasant consequences this entails.
-\end{itemize}
-
-\subsection{Special Needs \& Retaking the Course}
-\begin{itemize}
-    \item If you have any special needs that might impact your class performance (learning disabilities, impaired sight or hearing, etc.), please come to my office hours or contact me via mail so we can make suitable arrangements.
-    \item If you already know that you'll be missing recitation or an exam due to religious holidays or other binding commitments, please send me an email with the specific dates.
-    \item If you've taken this course before, I invite you to come to my office hours this week so we can identify problem areas and discuss how to address them.
-\end{itemize}
-
-\section{How to Ace This Course}
-
-\begin{itemize}
-    \item \textbf{Do the homeworks!}\\
-        Do every single homework.
-        Each homework is about 5\% of your grade.
-        %
-    \item \textbf{Chase those bonus points!}\\
-        Try the challenge exercises, even if you aren't quite sure what the answer is.
-        You might still get some points, and wrong answers aren't penalized.
-        Similarly, take every single quiz to minimize the risk of a bad final dragging down your grade.
-        %
-    \item \textbf{Don't rush into things!}\\
-        Read every question carefully (this goes for homeworks as well as quizzes).
-        Make sure you know what it is you are asked to do.
-        Whenever you feel like starting the solution, stop for a moment, paraphrase the question you think you are answering, and double check that this is indeed what the exercise is asking.
-        %
-    \item \textbf{Reflect on what you are doing!}\\
-        Think about why certain exercises are on the homework.
-        We're not trying to torture you, there is a reason for every single exercise, some important insight waiting to be discovered by you.
-        Rote memorization is not enough for this course, you must understand the tools and how to use them.
-        %
-    \item \textbf{Collaborate!}\\
-        Don't be a lone wolf, discuss the homework with your peers.
-        That way, you make sure that you aren't misinterpreting the question, and by explaining your answer to others you can see whether it actually works, and why.
-        But don't just copy somebody's answers.
-        %
-    \item \textbf{Ask for help before it's too late!}\\
-        If you feel that you're falling behind, act immediately.
-        Go to your TAs or come to my office hours so that we can go over the material you are struggling with.
-        This is not like an introductory survey course where you can skip a session and start fresh on a new topic the week after that.
-        Everything builds on the material that came before.
-        Treat it like learning a foreign language, programming or calculus.
-        Any knowledge gaps you have will grow at a rapid pace if you don't act fast.
-\end{itemize}
-
-\medskip
-\begin{flushright}
-    \begin{minipage}[b]{28em}
-        \flushright
-        \emph{The mind is not a vessel to be filled but a fire to be kindled.}\\
-        Plutarch\\
-
-        \medskip
-        \emph{Learning is exploring.}\\
-        Yours truly
-    \end{minipage}
-\end{flushright}
+\subsection{Special Needs}
+If you have any special needs that might impact your class performance (learning disabilities, impaired sight or hearing, etc.), please come to my office hours or contact me via mail so we can make suitable arrangements.

@@ -4,7 +4,7 @@
     sug/.style = { dashed },
     req/.style = { },
     ]
-    \node (CL2) at (0,0) [align=center] {Computational Linguistics 2\\ (Lin 637)};
+    \node[fill=gray!25] (CL2) at (0,0) [align=center] {Computational Linguistics 2\\ (Lin 637)};
 
     % Prereqs
     \node (Phon) [above=of CL2, xshift=-8em, align=center] {Phonology 1 (Lin 522)\\
@@ -22,6 +22,7 @@
     \node (NLP) [below right=of CL2, xshift= 8em, align=center] {Introduction to NLP\\ (CSE 628)};
     \node (Machine) [below=of NLP, xshift=-8em, align=center]  {Machine Learning\\ (CSE 512)};
     \node (Speech)  [below=of NLP, xshift= 8em, align=center] {Speech Processing\\ (CSE 542)};
+    \node (AI) [below=of Machine, align=center] {Artificial Intelligence\\ (CSE 537)};
 
     % Linguistics branch
     \node (CompSem) [below=of CL2, xshift=-16em, align=center] {Computational Semantics\\ (Lin 626)};
@@ -39,6 +40,7 @@
     \draw[req] (CL1.south -| NLP.north) -- (NLP);
     \draw[sug] (NLP) -| (Machine);
     \draw[sug] (NLP) -| (Speech);
+    \draw[sug] (NLP) |- (AI);
     \draw[sug] (Learn |- CL2.south) -- (Learn); 
     \draw[sug, transform canvas={xshift=2em}] (Parse |- CL2.south) -- (Parse);
     \draw[sug] ($(CL2.south)-(6em,0)$) |- (CompSem);

@@ -1,0 +1,64 @@
+\begin{tikzpicture}[
+    state/.style = {circle, fill=blue!15, inner sep = 0pt, minimum width = 2em},
+    final/.style = {circle, fill=red!15, inner sep = 0pt, minimum width= 2em},
+    keylabel/.style = {black},
+    arc/.style = {->,gray!75}
+    ]
+    
+    \node[state] (root) at (0,0) {};
+
+    \node[state] (b) [xshift=-13em,below=of root] {};
+    \node[state] (d) [right=of b] {};
+    \node[state] (e) [right=of d] {};
+    \node[state] (E) [right=of e] {};
+    \node[state] (i) [right=of E] {};
+    \node[state] (r) [right=of i] {};
+    \node[state] (s) [right=of r] {};
+
+    \foreach \Target in {b,d,e,E,i,r,s}
+        \draw[arc] (root) to node [above, keylabel, pos=0.75] {\Target} (\Target);
+
+    \node[state] (b-l) [below=of b] {};
+    \node[state] (b-i) [below=of b-l] {};
+    \node[state] (b-n) [below=of b-i] {};
+    \node[final] (b-d) [below=of b-n] {2};
+    \node[final] (b-e) [below=of b-d] {3};
+
+    \draw[arc] (b) to node [left, keylabel] {l} (b-l);
+    \foreach \Source/\Target in {l/i,i/n,n/d,d/e}
+        \draw[arc] (b-\Source) to node [left, keylabel] {\Target} (b-\Target);
+
+    \node[final] (d-u) [below=of d] {5};
+    \draw[arc] (d) to node [left, keylabel] {u} (d-u);
+
+    \node[final] (e-a) [below=of e] {6};
+    \draw[arc] (e) to node [left, keylabel] {r} (e-a);
+
+    \node[final] (E-s) [below=of E] {8};
+    \draw[arc] (E) to node [right, keylabel] {s} (E-s);
+
+    \node[state] (i-c) [below=of i] {};
+    \node[final] (i-h) [below=of i-c] {4};
+    \draw[arc] (i) to node [right, keylabel] {c} (i-c);
+    \draw[arc] (i-c) to node [right, keylabel] {h} (i-h);
+
+    \node[state] (r-a) [below=of r] {};
+    \node[final] (r-d) [below=of r-a] {0};
+    \draw[arc] (r) to node [right, keylabel] {a} (r-a);
+    \draw[arc] (r-a) to node [right, keylabel] {d} (r-d);
+
+    \node[state] (r-") [below right=of r] {};
+    \node[state] (r-"a) [below=of r-"] {};
+    \node[state] (r-"d) [below=of r-"a] {};
+    \node[state] (r-"e) [below=of r-"d] {};
+    \node[final] (r-"r) [below=of r-"e] {1};
+
+    \draw[arc] (r) to node [right, keylabel] {"} (r-");
+    \foreach \Source/\Target in {/a,a/d,d/e,e/r}
+        \draw[arc] (r-"\Source) to node [right, keylabel] {\Target} (r-"\Target);
+
+    \node[state] (s-i) [below right=of s] {};
+    \node[final] (s-ii) [below=of s-i] {7};
+    \draw[arc] (s) to node [right, keylabel] {i} (s-i);
+    \draw[arc] (s-i) to node [right, keylabel] {i} (s-ii);
+\end{tikzpicture}
