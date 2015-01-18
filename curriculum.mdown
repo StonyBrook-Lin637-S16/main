@@ -181,9 +181,10 @@
 
 - parsing
 
-- complexity theory
-
 algorithmic concepts
+    bigO
+    binary search
+
     data structures
         string
         list

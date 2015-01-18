@@ -266,8 +266,8 @@
 \newcommand{\BigO}{\ensuremath{O}}
 
 \definecolor{codebg}{rgb}{0.95,0.95,0.95}
-\newminted{python}{linenos,mathescape,gobble=4,fontsize=\footnotesize,bgcolor=codebg}
-\newmintedfile{python}{linenos,mathescape,fontsize=\footnotesize,bgcolor=codebg}
+\newminted{python}{linenos,mathescape,gobble=4,fontsize=\footnotesize,bgcolor=codebg,samepage=false}
+\newmintedfile{python}{linenos,mathescape,fontsize=\footnotesize,bgcolor=codebg,samepage=false}
 
 
 \newcommand{\LeftEdgeSymbol}{\ensuremath{\rtimes}}
@@ -277,6 +277,15 @@
 \newcommand{\Bigrams}{\ensuremath{\mathrm{2\text{-}grams}}}
 \newcommand{\augmented}[1]{\ensuremath{\hat{#1}}}
 \newcommand{\stringcat}{\ensuremath{\cdot}}
-\newcommand{\posG}[1]{\ensuremath{#1_{+}}}
-\newcommand{\negG}[1]{\ensuremath{#1_{-}}}
+\newcommand{\posG}[1]{\ensuremath{^+ #1}}
+\newcommand{\negG}[1]{\ensuremath{^- #1}}
 \newcommand{\complementof}[1]{\ensuremath{ \overline{#1} } }
+
+% labeling function
+\newcommand{\LabelFunc}{\ensuremath{\ell}}
+
+% natural numbers
+\newcommand{\NatNum}{\ensuremath{\mathbb{N}}}
+
+% positive natural numbers
+\newcommand{\NatNumPos}{\ensuremath{\mathbb{N}^{+}}}

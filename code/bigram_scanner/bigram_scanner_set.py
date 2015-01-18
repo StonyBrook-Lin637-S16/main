@@ -22,9 +22,7 @@ def string_to_bigrams(w):
         
 def bigram_comparison(grammar,bigram_list):
     """Check whether a bigram grammar subsumes a list of bigrams"""
-
-    if set(bigram_list).issubset(grammar):
-        return True
+    return set(bigram_list).issubset(grammar)
 
 def bigram_scanner(grammar,w):
     """Recognizer for bigram grammar given string w"""
