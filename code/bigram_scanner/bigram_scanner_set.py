@@ -1,6 +1,8 @@
 #!/usr/bin/env python
+# encoding: utf-8
 
-bigram_grammar = set(['La', 'ab', 'bR'])
+bigram_grammar = set(['La', 'ab', 'ba', 'bR'])
+
 
 def augment_string(w):
     """add edge markers to string"""
@@ -9,9 +11,9 @@ def augment_string(w):
     except TypeError:
         print("argument type of augment_string cannot be concatenated")
 
+
 def string_to_bigrams(w):
     """convert string into non-repeating list of bigrams"""
-    
     bigram_list = []
 
     for i in range(len(w)-1):
@@ -20,14 +22,16 @@ def string_to_bigrams(w):
             bigram_list.append(current_bigram)
     return bigram_list
         
-def bigram_comparison(grammar,bigram_list):
+
+def bigram_comparison(grammar, bigram_list):
     """Check whether a bigram grammar subsumes a list of bigrams"""
     return set(bigram_list).issubset(grammar)
 
-def bigram_scanner(grammar,w):
+
+def bigram_scanner(grammar, w):
     """Recognizer for bigram grammar given string w"""
 
-    if bigram_comparison(grammar,string_to_bigrams(augment_string(w))):
+    if bigram_comparison(grammar, string_to_bigrams(augment_string(w))):
         print("well-formed: " + w)
     else:
         print("ill-formed: " + w)
