@@ -15,8 +15,8 @@
         \textbf{Office hours:} Tue 11:30--2:30pm\\
         \textbf{Location:} Psychology A 144 &
         \textbf{Office:} SBS N249\\
-        \textbf{Course Website:} tba & %fixme
-        \textbf{Personal Website:} \url{http://thomasgraf.net}
+        \textbf{Course Website:} \href{http://lin637.thomasgraf.net} {lin637.thomasgraf.net} &
+        \textbf{Personal Website:} \href{http://thomasgraf.net}{thomasgraf.net}
     \end{tabular}
 }
 
@@ -34,11 +34,11 @@ This emphasis is also reflected in the selection of topics for this course.
 \begin{itemize}
     \item \textbf{What this course is not about}
         \begin{itemize}
-            \item Computers as tools for linguistic research
+            \item Computer-assisted research methods in linguistics
             \item Programming
             \item Software development for natural language tasks
         \end{itemize}
-    \item \textbf{What is not covered but profits from what is covered}
+    \item \textbf{What is not covered but benefits from what is covered}
         \begin{itemize}
             \item Speech recognition
             \item OCR
@@ -72,7 +72,10 @@ This emphasis is also reflected in the selection of topics for this course.
         \end{itemize}
 \end{itemize}
 
-A detailed outline of the course is given in Tab.~\ref{tab:Syllabus_CourseOutline}.
+A rough outline of the course progression is given in Tab.~\vref{tab:Syllabus_CourseOutline}.
+Many of the topics we cover draw from very specialized areas of formal language theory that even most mathematicians and computer scientists do not know about, e.g.\ the correspondence between finite-state machines and monadic second-order logic, or the logical characterization of tree transductions.
+So this course might be of value to you even if you do not particularly care about natural language.
+Make no mistake, though, we'll talk a lot about language and linguistics --- this is not a math class.
 
 \begin{table}
     \centering
@@ -115,8 +118,20 @@ A detailed outline of the course is given in Tab.~\ref{tab:Syllabus_CourseOutlin
 \subsection{Prerequisites}
 
 The only official prerequisite is Computational Linguistics 1 (Lin 537) or comparable programming skills in Python.
-It is also helpful to have some basic familiarity with linguistics (phonemes, phrase structure rules, syntactic trees) and mathematics (sets, functions, relations, and propositional logic as covered in Semantics 1, for instance).
+Python will be used to illustrate some formal concepts, and some of the homeworks will require you to implement an algorithm or procedure in Python.
+
+It is also helpful to have some basic familiarity with linguistics (phonemes, phrase structure rules, syntactic trees) and mathematics (sets, functions, relations, and first-order logic as covered in Semantics 1, for instance).
 You can take an online survey to identify weaknesses, and several introductory readings on these topics are available on the course website.
+
+\medskip
+\noindent
+\hspace{-.75em}
+\begin{tabular}{ll}
+    \textbf{Survey URL:} & 
+    \href{https://testmoz.com/432409}{https://testmoz.com/432409}\\
+    \textbf{Password:} &
+    CompLing2
+\end{tabular}
 
 \section{Teaching Goals}
 \begin{itemize}
@@ -178,7 +193,7 @@ You can take an online survey to identify weaknesses, and several introductory r
 
 \subsection{Contacting me}
 \begin{itemize}
-    \item Emails should be sent to lin637@thomasgraf.net to make sure they go to my high priority inbox.
+    \item Emails should be sent to \href{mailto://lin637@thomasgraf.net}{lin637@thomasgraf.net} to make sure they go to my high priority inbox.
         Disregarding this policy means late replies and is a sure-fire way to get on my bad side.
     \item Reply time < 24h in simple cases, possibly more if meddling with bureaucracy is involved.
     \item If you want to come to my office hours and anticipate a longer meeting, please email me so that we can set apart enough time and avoid collisions with other students.
@@ -186,3 +201,85 @@ You can take an online survey to identify weaknesses, and several introductory r
 
 \subsection{Special Needs}
 If you have any special needs that might impact your class performance (learning disabilities, impaired sight or hearing, etc.), please come to my office hours or contact me via mail so we can make suitable arrangements.
+
+
+\section{Online Component}
+
+This class will use some online tools to facilitate homework collaboration and submission, student discussions, and dynamic lecture evaluation.
+This is the first time I'm trying something like this for one of my courses, so expect a few bumps in the road.
+
+\begin{itemize}
+    \item \textbf{Homework submission}\\
+        \emph{How it works:}
+        Homeworks will distributed via a github repository. 
+        You can fork this repo and upload your own code, or checkout other students' forks to see how they dealt with the problem.
+        In order to submit a homework you upload your solution to your fork and issue a pull request.
+        After the due date, I'll upload my solution to the repository.
+
+        \emph{Why we do it:}
+        This setup mimics the modern workflow in collaborative development projects.
+        Git is one of the best-known version control systems, and github is the biggest online service for hosting git repositories.
+        Familiarity with version control systems is an essential job requirement for computational linguists, and it is also very helpful for academic work.
+        See this discussion on Stackflow for some ideas how git can be used in conjunction with Latex:
+        \href{http://stackoverflow.com/questions/6188780/git-latex-workflow}{http://stackoverflow.com/questions/6188780/git-latex-workflow}
+
+        \emph{What you'll need:}
+        A github account (the free tier is enough) and a way of uploading your code to a github repository. Linux users can install git via the command line, whereas Windows and Mac users should download and install the github app, which comes with a nice GUI.
+
+    \item \textbf{Homework Feedback and Discussion}\\
+        \emph{How it works:}
+        Every github repository comes with an issue (= ticket) tracker.
+        If you have a question or wish to discuss a topic, you can open a ticket on the main repository (note: tickets support markdown).
+        I will also use tickets to leave comments on your homeworks.
+
+        \emph{Why we do it:}
+        Once again this is an essential part of modern software development.
+        And it is also a lot more convenient than anything Blackboard has to offer.
+
+        \emph{What you'll need:}
+        Not much beyond the ability to navigate the github repos.
+
+    \item \textbf{Reading summaries}\\
+        \emph{How it works:}
+        Every week I create an empty page on the course wiki for each assigned reading.
+        Your job is to expand these articles into useful summaries.
+        The default syntax for the wiki entries is markdown, a very simple \emph{lingua franca} for writing plain text documents that can easily be converted into a variety of file formats (doc, pdf, html, and so on).
+
+        \emph{Why we do it:}
+        Wikis are frequently used for software documentation nowadays, so you have to know how to work with one.
+        You will also get to see the advantages of markdown, in particular for short documents that do not need a lot of fancy typesetting (this can even include your own website!).
+        Hopefully this will move you away from formats like doc, which
+        %
+        \begin{itemize*}
+            \item are proprietary, and
+            \item lack backwards compatibility, and
+            \item are tedious to index and search, and
+            \item fail to separate the content of a document from its presentation, thereby distracting you with unnecessary details.
+        \end{itemize*}
+        %
+        Also, learning markdown takes a lot less time than relearning the MS Office user interface with each new version.
+        If you find that markdown is too simple for your own purposes, you can also switch to a more expressive superset like \href{http://johnmacfarlane.net/pandoc/}{pandoc}.
+
+        \emph{What you'll need:}
+        Nothing except the ability to read (and ideally write in) markdown.
+        The github editor makes this fairly easy with its built-in help, formatting buttons and dynamic preview.
+        You can also checkout this interactive markdown tutorial, which should take you about 15 minutes (yes, markdown is that easy!):
+        \href{http://markdowntutorial.com/}{http://markdowntutorial.com/}
+
+    \item \textbf{Class announcements}\\
+        \emph{How it works:}
+        Normal announcements (readings, due dates) are put on the course website, time-critical ones (i.e.\ class cancellations) are emailed out via Blackboard.
+        
+        \emph{What you'll need:}
+        If you're not officially enrolled in the course, send me a message so I can add you to Blackboard.
+
+    \item \textbf{Handouts}\\
+        \emph{How it works:}
+        Handouts are made available online Monday and Wednesday before 3pm.
+        You can look at them on your laptop\slash tablet or make a hardcopy before class.
+        I will not bring handouts to class unless I could not upload them on time the day before.
+
+        \emph{Why we do it:}
+        The department copier has a nasty habit of breaking down at the most inopportune times, and even when it is able to print other things like the stapler do not work.
+        And most students throw away the handout anyways if they also have the PDF.
+\end{itemize}

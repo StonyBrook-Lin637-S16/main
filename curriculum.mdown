@@ -21,6 +21,7 @@
         Savitch & Manaster-Ramer: Generative Capacity Matters
         Krahmer10: Computational Linguistics and Psychology
         Wilks: Computational Linguistics History
+        RiggleFeatureChart
 
 - phonology
 
@@ -110,6 +111,9 @@
             - closure properties
             - application to phonology and morphology (2-level morphology)
             - equivalence of SPE and OT
+            Readings:
+                Riggle Thesis, Generating Contenders, Violation Semirings
+                PyPhon
 
         - Automaton-Grammar connection --> switch to trees --> syntax
 
