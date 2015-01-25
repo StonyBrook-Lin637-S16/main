@@ -53,28 +53,28 @@ Link List
 
 ### Using git
 
-- [Github app for Windows](http://windows.github.com) (supports only Windows 7 or later)
-- [Github app for Mac](htp://mac.github.com) (supports only OS X 10.9 or later)
-- List of alternative [GUI clients for git]("http://git-scm.com/downloads/guis")
-- Tutorials for using [git via the command line]("https://www.atlassian.com/git/tutorials")
-- Official [documentation for git]("http://git-scm.com/doc")
+- [Github app for Windows](http://windows.github.com); supports only Windows 7 or later
+- [Github app for Mac](http://mac.github.com); supports only OS X 10.9 or later
+- List of alternative [GUI clients for git](http://git-scm.com/downloads/guis)
+- Tutorials for using [git via the command line](https://www.atlassian.com/git/tutorials)
+- Official [documentation for git](http://git-scm.com/doc)
 
 ### Markdown
 
-- Interactive tutorial to [markdown basics]("http://markdowntutorial.com/")
-- [Complete markdown syntax]("http://daringfireball.net/projects/markdown/syntax")
-- Overview of [Github's markdown dialect]("https://help.github.com/categories/writing-on-github/")
+- Interactive tutorial to [markdown basics](http://markdowntutorial.com/)
+- [Complete markdown syntax](http://daringfireball.net/projects/markdown/syntax)
+- Overview of [Github's markdown dialect](https://help.github.com/categories/writing-on-github/)
 
 ### LaTeX
 
-- [Overleaf]("https://www.overleaf.com/") (formerly writeLaTeX) is an online LaTeX editor with live preview
-- List of [commonly used math symbols]("http://www.artofproblemsolving.com/Wiki/index.php/LaTeX:Symbols")
-- Andrew Roberts' [Getting to Grips with LaTeX]("http://www.andy-roberts.net/writing/latex")
+- [Overleaf](https://www.overleaf.com/) (formerly writeLaTeX) is an online LaTeX editor with live preview
+- List of [commonly used math symbols](http://www.artofproblemsolving.com/Wiki/index.php/LaTeX:Symbols)
+- Andrew Roberts' [Getting to Grips with LaTeX](http://www.andy-roberts.net/writing/latex)
 
 ### Python
 
-- A succinct yet extensive [tutorial for Python 3]("http://www.python-course.eu/python3_course.php")
-- The official [Python 3 documentation]("https://docs.python.org/3/")
+- A succinct yet extensive [tutorial for Python 3](http://www.python-course.eu/python3_course.php)
+- The official [Python 3 documentation](https://docs.python.org/3/)
 
 [department]: http://linguistics.stonybrook.edu
 [pdf]: ../../tree/master/pdf
