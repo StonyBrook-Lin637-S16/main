@@ -1,5 +1,5 @@
-Computational Linguistics 2, Stony Brook University
-===================================================
+Computational Linguistics 2
+===========================
 
 
 Overview
