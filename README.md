@@ -45,7 +45,7 @@ If you want to compile the lecture notes yourself, or use them as the basis for 
 2) Clone the repository via git, or download and extract the [zip file](../../archive/master.zip).
  Note that the project folder will also contain an empty _build_ folder, which is used for temporary files to speed up compilation.
 
-3) Use the standard tex --> pdf compilation tool chain (not dvi --> ps --> pdf!), but make sure that pdflatex is run with the parameters --shell-escape and --etex.
+3) Use the standard tex --> pdf compilation tool chain (**not** tex --> dvi --> ps --> pdf!), but make sure that pdflatex is run with the parameters --shell-escape and --etex.
 
 
 Link List
