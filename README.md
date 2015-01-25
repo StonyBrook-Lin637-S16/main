@@ -81,4 +81,4 @@ Link List
 [readings]: ../../../readings
 [sbu]: http://www.stonybrook.edu
 [survey]: https://testmoz.com/432409
-[syllabus]: ../../tree/master/pdf/0_syllabus.pdf
+[syllabus]: ../../blob/master/pdf/0_syllabus.pdf?raw=true
