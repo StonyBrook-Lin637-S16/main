@@ -7,13 +7,13 @@ Overview
 
 This is the primary course website for Computational Linguistics 2 (Lin 637), offered by the [Department of Linguistics] [department] at [Stony Brook University] [sbu]. For a brief list of topics, check the [syllabus] [syllabus].
 
-This repository is publicly available and hosts the LaTeX source code for the lecture notes. Compiled pdfs of each chapter are available under the [pdf] [pdf] folder.
+This repository is publicly accessible and hosts the LaTeX source code for the lecture notes. Compiled pdfs of each chapter are available in the [pdf] [pdf] folder.
 
 
 Prerequisites
 -------------
 
-This course assumes a certain degree of familiarity with generative syntax, phonology, and basic mathematics (sets, functions, relations, first-order logic). Please take the [online survey] [survey] to ensure that you satisfy the prerequisites. If you have weaknesses, consult the relevant material suggested in the [readings repository] [readings].
+This course assumes a certain degree of familiarity with generative syntax, phonology, and basic mathematics (sets, functions, relations, first-order logic). Please take the [online survey] [survey] to ensure that you satisfy the prerequisites. If you have weaknesses, consult the relevant material suggested in the [readings repository] [readings] (access restricted to enrolled students).
 
 In addition, you will have to use Python, markdown and LaTeX at various points during this course. The [link list](#Link_List) at the end of this document has some useful tutorials.
 
@@ -51,8 +51,30 @@ If you want to compile the lecture notes yourself, or use them as the basis for 
 Link List
 ---------
 
-coming soon
+### Using git
 
+- [Github app for Windows](http://windows.github.com) (supports only Windows 7 or later)
+- [Github app for Mac](htp://mac.github.com) (supports only OS X 10.9 or later)
+- List of alternative [GUI clients for git]("http://git-scm.com/downloads/guis")
+- Tutorials for using [git via the command line]("https://www.atlassian.com/git/tutorials")
+- Official [documentation for git]("http://git-scm.com/doc")
+
+### Markdown
+
+- Interactive tutorial to [markdown basics]("http://markdowntutorial.com/")
+- [Complete markdown syntax]("http://daringfireball.net/projects/markdown/syntax")
+- Overview of [Github's markdown dialect]("https://help.github.com/categories/writing-on-github/")
+
+### LaTeX
+
+- [Overleaf]("https://www.overleaf.com/") (formerly writeLaTeX) is an online LaTeX editor with live preview
+- List of [commonly used math symbols]("http://www.artofproblemsolving.com/Wiki/index.php/LaTeX:Symbols")
+- Andrew Roberts' [Getting to Grips with LaTeX]("http://www.andy-roberts.net/writing/latex")
+
+### Python
+
+- A succinct yet extensive [tutorial for Python 3]("http://www.python-course.eu/python3_course.php")
+- The official [Python 3 documentation]("https://docs.python.org/3/")
 
 [department]: http://linguistics.stonybrook.edu
 [pdf]: ../../tree/master/pdf

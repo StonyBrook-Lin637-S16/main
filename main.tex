@@ -3,18 +3,19 @@
 %=================================================================
 \documentclass[11pt,letterpaper]{book}
 
-\newcommand{\theauthor}{Thomas Graf}		        
+\newcommand{\theauthor}{Thomas Graf}
+\newcommand{\lastname}{Graf}
 \newcommand{\university}{Stony Brook University}	
 \newcommand{\emailaddress}{lin637@thomasgraf.net}
 \newcommand{\coursenumber}{Lin637}
 \newcommand{\coursename}{Computational Linguistics 2}
-\newcommand{\thetitle}{\texorpdfstring{\coursenumber\\ \coursename}{\coursenumber --- \coursename}}
+\newcommand{\semester}{Spring 2015}
+\newcommand{\thetitle}{\coursename\ [\coursenumber, \semester]}
 \newcommand{\thekeywords}{graduate level, lecture, computational linguistics, phonology, syntax}
 \newcommand{\thedate}{}
 
 \usepackage{mypackages}
 \usepackage{mycommands}
-
 
 
 %=================================================================
@@ -29,10 +30,11 @@
 %=================================================================
 % \includeonly{./tex/ConstituencyTests}
 
+\pagestyle{empty}
 \begin{document}
+\maketitle
 \raggedbottom
 \pagenumbering{Roman}
-\maketitle
 \tableofcontents
 \clearpage
 
@@ -43,9 +45,6 @@
 \include{./tex/strictlylocal}
 \include{./tex/learnabilitysl}
 \include{./tex/probabilisticlocal}
-
-\pagestyle{empty}
-% \include{./tex/h1}
 
 \bibliographystyle{../../linquiry3}
 \bibliography{../../universal,../../graf}
