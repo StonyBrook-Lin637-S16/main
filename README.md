@@ -42,7 +42,7 @@ If you want to compile the lecture notes yourself, or use them as the basis for 
   - a recent LaTeX distribution with _Tikz_ >= 3.00 and recent versions of _minted_ and _forest_
   - the Python pygments package (required by minted)
 
-2) Clone the repository via git, or download and extract the [zip file](./archive/master.zip).
+2) Clone the repository via git, or download and extract the [zip file](../../archive/master.zip).
  Note that the project folder will also contain an empty _build_ folder, which is used for temporary files to speed up compilation.
 
 3) Use your standard tex --> pdf compilation tool chain, but ensure that pdflatex is run with the parameters --shell-escape and --etex
