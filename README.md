@@ -13,7 +13,7 @@ This repository is publicly available and hosts the LaTeX source code for the le
 Prerequisites
 -------------
 
-This course assumes a certain degree of familiarity with generative syntax, phonology, and basic mathematics (sets, functions, relations). Please take the [online survey] [survey] to ensure that you satisfy the prerequisites. If not, consult some of the material suggested in the [readings repository] [readings].
+This course assumes a certain degree of familiarity with generative syntax, phonology, and basic mathematics (sets, functions, relations, first-order logic). Please take the [online survey] [survey] to ensure that you satisfy the prerequisites. If not, consult some of the material suggested in the [readings repository] [readings].
 
 In addition, you will have to use Python, markdown and LaTeX at various points during this course. The [link list](#Link_List) at the end of this document has some useful tutorials.
 
@@ -51,6 +51,7 @@ If you want to compile the lecture notes yourself, or use them as the basis for 
 Link List
 ---------
 
+coming soon
 
 
 [department]: http://linguistics.stonybrook.edu
