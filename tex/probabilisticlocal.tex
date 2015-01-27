@@ -6,3 +6,114 @@
     \item inferring probabilities
     \item smoothing techniques
 \end{itemize}
+
+\begin{align*}
+    f(aba) & =
+            f(\LeftEdge a)
+            \times
+            f(ab)
+            \times
+            f(ba)
+            \times
+            f(a\RightEdge)
+            \\
+            & =
+            1
+            \times
+            1
+            \times
+            1
+            \times
+            0
+            \\
+            & =
+            0
+\end{align*}
+
+\begin{center}
+    \begin{minipage}{.35\linewidth}
+        \begin{align*}
+            f(aba)
+            &= 1 \times (1 \times (1 \times 0)) \\
+            &= 1 \times (1 \times 0) \\
+            &= 1 \times 0\\
+            &= 0
+        \end{align*}
+    \end{minipage}
+    %
+    \begin{minipage}{.2\linewidth}
+        \begin{align*}
+            &= 1 \mathrel{\text{min}} (1 \mathrel{\text{min}} (1 \mathrel{\text{min}} 0)) \\
+            &= 1 \mathrel{\text{min}} (1 \mathrel{\text{min}} 0) \\
+            &= 1 \mathrel{\text{min}} 0\\
+            &= 0
+        \end{align*}
+    \end{minipage}
+    %
+    \begin{minipage}{.25\linewidth}
+        \begin{align*}
+            &= 1 \wedge (1 \wedge (1 \wedge 0)) \\
+            &= 1 \wedge (1 \wedge 0) \\
+            &= 1 \wedge 0\\
+            &= 0
+        \end{align*}
+    \end{minipage}
+\end{center}
+
+What they have in common:
+%
+\begin{itemize}
+    \item set is closed under operation
+    \item operation is associative
+    \item 1 is an identity element
+\end{itemize}
+%
+They're \emph{monoids}.
+Use \semimult\ as a general placeholder for operations that obey these properties.
+%
+\[
+    f(a_1 \cdot a_2 \cdots a_{n-1} \cdot a_n) \is
+        f(a_1 \cdot a_2) \semimult \cdots \semimult f(a_{n-1} \cdot a_n)
+\]
+%
+\begin{itemize}
+    \item 1 is the unique top element
+    \item 0 is the unique bottom element
+\end{itemize}
+%
+Other monoids:
+%
+\begin{itemize}
+    \item set of all n-grams in string
+    \item number of bigram tokens (no top element!)
+    \item most frequent n-grams:
+        \begin{align*}
+            f(a)
+            & \is
+            \tuple{\setof{a},1}
+            \\
+            \tuple{S,m} \semiadd \tuple{T,n}
+            & \is
+                \begin{cases}
+                    \tuple{S \cap T, m+n} & \text{if } S \cap T \neq \emptyset\\
+                    \tuple{S,m}           & \text{if } m > n \text{ and } S \cap T = \emptyset\\
+                    \tuple{T,n}           & \text{if } n > m \text{ and } S \cap T = \emptyset\\
+                    \tuple{S \cup T, m}   & \text{if } m = n \text{ and } S \cap T = \emptyset\\
+                \end{cases}
+        \end{align*}
+\end{itemize}
+%
+Here 0 is the identity, so we use \semiadd\ instead.
+
+\pythonfile[firstline=5]{./code/monoid_scanner/monoid_bigram_scanner.py}
+%
+The set of all bigrams in the string $w$ is then computed by feeding the two functions below into the monoid scanner.
+
+\pythonfile[firstline=5]{./code/monoid_scanner/ngram_set.py}
+%
+If we want to know how many bigram tokens occur in the string, we switch out the previous functions for two new ones.
+
+\pythonfile[firstline=5]{./code/monoid_scanner/ngram_token.py}
+
+%hw: generalize monoid_scanner to n-grams
+%hw: use monoid parser to count number of tokens for each occurring n-gram
