@@ -2,9 +2,9 @@
 # encoding: utf-8
 
 
-def ngram_set_base(w):
+def set_base(w, *args):
     return set([w])
 
 
-def ngram_set_compose(s, t):
+def set_compose(s, t):
     return s.union(t)

@@ -86,34 +86,37 @@ Other monoids:
 \begin{itemize}
     \item set of all n-grams in string
     \item number of bigram tokens (no top element!)
-    \item most frequent n-grams:
-        \begin{align*}
-            f(a)
-            & \is
-            \tuple{\setof{a},1}
-            \\
-            \tuple{S,m} \semiadd \tuple{T,n}
-            & \is
-                \begin{cases}
-                    \tuple{S \cap T, m+n} & \text{if } S \cap T \neq \emptyset\\
-                    \tuple{S,m}           & \text{if } m > n \text{ and } S \cap T = \emptyset\\
-                    \tuple{T,n}           & \text{if } n > m \text{ and } S \cap T = \emptyset\\
-                    \tuple{S \cup T, m}   & \text{if } m = n \text{ and } S \cap T = \emptyset\\
-                \end{cases}
-        \end{align*}
 \end{itemize}
 %
 Here 0 is the identity, so we use \semiadd\ instead.
 
-\pythonfile[firstline=5]{./code/monoid_scanner/monoid_bigram_scanner.py}
+\begin{center}
+    \pythonfile[firstline=5]{./code/monoid_scanner/monoid_bigram_scanner.py}
+\end{center}
 %
-The set of all bigrams in the string $w$ is then computed by feeding the two functions below into the monoid scanner.
-
-\pythonfile[firstline=5]{./code/monoid_scanner/ngram_set.py}
+In order to turn this into a standard recognizer, we have to supply two functions that, respectively, determine for each bigram whether it is licensed by the grammar and compute compound grammaticality values.
 %
-If we want to know how many bigram tokens occur in the string, we switch out the previous functions for two new ones.
+\begin{center}
+    \pythonfile[firstline=5]{./code/monoid_scanner/ngram_grammatical.py}
+\end{center}
+%
+The set of all bigrams in the string, on the other hand, is computed by feeding the two functions below into the monoid scanner.
+%
+\begin{center}
+    \pythonfile[firstline=5]{./code/monoid_scanner/ngram_set.py}
+\end{center}
+%
+And if we want to know how many bigram tokens occur in the string, we switch to yet another pair of functions.
+%
+\begin{center}
+    \pythonfile[firstline=5]{./code/monoid_scanner/ngram_token.py}
+\end{center}
 
-\pythonfile[firstline=5]{./code/monoid_scanner/ngram_token.py}
+advantages: modularity (look at how small those functions are!), easy to maintain and debug, any optimization to monoid_scanner optimizes a variety of scanners
+
+\begin{center}
+    \pythonfile[firstline=5]{./code/monoid_scanner/ngram_probabilistic.py}
+\end{center}
 
 %hw: generalize monoid_scanner to n-grams
 %hw: use monoid parser to count number of tokens for each occurring n-gram

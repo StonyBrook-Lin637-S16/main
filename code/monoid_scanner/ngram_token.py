@@ -2,9 +2,9 @@
 # encoding: utf-8
 
 
-def ngram_token_base(w):
+def token_base(w, *args):
     return 1
 
 
-def ngram_token_compose(s, t):
+def token_compose(s, t):
     return s + t
