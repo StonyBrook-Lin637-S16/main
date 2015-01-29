@@ -28,9 +28,9 @@ def bigram_scan(grammar, w, i):
 
 def bigram_scanner(grammar, w):
     """recognizer for bigram grammar given string w"""
-    if type(grammar) is not list and type(grammar) is not set:
+    if not isinstance(grammar, list) and not isinstance(grammar, set):
         print("wrong argument type: first argument must be list or set")
-    elif type(w) is not str:
+    elif not isinstance(w, str):
         print("wrong argument type: second argument must be string")
     else:
         bigram_scan(set(grammar), augment_string(w), 0)
