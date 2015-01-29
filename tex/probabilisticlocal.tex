@@ -97,7 +97,7 @@ Here 0 is the identity, so we use \semiadd\ instead.
 In order to turn this into a standard recognizer, we have to supply two functions that, respectively, determine for each bigram whether it is licensed by the grammar and compute compound grammaticality values.
 %
 \begin{center}
-    \pythonfile[firstline=5]{./code/monoid_scanner/ngram_grammatical.py}
+    \pythonfile[firstline=5]{./code/monoid_scanner/ngram_boolean.py}
 \end{center}
 %
 The set of all bigrams in the string, on the other hand, is computed by feeding the two functions below into the monoid scanner.
@@ -112,7 +112,9 @@ And if we want to know how many bigram tokens occur in the string, we switch to 
     \pythonfile[firstline=5]{./code/monoid_scanner/ngram_token.py}
 \end{center}
 
-advantages: modularity (look at how small those functions are!), easy to maintain and debug, any optimization to monoid_scanner optimizes a variety of scanners
+advantages: modularity (look at how small those functions are!), easy to maintain and debug, any optimization to monoid-scanner optimizes a variety of scanners
+
+careful: it still pays off to construct scanner in a smart way.
 
 \begin{center}
     \pythonfile[firstline=5]{./code/monoid_scanner/ngram_probabilistic.py}
