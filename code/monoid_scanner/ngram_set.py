@@ -3,7 +3,7 @@
 
 
 def set_base(w, *args):
-    return set([w])
+    return set(w)
 
 
 def set_compose(s, t):
