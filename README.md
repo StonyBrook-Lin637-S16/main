@@ -29,7 +29,7 @@ Homeworks
 
 Each homework will be hosted in its own private repository. Only course participants have access to these repositories.
 
-Homework 1: coming soon
+[Homework 1](../../../homework1): due Wed, Feb 11, 11:59am
 
 
 Compilation Instructions
