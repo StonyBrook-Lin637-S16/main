@@ -5,60 +5,76 @@
     arc/.style = {->,gray!75}
     ]
     
+    % root node
     \node[state] (root) at (0,0) {};
 
+    % root daughters
     \node[state] (b) [xshift=-13em,below=of root] {};
     \node[state] (d) [right=of b] {};
-    \node[state] (e) [right=of d] {};
-    \node[state] (E) [right=of e] {};
+    \node[state] (E) [right=of d] {};
     \node[state] (i) [right=of E] {};
-    \node[state] (r) [right=of i] {};
-    \node[state] (s) [right=of r] {};
+    \node[state] (R) [right=of i] {};
+    \node[state] (s) [right=of R] {};
 
-    \foreach \Target in {b,d,e,E,i,r,s}
+    % arcs to root daughters
+    \foreach \Target in {b,d,E,i,R,s}
         \draw[arc] (root) to node [above, keylabel, pos=0.75] {\Target} (\Target);
 
+    % blind@ branch
     \node[state] (b-l) [below=of b] {};
     \node[state] (b-i) [below=of b-l] {};
     \node[state] (b-n) [below=of b-i] {};
     \node[final] (b-d) [below=of b-n] {2};
-    \node[final] (b-e) [below=of b-d] {3};
+    \node[final] (b-@) [below=of b-d] {3};
 
     \draw[arc] (b) to node [left, keylabel] {l} (b-l);
-    \foreach \Source/\Target in {l/i,i/n,n/d,d/e}
+    \foreach \Source/\Target in {l/i,i/n,n/d,d/@}
         \draw[arc] (b-\Source) to node [left, keylabel] {\Target} (b-\Target);
 
-    \node[final] (d-u) [below=of d] {5};
+    % du: branch 
+    \node[state] (d-u) [below=of d] {};
+    \node[final] (d-long) [below=of d-u] {5};
     \draw[arc] (d) to node [left, keylabel] {u} (d-u);
+    \draw[arc] (d-u) to node [left, keylabel] {:} (d-long);
 
-    \node[final] (e-a) [below=of e] {6};
-    \draw[arc] (e) to node [left, keylabel] {r} (e-a);
+    % ER/Es branch
+    \node[final] (E-a) [below=of E, xshift=-1.5em] {6};
+    \draw[arc] (E) to node [left, keylabel] {R} (E-a);
 
-    \node[final] (E-s) [below=of E] {8};
+    \node[final] (E-s) [below=of E, xshift=1.5em] {8};
     \draw[arc] (E) to node [right, keylabel] {s} (E-s);
 
-    \node[state] (i-c) [below=of i] {};
-    \node[final] (i-h) [below=of i-c] {4};
-    \draw[arc] (i) to node [right, keylabel] {c} (i-c);
-    \draw[arc] (i-c) to node [right, keylabel] {h} (i-h);
+    % iC branch
+    \node[final] (i-c) [below=of i] {4};
+    \draw[arc] (i) to node [right, keylabel] {C} (i-c);
 
-    \node[state] (r-a) [below=of r] {};
-    \node[final] (r-d) [below=of r-a] {0};
-    \draw[arc] (r) to node [right, keylabel] {a} (r-a);
-    \draw[arc] (r-a) to node [right, keylabel] {d} (r-d);
+    % Ra:d/Re:d@R branch
+    \node[state] (R-a) [below=of R] {};
 
-    \node[state] (r-") [below right=of r] {};
-    \node[state] (r-"a) [below=of r-"] {};
-    \node[state] (r-"d) [below=of r-"a] {};
-    \node[state] (r-"e) [below=of r-"d] {};
-    \node[final] (r-"r) [below=of r-"e] {1};
+    % Ra:d subbranch
+    \node[state] (R-along) [below=of R-a] {};
+    \node[final] (R-d) [below=of R-along] {0};
 
-    \draw[arc] (r) to node [right, keylabel] {"} (r-");
-    \foreach \Source/\Target in {/a,a/d,d/e,e/r}
-        \draw[arc] (r-"\Source) to node [right, keylabel] {\Target} (r-"\Target);
+    \draw[arc] (R) to node [right, keylabel] {a} (R-a);
+    \draw[arc] (R-a) to node [right, keylabel] {:} (R-along);
+    \draw[arc] (R-along) to node [right, keylabel] {d} (R-d);
 
+    % Re:d@R subbranch
+    \node[state] (R-e) [below right=of R] {};
+    \node[state] (R-elong) [below=of R-e] {};
+    \node[state] (R-elongd) [below=of R-elong] {};
+    \node[state] (R-elong@) [below=of R-elongd] {};
+    \node[final] (R-elongR) [below=of R-elong@] {1};
+
+    \draw[arc] (R) to node [right, keylabel] {e} (R-e);
+    \draw[arc] (R-e) to node [right, keylabel] {:} (R-elong);
+    \draw[arc] (R-elongd) to node [right, keylabel] {@} (R-elong@);
+    \foreach \Source/\Target in {/d, @/R}
+        \draw[arc] (R-elong\Source) to node [right, keylabel] {\Target} (R-elong\Target);
+
+    % si: branch
     \node[state] (s-i) [below right=of s] {};
-    \node[final] (s-ii) [below=of s-i] {7};
+    \node[final] (s-long) [below=of s-i] {7};
     \draw[arc] (s) to node [right, keylabel] {i} (s-i);
-    \draw[arc] (s-i) to node [right, keylabel] {i} (s-ii);
+    \draw[arc] (s-i) to node [right, keylabel] {:} (s-long);
 \end{tikzpicture}

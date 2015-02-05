@@ -5,28 +5,39 @@
     arc/.style = {->,gray!75}
     ]
     
+    % root node
     \node[state] (root) at (0,0) {};
 
+    % daughters of root
     \node[final] (blind) [xshift=-13em,below=of root] {2};
     \node[final] (du) [right=of blind] {5};
-    \node[final] (er) [right=of du] {6};
-    \node[final] (Es) [right=of er] {8};
-    \node[final] (ich) [right=of Es] {4};
-    \node[state] (r) [right=of ich] {};
-    \node[final] (sii) [right=of r] {7};
+    \node[state] (E) [right=of du] {};
+    \node[final] (iC) [right=of E] {4};
+    \node[state] (R) [right=of iC] {};
+    \node[final] (si) [right=of R] {7};
 
-    \foreach \Target in {blind,du,er,Es,ich,r,sii}
+    % branches without long phones from root
+    \foreach \Target in {blind,E,iC,R}
         \draw[arc] (root) to node [above, keylabel, pos=0.75] {\Target} (\Target);
 
-    \node[final] (b-e) [below=of blind] {3};
+    % branch with long phones from root
+    \foreach \Target in {du,si}
+        \draw[arc] (root) to node [above, keylabel, pos=0.75] {\Target:} (\Target);
 
-    \draw[arc] (blind) to node [left, keylabel] {e} (b-e);
+    % blind@
+    \node[final] (b-@) [below=of blind] {3};
+    \draw[arc] (blind) to node [left, keylabel] {@} (b-@);
 
-    \node[final] (r-a) [below=of r] {0};
+    % ER/Es
+    \node[final] (E-R) [below=of E] {6};
+    \node[final] (E-s) [right=of E-R] {8};
+    \draw[arc] (E) to node [left, keylabel] {R} (E-R);
+    \draw[arc] (E) to node [right, keylabel] {s} (E-s);
 
-    \node[final] (r-") [right=of r-a] {1};
-
-    \draw[arc] (r) to node [left, keylabel] {ad} (r-a);
-    \draw[arc] (r) to node [right, keylabel] {"ader} (r-");
+    % Ra:d/Re:d@R
+    \node[final] (R-a) [below=of R] {0};
+    \node[final] (R-e) [right=of R-a] {1};
+    \draw[arc] (R) to node [left, keylabel] {a:d} (R-a);
+    \draw[arc] (R) to node [right, keylabel] {e:d@R} (R-e);
 \end{tikzpicture}
 
