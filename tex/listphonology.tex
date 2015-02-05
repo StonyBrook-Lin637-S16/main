@@ -221,7 +221,6 @@ The phonology list model, then, would take up about 60 pages, which doesn't seem
 Things do not get much worse as the number of allophones increases.
 The language Ubykh (extinct, Northwestern Caucasian) has 84 consonant phonemes, but only 2 phonemic vowels.
 Ignoring allophones, we need numbers between 0 and 85 to identify each phoneme, which implies an increase in the maximum number of bits per sound to 7, so with an average of 6 bits (a very pessimistic estimate) we would end up using 292 Kilobytes, or 111 pages.
-1010101
 Even if every phoneme has two allophones and no phone is an allophone for more than one phoneme, we have at most 172 different sounds, which fits comfortably within 8 bits; assuming an average of 7 bits per phone, the whole phonology list would take up a mere 341 Kilobytes.
 
 As you can see, the number of representable phones increases exponentially with the number of bits, and the overall memory usage depends only on the number of bits. 
