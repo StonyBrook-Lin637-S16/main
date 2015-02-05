@@ -4,7 +4,19 @@
 \addto\captionsenglish{\renewcommand{\bibname}{References and Further Reading}}
 \def\thesection{\arabic{section}}
 
-\newcommand{\Note}[1]{\marginpar{\footnotesize\bfseries #1}}
+\newcommand{\Note}[1]{\marginpar{\scriptsize #1}}
+\newcommand{\NoteNearNumbers}[1]{\marginpar[%
+        \begin{tabular}{p{\marginparwidth-2em}r}
+            \scriptsize
+            #1 &
+        \end{tabular}%
+    ]{%
+        \begin{tabular}{rp{\marginparwidth-2em}}
+            &
+            \scriptsize
+            #1
+        \end{tabular}%
+    }}
 
 \newcounter{homework}[chapter]
 \def\thehomework{\thechapter.\arabic{homework}}
@@ -162,6 +174,31 @@
 }
 {\endMakeFramed}
 
+% tech info environment
+\def\Techinfoframe#1{
+    \tikzset{external/export next=false}
+    \tikz{
+        \node[inner sep=10pt, inner ysep=20pt] (text) {#1};
+        \begin{pgfonlayer}{background}
+            \fill[gray!10] (text.north west) rectangle (text.south east);
+        \end{pgfonlayer}
+    }
+}
+
+\newenvironment{techinfo}[1][\unskip]{%
+    \def\FrameCommand{\Techinfoframe}
+    \vskip\baselineskip
+    \MakeFramed {\FrameRestore}
+    \noindent\ignorespaces%
+    \tikzset{external/export next=false}%
+    \tikz\node[fill=black,text=white,anchor=west,overlay]
+        at (0em,2.5em) {Background \quad #1};%
+    \ignorespaces
+}
+{\endMakeFramed}
+
+
+
 \theoremstyle{plain}
 \theoremheaderfont{\normalfont\bfseries}
 \theorembodyfont{\normalfont\upshape}
@@ -294,3 +331,6 @@
 % semiring operations
 \newcommand{\semiadd}{\ensuremath{\oplus}}
 \newcommand{\semimult}{\ensuremath{\otimes}}
+
+% multiplication
+\newcommand{\mult}{\ensuremath{\mathop{\times}}}
