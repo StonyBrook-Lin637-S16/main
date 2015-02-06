@@ -1,5 +1,5 @@
 *
-!*.gitignore
+!.gitignore
 !*.bib
 !*.bst
 !*.clo
