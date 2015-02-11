@@ -27,6 +27,6 @@ def bigram_comparison(grammar, bigram_list):
 def bigram_scanner(grammar, w):
     """Recognizer for bigram grammar given string w."""
     if bigram_comparison(grammar, string_to_bigrams(augment_string(w))):
-        print("well-formed: " + w[1:-1])
+        print("well-formed: " + w)
     else:
-        print("ill-formed: " + w[1:-1])
+        print("ill-formed: " + w)
