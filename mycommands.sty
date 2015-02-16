@@ -47,6 +47,9 @@
 % emptystring
 \newcommand{\emptystring}{\ensuremath{\varepsilon}}
 
+% strings
+\newcommand{\String}[1]{\ensuremath{\mathit{#1}}}
+
 \newcommand{\mlex}[2]{\ensuremath{\text{#1} ::\thinspace \mathrm{#2}}}
 \newcommand{\SelEq}{\ensuremath{\mathop{=}}}
 \newcommand{\fsel}[1]{\ensuremath{\SelEq\mathrm{#1}}}
@@ -312,7 +315,7 @@
 \newcommand{\RightEdgeSymbol}{\ensuremath{\ltimes}}
 \newcommand{\LeftEdge}{\ensuremath{\LeftEdgeSymbol}}
 \newcommand{\RightEdge}{\ensuremath{\RightEdgeSymbol}}
-\newcommand{\Bigrams}{\ensuremath{\mathrm{2\text{-}grams}}}
+\newcommand{\Bigrams}[1][2]{\ensuremath{#1\mathrm{\text{-}grams}}}
 \newcommand{\augmented}[1]{\ensuremath{\hat{#1}}}
 \newcommand{\stringcat}{\ensuremath{\cdot}}
 \newcommand{\posG}[1]{\ensuremath{^+ #1}}
@@ -337,3 +340,9 @@
 
 % ngrams
 \newcommand{\ngram}[1]{\ensuremath{\mathit{#1}}}
+
+% language class
+\newcommand{\LangClass}[1]{\ensuremath{\mathrm{#1}}}
+
+% Strictly Local
+\newcommand{\SL}{\LangClass{SL}}
