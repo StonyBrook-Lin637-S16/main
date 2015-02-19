@@ -401,10 +401,21 @@ Do not even try to look for a smarter strategy to build a grammar for the union 
     Hence there is no bigram grammar that generates all the strings in $L_1 \cup L_2$ and nothing else, so $L_1 \cup L_2$ is not a bigram language.
 \end{proof}
 %
+Abstract as it may be, this result is of immediate importance for our investigation of phonology.
+If the union of two arbitrary strictly local languages were also strictly local, then we would expect that phonological processes can always apply disjunctively.
+Consider the following example: some languages have sibilant harmony, while others have vowel harmony.
+Each process can be equated with the set of strings that satisfy the respective harmony pattern.
+If we take the union of these two sets, we get the set of strings that satisfy sibilant harmony or vowel harmony.
+If that set were intersected with some natural language's phonology --- which is an abstract way of saying that we force the constraint represented by that set onto the language --- then words in that language are well-formed as long as they obey sibiliant harmony or vowel harmony, but they need not obey both.
+This is extremely unnatural. If a language has two phonological processes, then words must usually obey both.
+It is not the case that satisfying one constraint grants you \emph{carte blanche} to ignore the other.
+The closure properties of strictly local languages can explain this fact: intersection (=constraint conjunction) always yields a potential natural language phonology, union (=constraint disjunction) may not.
+The assumption that local phonological processes fit within the bounds of strictly local languages thus makes a typological prediction: if two constraints apply in a disjunctive fashion as indicated above, then these two constraints must be such that their union is also strictly local --- which rules out a great number of strictly local languages.
+%
 %hw: extend proof to case where both languages are infinite
 %hw: extend proof to arbitrary k
 
-The previous two lemmata immediately imply that closure under relative complement does not hold either.
+The previous two lemmata also imply that closure under relative complement does not hold.
 %
 \begin{lemma}
     The class of strictly local languages is not closed under (relative) complement.
