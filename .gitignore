@@ -9,6 +9,7 @@
 !*.py
 !*.sty
 !*.tex
+!*.tikz
 !tex/
 !img/
 !img/**/
