@@ -294,7 +294,7 @@ Suppose we are interested in the strictly $1$-local languages over $a$ and $b$.
 There are 4 different 1-grams over this alphabet: $\LeftEdge$, $\RightEdge$, $a$, and $b$. 
 Since every strictly $1$-local grammar is a set of these $1$-grams, the class of $\SL_1$ grammars over $a$ and $b$ is the powerset of the set of these $4$ bigrams.
 This means that there are $2^4 = 16$ different $\SL_1$-grammars, and these grammars are partially ordered by the subset relation.
-We can actually represent this space graphically as in Fig.~\ref{fig:LearnSL_SL1-Lattice}.
+We can actually represent this space graphically as a Hasse diagram, see Fig.~\ref{fig:LearnSL_SL1-Lattice}.
 %
 \begin{figure}[htpb]
     \centering
@@ -302,6 +302,18 @@ We can actually represent this space graphically as in Fig.~\ref{fig:LearnSL_SL1
     \caption{Lattice representation of the space of $\SL_1$-grammars over $a$ and $b$}
     \label{fig:LearnSL_SL1-Lattice}
 \end{figure}
+%
+\begin{techinfo}[Partially ordered sets]
+    A (weak) partial order is a binary relation $R$ over a set $S$ that satisfies three conditions:
+    %
+    \begin{description}
+        \item[reflexive] for all $x \in S$, $\binrel{R}{x}{x}$
+        \item[antisymmetry] for all $x, y \in S$, $\binrel{R}{x}{y}$ and $\binrel{R}{y}{x}$ jointly imply $x = y$
+        \item[transitivity] for all $x, y, z \in S$, $\binrel{R}{x}{y}$ and $\binrel{R}{y}{z}$ jointly imply $\binrel{R}{x}{z}$
+    \end{description}
+    %
+    A partially ordered set, or \emph{poset}, is a set with a partial order defined over it.
+\end{techinfo}
 
 As you can see this space has a lot of structure.
 First of all, there are unique bottom and top elements, which are $\setof{}$ and $\setof{\LeftEdge, a, b, \RightEdge}$ in this case.
