@@ -1,0 +1,56 @@
+\begin{tikzpicture}
+    % Lattice of SL1-grammars over alphabet {a,b} with edge markers
+
+    % atoms
+    \node (a) at (0,0) {$\setof{a}$};
+    \node (b) [right=of a] {$\setof{b}$};
+    \node (L) [left=of a] {$\setof{\LeftEdge}$};
+    \node (R) [right=of b] {$\setof{\RightEdge}$};
+
+    % level 2
+    \node(La) [above left=of L] {$\setof{\LeftEdge, a}$};
+    \node(Lb) [above=of L] {$\setof{\LeftEdge, b}$};
+    \node(LR) [above=of a] {$\setof{\LeftEdge, \RightEdge}$};
+    \node(ab) [above=of b] {$\setof{a,b}$};
+    \node(aR) [above=of R] {$\setof{a, \RightEdge}$};
+    \node(bR) [above right=of R] {$\setof{b, \RightEdge}$};
+
+    % level 3
+    \node(Lab) [above=of Lb] {$\setof{\LeftEdge, a, b}$};
+    \node(LaR) [above=of LR] {$\setof{\LeftEdge, a, \RightEdge}$};
+    \node(LbR) [above=of ab] {$\setof{\LeftEdge, b, \RightEdge}$};
+    \node(abR) [above=of aR] {$\setof{a, b, \RightEdge}$};
+
+    % top and bottom
+    \node[xshift=2.5em] (1) [above=of LaR] {$\setof{\LeftEdge, a, b, \RightEdge}$};
+    \node[xshift=2.5em] (0) [below=of a] {$\setof{}$};
+
+    % branches    
+    % bottom level
+    \foreach \Source in {a,b,L,R}
+        \draw (\Source) to (0);
+
+    % top level
+    \foreach \Target in {Lab,LaR,LbR,abR}
+        \draw (1) to (\Target);
+
+    % level 2 via atoms
+    \foreach \One/\Two in {L/a,L/b,L/R,a/b,a/R,b/R}
+        {
+        \draw (\One) to (\One\Two);
+        \draw (\Two) to (\One\Two);
+        }
+
+    % level 3 (not as nicely abstracted as level 2)
+    \foreach \Target in {La,ab,Lb}
+        \draw (Lab) to (\Target);
+
+    \foreach \Target in {La,aR,LR}
+        \draw (LaR) to (\Target);
+
+    \foreach \Target in {Lb,bR,LR}
+        \draw (LbR) to (\Target);
+
+    \foreach \Target in {ab,bR,aR}
+        \draw (abR) to (\Target);
+\end{tikzpicture}
