@@ -131,7 +131,7 @@ The learner is successful iff it guesses the right language after a finite numbe
 Let us make these ideas more precise so that we know what exactly we are talking about before moving on.
 %
 \begin{definition}[Text]
-    Given a language $L$, a \emph{(positive) text} over $L$ is a total mapping $T$ from the natural numbers onto $L \cup \setof{\Noise}$ (that is to say, it is an infinite string in which ever member of $L$ occurs at least once and random noise is represented by \Noise).
+    Given a language $L$, a \emph{(complete, positive) text} over $L$ is a total mapping $T$ from the natural numbers onto $L \cup \setof{\Noise}$ (that is to say, it is an infinite string in which ever member of $L$ occurs at least once and random noise is represented by \Noise).
     We denote by $T(i)$ the $i+1$-th element in the text, whereas $T[i]$ represents the length $i$ prefix of $T$, i.e.\ $\tuple{T(0), T(1), \ldots, T(i-1)}$.
     For every sequence $s$, $\contentof(s)$ is the set of elements of $L$ that occur in $s$.
 \end{definition}
@@ -172,16 +172,18 @@ At this point you might already have a hunch that the Gold paradigm is not a ful
 You would be right, many factors are omitted or simplified.
 There are no constraints on how quickly a learner has to converge, so a learner that takes 300 years to find the target language is perfectly acceptable.
 The learner also has perfect recall since its guess at position $i$ in the text is not just determined by the element at this position, which we denote $T(i)$, but by all the elements up to this position, which is represented by the minimally different $T[i]$.
-These two factors simply the learning problem a lot.
+Moreover, the text contains a lot of information: noise is explicitly marked as such so that the learner is never mislead by faulty input, and every sentence of the language appears must appear in every text at some point.
+These four factors simplify the learning problem a lot.
 
-At the same time, some factors probably make the Gold paradigm harder than the real life task.
+At the same time, some factors make the Gold paradigm harder than the real life task.
 In particular, the learner has to succeed on every text, no matter how defunct and degenerate that text is.
 It is highly unlikely that a child could learn from input that consists predominantly of sentences from Wall Street Journal op-ed pieces --- child-directed input starts out easy with simple short sentences and increases gradually in complexity.
 The Gold paradigm requires the learner to succeed even under highly adversarial circumstances.
 And the restriction to strings that are completely stripped off prosody and semantics also heightens the difficulty of the task.
 
 It is important to keep in mind though that these aren't so much issues of empirical inadequacy as they are consequences of mathematical abstraction.
-By keeping the paradigm as simple as possible, we can get insight into why certain classes of languages are learnable and others are not, and these insights can be adapted to more adequate paradigms in subsequent work.
+Putting restrictions on the structure of the text makes proofs more involved, and including prosodic or semantic information requires more complex objects than just strings.
+By keeping the paradigm as mathematically simple as possible, we can quickly gain insights into why certain classes of languages are learnable and others are not, and these insights can be adapted to more adequate paradigms in subsequent work.
 The process isn't all that different from what we are currently doing in our analysis of phonology: set out the bare essentials that need to be accomplished, see how one might go about this with the least amount of assumptions, and where necessary revise the model in a conservative fashion so that one can easily tell which properties are being preserved, and why.
 
 
@@ -235,12 +237,12 @@ Since there is no negative evidence in the Gold paradigm, the learner has no opp
 \end{proof}
 
 The two theorems home in on the central problem of learning a given space of languages in the Gold paradigm: on the one hand the learner has to generalize from a finite amount of input to an infinite language, but on the other hand this generalization step needs to be conservative enough that the learner can avoid from overgeneralization.
-Other learning paradigms usually give the learner some means of recovering from overgeneralization to some degree --- e.g.\ via probabilistic reasoning, negative evidence, or an all-knowing oracle that can be asked specific questions --- but the tension between finite data and infinite target languages remains.
+Other learning paradigms may give the learner some means of recovering from overgeneralization to some degree --- e.g.\ via probabilistic reasoning, negative evidence, or an omniscient oracle that can be asked specific questions --- but the tension between finite data and infinite target languages remains.
 This tension can be resolved correctly only if the space is structured in a specific way and the learner is aware of that structure.
 
 There are some clear parallels to Universal Grammar (UG) in linguistics.
 However, UG does not really talk about the structure of the language space but rather puts restrictions on what the elements of each language in that space look like.
-By itself that is not enough to guarantee learnability.
+By itself that is not enough to guarantee learnability (unless the restrictions are severe enough to render the space of languages finite, see Sec.~\ref{sub:LearnSL_FiniteClass}).
 Nonetheless UG considerations and learnability can be linked in intriguing ways, as we will see next in our look at the (non-)learnability of strictly local languages.
 
 \section{Learning Strictly Local Languages}
@@ -281,10 +283,41 @@ This allows us to factor language as an empirical object into at least two disti
 Natural languages are the special type of language that belongs to both.
 So you see, learnablity is not just tied to language acquisition, it can also be invoked to explain typological facts.
 
+\subsection{Every Finite Class is Learnable}
+\label{sub:LearnSL_FiniteClass}
+
+On a mathematical level, the learnability of $\SL_k$ is actually a corollary of a more fundamental fact: every finite class of languages is learnable.
+Intuitively, that's because the languages in a finite class can be tried one after another to test if they fit the text.
+As long as one does not pick a needlessly large language, overgeneration can be avoided and the right language will be found eventually.
+Since there are only a finite number of $k$-grams for every fixed alphabet, $\SL_k$ is finite as well and thus can be explored in this fashion.
+%
+\begin{theorem}
+    Every finite class $\mathcal{C}$ of languages is learnable.
+\end{theorem}
+%
+\begin{proof}
+    Assume w.l.o.g.\ that $\mathcal{C}$ contains only $n$ languages. 
+    Put these languages into order $L_1 \cdots L_n$ such that for all $L_i, L_j$, $i < j$ implies that $L_i$ is not a proper superset of $L_j$.
+    We now define a learner $\Learner$ that always picks the ``left-most'' language that subsumes the content of the text: for all $i$, $\Learner(T[i]) = L_k$, where $L_k \supseteq \contentof(T[i])$ and there is no $L_j$ such that $L_j \supseteq \contentof(T[i])$ and $j < k$.
+    Obviously $\Learner$ converges on every text.
+
+    To see that $\Learner$ also identifies $\mathcal{C}$, suppose that $T$ is some text over $L_k \in \mathcal{C}$.
+    Once $\Learner$ converges at $T(i)$, it conjectures some $L_j \supseteq \contentof(T[i])$.
+    It cannot be the case that $j > k$ because $\Learner$ picks the language with the lowest index.
+    If $j < k$, then $L_j \not\supseteq L_k$, so there is some string $w \in L_k$ such that $w \notin L_j$.
+    But $w$ must occur in $T$ at some point $p$, so $w \in \contentof(T[p]) \not\subseteq L_j$, contradicting the earlier assumption that $\Learner$ converges at $T(i)$ with $\Learner(T[i]) = L_j \neq L_k$.
+    The only possible case, then, is that $j = k$, wherefore $L_j = L_k = \Learner(T[i])$.
+\end{proof}
+%
+This theorem has several important implications.
+First of all, finite language classes are trivial to learn because we can always induce a suitable structure over this class that guarantees its learnability.
+Interesting learnability results are about infinite language classes, or home in on properties of finite language classes that make learning more efficient or would also guarantee learnability if the class were in fact infinite.
+Fortunately that is the case for the $\SL_k$-learner.
 
 \subsection{Generalizing the Learner}
 The proof that $\SL_k$ is identifiable in the limit is deceptively simple.
 In just five lines it establishes the learnability result, but it does not quite home in on why this works, what aspects of strictly local languages are essential for the proof, and what exactly the explored space looks like.
+In particular, is the learnability of $\SL_k$ simply due to the fact that every finite class of languages is learnable, or is there more to $\SL_k$ that would guarantee learnability even for 
 These are important points; if we want to revise our formalism at some later point without losing the learnability property, we need to know what we can safely change.
 
 Let's first think about the overall shape of $\SL_k$.
@@ -336,13 +369,13 @@ the learner isn't just moving upwards, it's moving to the supremum of the nodes 
 
 By moving to the supremum rather than just any random higher node, the learner generalizes in the most careful and conservative way possible that is consistent with the data, which avoids overgeneralizing.
 If the supremum isn't the right grammar, then there will be more evidence further down the line and we can move to the next higher supremum, and so on.
-If, on the other hand, the learner simply moved to some arbitrary higher node, there would be no evidence that it has the wrong grammar and no way for it to correct its mistake.
+If, on the other hand, the learner simply moved to some arbitrary higher node, there might be no positive evidence that it has the wrong grammar and thus no way for it to correct its mistake.
 
 The lattice-based learning perspective is so appealing because it is both intuitive and general.
 It doesn't really matter that the nodes in the lattice correspond to strictly local grammars, what matters is that the learner has a way to explore this space in a principled fashion without overgeneralizing.
-This can be done as long as the learner can derive a second node from the input such that the supremum of that second node and the learner's current position corresponds to the most conservative revision of the learner's current hypothesis that can account for all the input so far.
-So if a given class of languages can be shown to have a lattice structure, and if we can define a method for picking the right suprema, then we have a learner for that class of languages.
+This can be done as long as the learner can derive a second node from the input such that the supremum of that second node and the learner's current position corresponds to the most conservative, empirically adequate revision of the learner's current hypothesis.
+So if a given class of languages can be shown to have a lattice structure --- which is possible for both finite and infinite classes --- and if we can define a method for picking the right suprema, then we have a learner for that class of languages.
 
 This is also highly appealing from a psycholinguistic perspective since one would assume that learning strategies do not differ significantly for, say, local and non-local phonological processes.
-Once we move from local to non-local processes, we will see that this is indeed the case: both processes involve exactly the same lattice-based learning algorithms,  with the only difference being what each lattice represents.
-%hw: construct corresponding lattice for SL1 languages; what is the mapping depending positive or negative grammar?
+Once we move from local to non-local processes, we will see that this is indeed the case: both processes involve exactly the same lattice-based learning algorithms, with the only difference being what each lattice represents.
+%hw: construct corresponding lattice for SL1 languages; what is the mapping for positive or negative grammar?
