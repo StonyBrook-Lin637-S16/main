@@ -3,7 +3,7 @@
 
 
 def prob_base(w, grammar):
-    return grammar[w] or 0
+    return grammar.get(w, 0)
 
 
 def prob_compose(s, t):
