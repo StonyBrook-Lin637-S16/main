@@ -35,6 +35,8 @@ Each homework will be hosted in its own private repository. Only course particip
 
 [Homework 3](../../../homework3): due Wed, Feb 25, 11:59am
 
+[Homework 4](../../../homework4): due Mon, Mar 9, 11:59am
+
 
 Compilation Instructions
 ------------------------
