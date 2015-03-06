@@ -7,4 +7,4 @@ def boolean_base(w, grammar):
 
 
 def boolean_compose(s, t):
-        return s & t
+        return s * t
