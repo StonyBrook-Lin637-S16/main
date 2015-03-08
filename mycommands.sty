@@ -353,6 +353,17 @@
 % Strictly Local
 \newcommand{\SL}{\LangClass{SL}}
 
+% Strictly Piecewise
+\newcommand{\SP}{\LangClass{SP}}
+
+% Threshold Testable
+\newcommand{\TT}{\LangClass{TT}}
+
+% Strictly Threshold Testable
+\newcommand{\STT}{\LangClass{STT}}
+\newcommand{\SLTT}[2]{\ensuremath{\SL_{#1}\TT_{#2}}}
+\newcommand{\SPTT}[2]{\ensuremath{\SP_{#1}\TT_{#2}}}
+
 % content
 \newcommand{\contentof}{\ensuremath{\mathit{content}}}
 
@@ -373,3 +384,9 @@
 
 % min
 \newcommand{\minfix}{\ensuremath{\mathrel{\text{min}}}}
+
+% threshold function
+\newcommand{\ThreshFunc}{\ensuremath{\tau}}
+
+% string occurrences
+\newcommand{\StringOcc}[2]{\ensuremath{\cardof{#1}_{#2}}}
