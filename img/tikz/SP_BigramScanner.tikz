@@ -1,0 +1,93 @@
+\begin{tikzpicture}
+    \begin{scope}[spy using outlines={rectangle, size = 5em}]
+        % input string    
+        \foreach \Name/\Symbol in { 0/$\LeftEdgeSymbol$,
+                                    1/$a$,
+                                    2/$b$,
+                                    3/$a$,
+                                    4/$b$,
+                                    5/$a$,
+                                    6/$b$,
+                                    7/$a$,
+                                    8/$b$,
+                                    9/$b$,
+                                    10/$\RightEdgeSymbol$
+                                  }
+            \node[text height=.75em] (\Name) at ($(\Name*1.5em,0)$) {\Symbol};
+
+        % list of bigrams
+        \node (bigrams) at (5.south)
+            [
+            yshift=-12em,
+            minimum width=7em,
+            minimum height=7.5em,
+            fill=red!5,
+            draw=red,
+            thick,
+            rounded corners
+            ]
+            {%
+                \begin{tabular}{l}
+                    \\[-.5em]
+                    $\LeftEdge a$\\
+                    $\mathit{ab}$\\
+                    $\mathit{ba}$\\
+                    $b \RightEdge$
+                \end{tabular}%
+            };
+
+        % name of list of bigrams
+        \node (G) at (bigrams.north)
+            [
+            minimum width=7em,
+            fill=red,
+            draw=red,
+            thick,
+            rounded corners
+            ]
+            {\color{white}\textbf{Grammar}};
+
+        % frame for looking up subsequence 
+        \draw[thick,gray,fill=gray!50,opacity=.3] ($(bigrams.west)+(1em,.75em)$) rectangle ($(bigrams.east)+(-1em,-.25em)$);
+
+        % first scanner window
+        %---------------------
+        % create center coordinate for zoom target
+        \coordinate (zoomcenter-good) at (1);
+
+        % spy on zoom target, create node (zoom) below
+        \spy[magnification=2.5,
+             blue,
+             spy connection path={
+                \draw[dashed] (tikzspyonnode.north west) -- (tikzspyinnode.north west);
+                \draw[dashed] (tikzspyonnode.north east) -- (tikzspyinnode.north east);
+                \draw[dashed] (tikzspyonnode.south west) -- (tikzspyinnode.south west);
+                \draw[dashed] (tikzspyonnode.south east) -- (tikzspyinnode.south east);
+                \draw[dashed,gray] (tikzspyinnode.south) ..
+                                            controls +(245:8em) and +(170:3em) ..
+                                                ($(bigrams.west)+(1em,.25em)$);
+            }]
+            on (zoomcenter-good) in node [fill=blue!5] (zoom-good) at ($(zoomcenter-good) - (0,5em)$);
+
+
+        % second scanner window
+        %----------------------
+        % create center coordinate for zoom target
+        \coordinate (zoomcenter-bad) at (8);
+
+        % spy on zoom target, create node (zoom) below
+        \spy[magnification=2.5,
+             blue,
+             spy connection path={
+                \draw[dashed] (tikzspyonnode.north west) -- (tikzspyinnode.north west);
+                \draw[dashed] (tikzspyonnode.north east) -- (tikzspyinnode.north east);
+                \draw[dashed] (tikzspyonnode.south west) -- (tikzspyinnode.south west);
+                \draw[dashed] (tikzspyonnode.south east) -- (tikzspyinnode.south east);
+                \draw[dashed,gray] (tikzspyinnode.south) ..
+                                            controls +(295:8em) and +(10:3em) ..
+                                                ($(bigrams.east)+(-1em,.25em)$);
+            }]
+            on (zoomcenter-bad) in node [fill=blue!5] (zoom-bad) at ($(zoomcenter-bad) - (0,5em)$);
+
+    \end{scope}
+\end{tikzpicture}
