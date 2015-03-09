@@ -5,6 +5,7 @@ Our project of devising a computational model of phonological processes has made
 We started out with phonology as a list of well-formed surface forms, but quickly realized that this cannot account for essential properties like linguistic creativity or that there are strong constraints on what is a possible phonological system in natural language.
 So we moved to a more abstract perspective where phonology is still a list, but rather than full surface forms we list the $n$-grams that may occur in a string.
 A string's well-formedness is no longer an idiosyncratic property determined by a single list lookup --- it now is contingent on the well-formedness of its parts.
+
 We saw that this perspective equates phonological systems with strictly local languages, which allows us to explore formal properties of phonology through the study of the class of strictly local languages.
 This class seems to be a good approximation of local processes: every local phonological process is captured by some strictly local language, and the class exhibits closure properties that replicate very basic typological facts.
 Given a UG-specified restriction on the size of locality domains, we even get a positive learnability result under highly adversarial circumstances.
@@ -19,7 +20,7 @@ The question is whether there are indeed aspects of phonology that are not stric
 \subsection{Navajo Sibilant Harmony is not Strictly Local}
 While many phonological processes have clearly delineated application domains of bounded size --- e.g.\ two adjacent segments, within a syllable or across a single word boundary --- some processes seem to apply across arbitrary distances.
 Navajo, for instance, exhibits \emph{sibilant harmony}, where all sibilants in a word must match the anteriority of the right-most one.
-For the Navajo phoneme inventory, sibilants are specified for anteriority as follows \citep[9]{Martin05}:
+The sibilants in the Navajo phoneme inventory are specified for anteriority as follows \citep[9]{Martin05}:
 %
 \begin{center}
     \begin{tabular}{cc}
@@ -32,6 +33,11 @@ For the Navajo phoneme inventory, sibilants are specified for anteriority as fol
     \end{tabular}
 \end{center}
 %
+\Note{%
+    The presentation here abstracts away from certain complicating factors.
+    In particular, the likelihood of sibilant harmony decreases with distance, but crucially sibilant harmony never becomes ungrammatical.
+}
+
 Sibilant harmony applies in a variety of cases in Navajo, but it is most apparent in compounds (\citealp[10]{Martin05}; the data is presented using a mixture of Navaja orthography and IPA).
 %
 \begin{center}
@@ -41,7 +47,7 @@ Sibilant harmony applies in a variety of cases in Navajo, but it is most apparen
         \textipa{xo{\color{blue}sts}'óóz} & a specific type of cactus
     \end{tabular}
     %
-    \hspace{2em}
+    \hspace{4em}
     %
     \begin{tabular}{ll}
         \textipa{{\color{red}t\textesh}aa} & `ear'\\
@@ -66,7 +72,7 @@ We can express this as a formal theorem.
     Let $L$ be the set of all such strings.
     Then $L$ contains strings $s_{a,i} \is \String{a c^i a}$ and $s_{b,i} \is \String{b c^i b}$.
     Suppose $L$ is strictly $k$-local.
-    By $k$-local suffix substitution closure, $s_{a,k} \in L$ and $s_{b,k} \in L$ jointly imply $\String{c^k a c^k b c^k} \in L$.
+    By $k$-local suffix substitution closure, $s_{a,k} \in L$ and $s_{b,k} \in L$ jointly imply $\String{a c^k b} \in L$.
     But this string violates sibilant harmony and thus cannot be a member of $L$, showing that $L$ is not strictly $k$-local.
     Since $k$ was arbitrary, $L$ is not strictly local.
 \end{proof}
@@ -76,7 +82,7 @@ At an earlier point we proved that strictly local languages are not closed under
 Rather, it shows that sibilant harmony is not strictly local if one assumes that segments that aren't sibilants contribute no useful information for determining well-formedness with respect to sibilant harmony.
 
 From a linguistic perspective, this means that any tricks that might allow us to decompose the long-distance dependency into a local one are banned unless they have a visible effect on the surface form.
-For example, we cannot use anything like ``invisible spreading'' where the right sibilant has some feature that invisibly spreads to the adjacent segment to the right, and from there to the next one, and so one, until it reaches another sibilant and changes the value of anteriority feature.
+For example, we cannot use anything like ``invisible spreading'' where the right sibilant has some feature that invisibly spreads to the adjacent segment to the left, and from there to the next one, and so one, until it reaches another sibilant and changes the value of anteriority feature.
 This is important to keep in mind: our claims about the complexity of various phonological processes are stated with the shared understanding that no hidden structure or distinctions can be invoked.
 Such hidden structures might exist, of course, but positing them blurs important boundaries and ties our claims to a very specific theoretical interpretation of the data --- one that might easily be false.
 Before we try to unify distinct phenomena by recourse to more elaborate structures, we should try to discern to which degree these phenomena are actually distinct.
@@ -84,14 +90,124 @@ Before we try to unify distinct phenomena by recourse to more elaborate structur
 \subsection{Strictly Piecewise Languages}
 
 Now that we have encountered a process that is not strictly local, we have to start looking for a model that is sufficiently powerful but not too different from strictly local languages and grammars.
-At good starting point is to take another gander at the proof above --- determining which property of strictly local languages was used to establish their inadequacy will give us an idea what needs to be changed.
+Let us take another gander at the proof above --- determining which property of strictly local languages was used to establish their inadequacy might give us an idea what needs to be changed.
+
 Adopting for a moment the perspective of a strictly $k$-local scanner, we quickly see the problem.
 In order to regulate the dependency between $a$ and $b$, both have to be within the scanner's search window, but that is impossible whenever the distance between the two exceeds the size of the search window.
 But what if our search window wasn't in one solid piece, but could be broken up into smaller parts that move around independently?
-That is to say, what if a strictly $k$-local scanner didn't have $1$ window of size $k$, but $k$ windows of size $1$?
+That is to say, what if a strictly $k$-local scanner didn't have $1$ window of size $k$, but $k$ windows of size $1$ so that we could inspect the string not in contiguous blocks but rather \emph{piece by piece}?
+%
+\begin{figure}[tbph]
+\centering
+\input{./img/tikz/SP_BigramScanner.tikz}
+\caption{A scanner with multiple search windows}
+\label{fig:SP_Scanner}
+\end{figure}
 
 Suppose that we have such a scanner, with $2$ windows of size $1$.
-Then a string satisfies sibilant harmony iff it can never be the case that one of the windows is on an anterior sibilant and the other window on a non-anterior sibilant.
+Then a string satisfies sibilant harmony iff it can never be the case that one of the windows is on an anterior sibilant $a$ and the other window on a non-anterior sibilant $b$.
+And this is the case iff the string contains no \emph{subsequence} $ab$.
+%
+\begin{definition}[Subsequence]
+    Given strings $u$ and $v \is v_1 \cdots v_m$, $v$ is a \emph{subsequence} of $u$ iff every $v_i$ occurs in $u$ and for all $1 \leq i,j \leq m$, if $i < j$ then $v_i$ precedes $v_j$ in $u$ (but they need not be adjacent).
+    If $v$ has length $k \geq 0$, it is a \emph{$k$-subsequence}.
+    The set of all $k$-subsequences of $u$ is denoted $\Subsequences[k](u)$.
+\end{definition}
+%
+\begin{examplebox}[Subsequences and Najavo Sibilant Harmony]
+    The word \textipa{xo\textesh} has the subsequences \textipa{xo}, \textipa{o\textesh}, and \textipa{x\textesh}, as well as \textipa{x}, \textipa{o}, \textipa{\textesh}, and \textipa{xo\textesh}.
+    Note that every substring is also a subsequence, but not the other way round.
+    The 2-subsequences of \textipa{tsaanééz} are listed below:
+    %
+    \begin{center}
+        \begin{tabular}{ccccc}
+            \textipa{ts} & \textipa{sa} & \textipa{aa} & \textipa{né} & \textipa{éé} \\
+            \textipa{ta} & \textipa{sn} & \textipa{an} & \textipa{nz} & \textipa{éz} \\
+            \textipa{tn} & \textipa{sé} & \textipa{aé} &              & \\
+            \textipa{té} & \textipa{sz} & \textipa{az} &              & \\
+            \textipa{tz} &              &              &              & 
+        \end{tabular}
+    \end{center}
+\end{examplebox}
+
+Remember that strictly $k$-local grammars are defined in such a way that a string is well-formed iff every substring of length $k$ is contained in the grammar.
+It seems that in order to account for long distance processes like Navajo sibiliant harmony, we have to look at subsequences instead.
+So all we have to do is make a minor change to the definition of strictly local grammars.
+
+\begin{definition}[Strictly Piecewise]
+    A \emph{strictly $k$-piecewise grammar} is a finite set of $k$-grams.
+    A positive strictly $k$-piecewise grammar $\posG{G}$ generates the language
+    \(
+        L(G) \is
+            \setof{ w \mid \Subsequences[k](w) \subseteq G }
+    \).
+    A negative strictly $k$-piecewise grammar $\negG{G}$ generates the language
+    \(
+        L(G) \is
+            \setof{ w \mid \Subsequences[k](w) \cap G = \emptyset }
+    \).
+    A language $L$ is \emph{strictly $k$-piecewise} iff it is generated by some strictly $k$-piecewise grammar.
+    The class $\SP$ of \emph{strictly piecewise languages} is given by
+    \(
+        \bigcup_{k \geq 1} \setof{ L \mid L \text{ is strictly $k$-piecewise} }
+    \).
+\end{definition}
+%
+As you can see the definition for strictly piecewise is almost exactly the one for strictly local, except that the definition of the generated language use $\Subsequences[k](w)$ instead of $\Bigrams[k](w)$.
+%
+\begin{examplebox}[A Negative Strictly 2-Piecewise Grammar for Sibilant Harmony]
+    Navajo sibilant harmony is violated whenever a string contains a 2-subsequence consisting of sibilants with opposite anteriority features.
+    Since there's only finitely many sibilants, we can list all forbidden 2-subsequences (for the sake of brevity let's assume that affricates count as two segments rather than one).
+    %
+    \begin{center}
+        \begin{tabular}{lll}
+            \textipa{s\textesh} &
+            \textipa{s\textyogh} &
+            \textipa{s\textesh\super h}\\
+            \textipa{z\textesh} &
+            \textipa{z\textyogh} &
+            \textipa{z\textesh\super h}\\
+            \textipa{s\super h\textesh} &
+            \textipa{s\super h\textyogh} &
+            \textipa{s\super h\textesh\super h}
+        \end{tabular}
+        \hspace{4em}
+        \begin{tabular}{lll}
+            \textipa{\textesh s} &
+            \textipa{\textyogh s} &
+            \textipa{\textesh\super hs}\\
+            \textipa{\textesh z} &
+            \textipa{\textyogh z} &
+            \textipa{\textesh\super hz}\\
+            \textipa{\textesh s\super h} &
+            \textipa{\textyogh s\super h} &
+            \textipa{\textesh\super hs\super h}
+        \end{tabular}
+    \end{center}
+    %
+    A negative strictly 2-piecewise grammar with these 2-subsequences will never generate a string that violates sibilant harmony.
+\end{examplebox}
+
+\subsection{Monoid-Based Implementation}
+
+In the previous chapter we generalized the bigram scanner for strictly 2-local languages to a monoid-based scanner that can carry out a variety of tasks besides acting as a recognizer.
+The code is repeated here for your convenience:
+%
+\begin{center}
+    \pythonfile[firstline=5]{./code/monoid_scanner/monoid_bigram_scanner.py}
+\end{center}
+%
+With a little bit of ingenuity, the code can also be used to construct a bigram scanner for strictly piecewise languages.
+The idea is that the base value function returns two values, a set with the currently read bigram and a boolean indicating whether this subsequence is licensed by the grammar.
+The composition function then uses this information to construct a list of all seen subsequences and checks for each newly constructed subsequence that it is licensed by the grammar.
+So in a sense we actually have two monoids operating in a synchronized fashion: one for computing sets of seen subsequences, and the other one for computing string well-formedness based on these sets.
+The full code for strictly 2-piecewise languages is given in Listing~\vref{code:SP_MonoidFunctions}.
+%
+\begin{listing}[tbph]
+\pythonfile[firstline=5]{./code/monoid_scanner/ngram_piecewise.py}
+\caption{Monoid functions for a strictly piecewise scanner}
+\label{code:SP_MonoidFunctions}
+\end{listing}
 
 \subsection{Properties of Strictly Piecewise Languages}
 
@@ -101,11 +217,13 @@ Other properties require only a little bit of extra work.
 The proof for closure under intersection is easily adopted, as is the proof for non-closure under union (and thus relative complement).
 The argument that all finite languages are strictly local also establishes that they are strictly piecewise, which furthermore entails that $\SP$ is not learnable in the limit from positive text.
 
-The strictly piecewise languages thus retain all essential properties of the strictly local languages, which isn't too surprising seeing how they are both generated by $n$-gram formalisms.
-These properties line up very well with what we know about phonology --- they do not give a full characterization of phonology, but what they do claim seems to be along the right track.
+The strictly piecewise languages thus retain all essential properties of the strictly local languages, which isn't too surprising seeing how they are both $n$-gram formalisms.
+Their properties line up very well with what we know about phonology --- they do not give a full characterization of phonology, but what they do claim seems to be along the right track.
 It is very tempting to surmise that natural language phonology is somewhere in the union of $\SL_j$ and $\SP_k$ for some UG-specified values of $j$ and $k$.
 In other words, phonology can be factored into a finite number of local and non-local processes that each correspond to some strictly local or strictly piecewise language (closure under intersection ensures that these can all be combined into two systems of local and non-local processes, respectively).
 
+Jeffrey Heinz has advocated this position in a series of papers \citep{Heinz10,HeinzIdsardi11}, but only for segmental phonology.
+Suprasegmental phenomena, in particular stress, are exempt from this claim.
 \Note{
     \centering
     \includegraphics[width=2.75cm]{./img/pic/heinz_crop.png}
@@ -113,8 +231,6 @@ In other words, phonology can be factored into a finite number of local and non-
     \noindent
     \textbf{Jeffrey Heinz}
 }
-Jeffrey Heinz has advocated this position in a series of papers \citep{Heinz10,HeinzIdsardi11}, but only for segmental phonology.
-Suprasegmental phenomena, in particular stress, are exempt from this claim.
 And this is a good thing since some suprasegmental phenomena fall outside the purview of $\SL$ and $\SP$.
 
 \section{Suprasegmental Phonology}
@@ -122,7 +238,7 @@ And this is a good thing since some suprasegmental phenomena fall outside the pu
 \subsection{Unbounded Stress}
 One phenomenon we haven't considered so far is stress assignment.
 Every language comes with a fixed set of rules that determine which syllable in a word gets primary stress and is thus prosodically most prominent. 
-Sometimes primary stress assignment can even resolve lexical ambiguities, such as in English with the noun \emph{$'$export} and verb \emph{ex$'$port}.
+Sometimes primary stress assignment can even resolve lexical ambiguities, such as in English with the noun \emph{\textipa{'}export} and verb \emph{ex\textipa{'}port}.
 
 Most languages use rather simple stress assignment rules, such as \emph{stress the first syllable} (which we will call \textbf{[0]} following Python's indexation system) or \emph{stress the antepenultimate} (abbreviated \textbf{[-3]}).
 These simple systems are strictly local.
@@ -201,8 +317,9 @@ In this case $G$ needs to be expanded into
         \tuple{\String{\text{L}},0}
     }
 \).
-But this means that every string must contain at least one stressed heavy syllable and at least one stressed non-heavy syllable.
-This is clearly not what we want, and there isn't a single string that can satisfy this requirement and at the same time be generated by the strictly piecewise grammar.
+However, this grammar force every string to contain at least one stressed heavy syllable and at least one stressed non-heavy syllable.
+This is clearly not what we want;
+there isn't even a single string that can satisfy this requirement and at the same time be generated by the strictly piecewise grammar.
 Culminativity thus is strictly threshold testable, but only over an impoverished alphabet.
 This is, in a certain sense, the inverse of previous cases where certain languages turned out to be strictly local only if one uses a refined alphabet that provides hidden information.
 Nonetheless it shows once more that the choice of alphabet is an important factor for determining the complexity of a process or constraint.
