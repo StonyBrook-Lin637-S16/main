@@ -1,0 +1,6 @@
+\begin{tikzpicture}
+    \node[state] (in) {p};
+    \node[state] (out) [right=of in] {q};
+
+    \path[->] (in) edge node [above] {a} (out);
+\end{tikzpicture}
