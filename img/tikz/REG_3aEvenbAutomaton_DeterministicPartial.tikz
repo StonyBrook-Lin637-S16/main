@@ -1,0 +1,17 @@
+\begin{tikzpicture}
+    \node[state,initial,accepting]     (0)                   {0};
+    \node[state,accepting]   (1)    [right=of 0]   {1};
+    \node[state,accepting]   (2)    [right=of 1]   {2};
+    \node[state,accepting]   (3)    [right=of 2]   {3};
+    \node[state]             (odd)  [below right=of 1]   {o};
+    \node[state,accepting]   (even) [below=of odd] {e};
+    \node[state,accepting]   (0e) [left=of odd] {$\{$0,e$\}$};
+
+    \path[->]
+        (0)    edge node [above] {a} (1)
+        (1)    edge node [above] {a} (2)
+        (2)    edge node [above] {a} (3)
+        (3)    edge node [below] {b} (odd)
+        (odd)  edge node [below] {b} (0e)
+        (even) edge [bend left]  node [left] {b} (odd);
+\end{tikzpicture}

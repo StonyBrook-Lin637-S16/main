@@ -1,0 +1,29 @@
+\begin{tikzpicture}
+    \node[state,initial]    (A)                   {A};
+    \node[state]            (AB)     [below=of A]   {AB};
+    \node[state]            (AC)     [left=of AB]   {AC};
+    \node[state]            (ABC)    [below right=of AB]   {ABC};
+    \node[state,accepting]  (AD)     [left=of AC]   {AD};
+    \node[state,accepting]  (ABD)    [left=of ABC]   {ABD};
+    \node[state,accepting]  (ABCD)   [below right=of ABC]   {ABCD};
+    \node[state,accepting]  (ACD)    [left=of ABCD]   {ACD};
+
+    \path[->]
+        (A)    edge node [right] {1} (AB)
+               edge [loop above] node {0} (A)
+        (AB)   edge node [above] {0} (AC)
+               edge node [above] {1} (ABC)
+        (AC)   edge node [above] {0} (AD)
+               edge [bend left] node [above] {1} (ABD)
+        (AD.north east)  edge [bend left=15] node [above] {0} (A.south west)
+        (AD)   edge [bend left] node [above] {1} (AB)
+        (ABC)  edge node [left] {0} (ACD)
+               edge node [right] {1} (ABCD)
+        (ABD)  edge [bend left] node [left] {0} (AC)
+               edge node [above] {1} (ABC)
+        (ACD)  edge [bend left] node [below] {0} (AD)
+               edge node [above] {1} (ABD)
+        (ABCD) edge node [above] {0} (ACD)
+               edge [loop right] node {1} (ABCD)
+        ;
+\end{tikzpicture}
