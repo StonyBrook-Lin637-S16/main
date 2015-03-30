@@ -1,0 +1,455 @@
+\chapter{The Power of SPE and OT}
+\label{cha:SPE}
+
+We have come a long way since we took our first look at phonology.
+Starting from a very naive perspective that deliberately ignored most linguistic assumptions and only considered only surface-true generalizations, we kept tweaking our computational model and arrived at the conclusion that most phonological patterns fall within the very weak classes of strictly local and strictly piecewise languages.
+Suprasegmental patterns required factoring out via culminativity, which can be expressed with $1$-threshold testable grammars given a suitable alphabet.
+The dependence on specific alphabets was worrying though, so that we took a closer look at how much power alphabet refinement can grant us.
+The answer was rather shocking, as even the strictly $2$-local languages see an immense increase in expressivity when they are supplemented with a hidden alphabet.
+We saw that a hidden alphabet pushes our model all the way up to the regular languages, with no strong empirical evidence that this enormous power is ever needed in phonology.
+
+These findings are particularly troubling because alphabet refinement amounts to positing a more abstract underlying structure, which is an ubiquitous strategy in phonology.
+This suggests that the standard theories of phonology might actually be too powerful.
+This claim is difficult to evaluate with our current tools, however, because linguistic theories of phonology do not simply distinguish between well-formed and ill-formed strings, but rather specify a mapping from underlying forms to surface forms.
+So rather than jumping to conclusions, we should try to give faithful formalizations of these theories.
+If generative capacity still turns out to be problematic, some reflecting is in order as to why linguists may feel the need for this extra power.
+
+\section{Formalizing Rewrite Rules}
+
+\subsection{Rewrite Rules in SPE}
+
+For many decades the dominant theory of phonology was SPE \citep{ChomskyHalle68}.
+According to SPE, phonology is a set of rewrite rules that map underlying representations to surface forms.
+A rewrite rule takes the form
+\[
+    \alpha \rewrite \beta \mid \gamma \_ \delta,
+\]
+which means that a substring $\alpha$ that occurs between $\gamma$ and $\delta$ is rewritten as $\beta$.
+For instance, $\String{aa} \rewrite \emptystring \mid b \_ \String{bb}$ rewrites all instances of $\String{baabb}$ as $\String{bbb}$.
+The part before the vertical bar --- $\alpha \rewrite \beta$ --- is the actual rewriting step, whereas $\gamma \_ \delta$ is the context specification.
+A rule can apply from left-to-right, right-to-left, or in parallel to all licit target sites.
+%
+\begin{examplebox}[Directionality of Rule Application]
+    Consider the rule $a \rewrite b \mid \String{ab} \_ \String{ba}$, which turns $a$ into $b$ whenever it occurs between $\String{ab}$ and $\String{ba}$ (this is an abstracted version of the process of full, local assimilation).
+    Depending on how this rule is applied, the string $\String{abababababa}$ is mapped to different output strings.
+    %
+    \begin{center}
+        \begin{tabular}{cc}
+            \toprule
+            \textbf{directionality} & \textbf{output string}\\
+            \midrule
+            left-to-right & \String{abbbabbbaba}\\
+            right-to-left & \String{ababbbabbba}\\
+            parallel      & \String{abbbbbbbbba}
+            \\
+            \bottomrule
+        \end{tabular}
+    \end{center}
+\end{examplebox}
+%
+Multiple rules can be conflated into a single rule using round and curly brackets to indicate optionality and non-determinism, respectively.
+For example, $a \rewrite \setof{b,c} \mid c(d)c \_$ rewrites $a$ as $b$ or $c$ iff it is preceded by $cc$ or $cdc$.
+Finally, the collection of conflated rules is linearly ordered, determining in the sequence of rule applications.
+
+As you can see, SPE features a dazzling array of technical tools, and that is actually just the tip of the iceberg.
+Segments are actually formalized as matrices of binary features, and sets of segments are represented via underspecified matrices.
+Many of the rewrite rules use this format to indicate the rewriting of segments as the change of feature values, and there is a lot of ancillary notation like $\alpha$-values to keep rules as short as possible.
+Finally, segments and strings in the context specification can be subscripted with $^+$ such that $w^+$ stands for every string in the language $w^+$. 
+It should be fairly obvious that we do not have the right tools to formalize all of these concepts.
+Let us start with the most basic notion, then: string rewriting.
+
+\subsection{Finite State Transducers}
+
+In the previous chapter we encountered finite state automata (FSAs) as another formalism for talking about strictly $2$-local grammars with hidden alphabets.
+Just like these grammars, an automaton only decides the well-formedness of strings, it is not a mechanism for rewriting a string as another one.
+However, automata can easily be turned into such a mechanism.
+
+Suppose that we want to map every string of the language $(\String{ab})^*$ to its counterpart where the order of $a$s and $b$s has been switched.
+The automaton for $(\String{ab})^*$ is given below.
+%
+\begin{center}
+    \input{./img/tikz/SPE_abStar.tikz}
+\end{center}
+%
+We want this automaton to also establish a connection between each $(\String{ab})^n$ and $(\String{ba})^n$.
+An easy way of doing this is to extend the automaton so that it operates on two strings at the same time.
+Each arc now gets a label $\sigma:\omega$, with the first component indicating the symbol in the first string, and the second component the symbol in the second string.
+For the current example, we extend $a$ to $a:b$ and $b$ to $b:a$.
+%
+\begin{center}
+    \input{./img/tikz/SPE_baStar.tikz}
+\end{center}
+
+Such an extended automaton is called a \emph{finite state transducer} (FST).
+We can view a transducer as 
+%
+\begin{itemize}
+    \item verifying whether two strings are related (do both strings take the same path through the transducer?),
+    \item building two strings in parallel (follow some path from an initial state to a final one and keep track of the first\slash second label of each arc), or
+    \item rewriting the first string as the second one (follow the arcs through transducer that yield the first string and build the second string that is described by these arcs).
+\end{itemize}
+%
+Obviously it is this third perspective that is of particular interest to us.
+%
+\begin{examplebox}[Three Views of Finite State Transducers]
+    Let us take a quick glance at the behavior of the FST above for the strings $\String{abab}$ and $\String{baba}$.
+    When viewed as a recognizer for a relation between strings, the transducer has to be able to find an identical state assignment for both strings.
+    This is indeed the case.
+    %
+    \begin{center}
+        \begin{tabular}{ccccc}
+            $0$ & $1$ & $0$ & $1$ & $0$\\
+                & $a$ & $b$ & $a$ & $b$\\
+                & $b$ & $a$ & $b$ & $a$\\
+        \end{tabular}
+    \end{center}
+    %
+    But $\String{abab}$ is not related to $\String{babb}$.
+    %
+    \begin{center}
+        \begin{tabular}{ccccc}
+            $0$ & $1$ & $0$ & $1$ & !\\
+                & $a$ & $b$ & $a$ & $b$\\
+                & $b$ & $a$ & $b$ & $b$\\
+        \end{tabular}
+    \end{center}
+    
+    Similarly, the transducer can build $\String{abab}$ and $\String{baba}$ in parallel via the sequence of transitions $\tuple{0,a:b,1}$, $\tuple{1,b:a,0}$, $\tuple{0,a:b,1}$, $\tuple{1,b:a,0}$.
+    And we can combine both views by first determining that $\String{abab}$ is recognized via the sequence $\tuple{0,a:b,1}$, $\tuple{1,b:a,0}$, $\tuple{0,a:b,1}$, $\tuple{1,b:a,0}$, and that the string jointly described by the second components of the transitions is $\String{baba}$.
+\end{examplebox}
+
+Formally, a FST is an FSA that has been extended with an output alphabet.
+%
+\begin{definition}[Finite State Transducer]
+    A \emph{finite state transducer} (FST) is a 6-tuple $A \is \tuple{\Sigma, \Omega, Q, I, F, \Delta}$, where
+    %
+    \begin{itemize}
+        \item $\Sigma$ is the input alphabet,
+        \item $\Omega$ is the output alphabet,
+        \item $Q$ is a finite set of states,
+        \item $I \subseteq Q$ is the set of \emph{initial} states,
+        \item $F \subseteq Q$ is the set of \emph{final} states,
+        \item $\Delta \subseteq Q \times \Sigma \times \Omega \times Q$ is a finite set of transition rules.
+    \end{itemize}
+    %
+    The FST is \emph{deterministic} iff $I$ is a singleton set and $\Delta$ contains no two $\tuple{p,a,b,q}$ and $\tuple{p,a,c,r}$ with $q \neq r$ or $b \neq c$.
+    Otherwise it is non-deterministic.
+    % For deterministic FSA, we also write $\delta(q,a) = q'$ instead of $\tuple{q,a,q'} \in \Delta$.
+\end{definition}
+%
+An FST does not generate a language, i.e.\ a set of strings, but a binary relation, i.e.\ pairs of strings.
+Such a binary relation between strings is also called a \emph{transduction}, and a transduction that can be computed by an FST is called a \emph{finite state transduction} or a \emph{rational relation}.
+Note that if we only consider the first component of each pair in the transduction we get the input language, whereas restricting our attention to the second component yields the output language.
+
+So now we have a mechanism for rewriting strings.
+We do not know yet if it can handle the full range of SPE rewrite rules, but it does provide us with a formal basis that we can explore with our computational techniques.
+
+\subsection{Properties of Finite State Transducers}
+
+If we are to use FSTs as models of SPE rewrite rules, we will have to be able to combine FSTs, just like SPE combines multiple rewrite rules into a grammar.
+For SPE, this means in particular being able to use the output of one rewrite rule as the input of the next rewrite rule.
+So if rule $R$ rewrites the string $u$ as $v$, and then $R'$ rewrites $v$ as $w$, then a grammar consisting of those two rules rewrites $u$ as $v$ (assuming $R$ applies before $R'$).
+
+We can do do something very similar with FSTs by constructing their \emph{composition}.
+Given two FSTs that compute the relations $R$ and $R'$, respectively, their composition computes the relation $R \circ R' \is \setof{\tuple{u,w} \mid \tuple{u,v} \in R \text{ and } \tuple{v,w} \in R'}$.
+The construction is very similar to the intersection of FSAs.
+Both automata are run in parallel, but whenever the first automaton takes an arc that is labeled $a:b$, the second automaton must take an arc whose first component is $b$.
+
+\paragraph{Composition}
+Let $A \is \tuple{Q_A, \Sigma, \Gamma, I_A, F_A, \Delta_A}$ and $B \is \tuple{Q_B, \Gamma, \Omega, I_B, F_B, \Delta_B}$ be two FSTs.
+Their composition is $A \circ B \is \tuple{Q_A \times Q_B, \Sigma, \Omega, I_A \times I_B, F_A \times F_B, \Delta}$, where $\Delta$ is the smallest set containing all $\tuple{(q_a,q_b),\sigma,\omega,(q_a',q_b')}$ such that $\tuple{q_a,\sigma,\gamma,q_a'} \in \Delta_A$ and $\tuple{q_b,\gamma,\omega,q_b'} \in \Delta_B$.
+
+\begin{examplebox}[Transducer Composition]
+    Suppose that we want to combine our first example transducer with another transducer that replaces every second $b$ by a $c$.
+    So if both transducer are run in sequence, the string $\String{abab}$ is no longer mapped to $\String{baba}$ but rather $\String{baca}$.
+    Each transducer is shown below.
+    %
+    \begin{center}
+        \input{./img/tikz/SPE_baStar.tikz}
+        \input{./img/tikz/SPE_b2c.tikz}
+    \end{center}
+    %
+    Following the procedure above, we obtain a transducer with 4 useful states.
+    %
+    \begin{center}
+        \input{./img/tikz/SPE_ComposedTransducer.tikz}
+    \end{center}
+    %
+    It is easy to see that this transducer rewrites $\String{abab}$ as $\String{baca}$. 
+\end{examplebox}
+%
+Closure under composition entails another important property: the image of a regular language $L$ under an FST $T$ is always regular.
+This is implied by a few simple observations.
+%
+\begin{enumerate}
+    \item If we drop the first component from each arc of the FST $T$, we get an FSA that defines a regular output language.
+    \item Every language $L$ can be lifted to a transduction by looking at its identity function $\idfunc(L) \is \setof{\tuple{w,w} \mid w \in L}$.
+        If $L$ is regular, this transduction is obtained by taking an FSA for $L$ (which must exist thanks to $L$ being regular) and expanding each arc label $a$ to $a:a$.
+    \item Since the class of FSTs is closed under composition, $\idfunc(L) \circ T$ is an FST\@.
+        Notice that the image of $\Sigma^*$ under $\idfunc(L) \circ T$ is exactly the image of $L$ under $T$.
+    \item If $\Sigma^*$ is the input language for an FST, then the output language consists of all strings that can be derived from some path through the FST\@.
+        In other words, the output language is exactly the language of the FSA that is obtained by dropping the first component of each arc label.
+    \item It follows that $T(L) = \idfunc(L) \circ T(\Sigma^*)$ is a regular language.
+\end{enumerate}
+%
+\Note{Why do we need FST composition for this result?
+    That is to say, why isn't it enough to observe that every FST can be turned into an FSA by dropping the first component of every arc label?
+}
+
+Besides composition, it is also of interest to look at the Boolean closure properties.
+%
+\paragraph{Union}
+We can just use the automaton construction that adds a single initial state from which $\emptystring$-transitions take us to the initial states of the transducers.
+That is to say, $A \cup B \is \tuple{Q_A \cup Q_B \cup \setof{q_0}, \Sigma \cup \Gamma, \Gamma \cup \Omega, q_0, F_A \cup F_B, \Delta}$, where
+\(
+    \Delta \is \Delta_A \cup \Delta_B \cup
+        \setof{
+            \tuple{q_0, \emptystring, \emptystring, i} \mid i \in I_A \cup I_B
+        }
+\).
+Keep in mind that the states of $Q_A$ and $Q_B$ must be renamed if the two sets are not disjoint.
+%
+\begin{examplebox}[Transducer Union]
+    The union of the two FSTs from the previous example is given below.
+    %
+    \begin{center}
+        \input{./img/tikz/SPE_UnionTransducer.tikz}
+    \end{center}
+\end{examplebox}
+
+\paragraph{Intersection}
+Given two transducers, we can construct their intersection using the exact algorithm for intersection of automata.
+However, it is not guaranteed that the transduction computed by this new FST is the intersection of the transductions computed by the original two FSTs.
+This is witnessed by the following counterexample: let $R$ and $R'$ be the regular relations $\setof{\tuple{a^n, b^n c^*} \mid n \geq 1}$ and $\setof{\tuple{a^n, b^* c^n} \mid n \geq 1}$, respectively.
+Their intersection is $R \cap R' \is \setof{ \tuple{a^n, b^n c^n} \mid n \geq 1}$.
+It is well-known that $b^n c^n$ is not regular (a fact we cannot prove yet), but since the output language of an FST is always regular, $R \cap R'$ cannot be a finite state transduction.
+
+\paragraph{(Relative) Complement}
+Non-closure under intersection and closure under union jointly imply non-closure under (relative) complement via De Morgan's law $A \cap B = \complementof{\complementof{A} \cup \complementof{B}}$.
+
+\begin{theorem}
+    The class of finite state transductions is closed under composition and union, but not intersection or (relative) complement.
+    The class of regular language is closed under finite state transductions.
+\end{theorem}
+
+Closure under intersection does hold for a proper subclass of finite state transductions, though, namely those that are computed by \emph{$\emptystring$-free} FSTs: no arc label has $\emptystring$ as its first component (``do not insert new nodes'') or as its second component (``do not delete any nodes'').
+Such transductions only relate strings of equal length, which is why they're called \emph{equal length relations}.
+An equal length relation can be viewed not just as binary relation, i.e.\ a set over pairs of strings, but also as sets of strings of pairs of symbols.
+That is to say, the pair $\tuple{\String{abba},\String{baab}}$ can be viewed as the string $\tuple{a,b}\tuple{b,a}\tuple{b,a}\tuple{a,b}$ instead.
+It is fairly easy to prove that equal length relations are regular languages and thus inherit all their closure properties, including closure under intersection and (relative) complement.
+
+
+\section{The Power of SPE}
+
+\subsection{SPE Generates All Regular Languages}
+
+We already know that every regular language is a projection of some strictly $2$-local language.
+A projection simply replaces every element in the input alphabet $\Sigma$ by some element of $\Omega$, irrespective of its surrounding.
+As $\Sigma$ and $\Omega$ are finite, we can view a projection as a single-state FST with a loop labeled $a:b$ iff the projection maps $a$ to $b$.
+%
+\begin{center}
+    \input{./img/tikz/SPE_ProjectionFST.tikz}    
+\end{center}
+%
+But this is just the intersection of three $\emptystring$-free transducers.
+%
+\begin{center}
+    \input{./img/tikz/SPE_ProjectionFST_ab.tikz}    
+    \hspace{2em}
+    \input{./img/tikz/SPE_ProjectionFST_cd.tikz}    
+    \hspace{2em}
+    \input{./img/tikz/SPE_ProjectionFST_eb.tikz}    
+\end{center}
+%
+Each one of these transducers corresponds to a rewrite rule $a \rewrite b$, so an SPE grammar that consists only of the three rewrite rules for the respective FSTs above computes the original projection (careful: we have to ensure $\Sigma$ and $\Omega$ are disjoint, otherwise a rewrite rule may accidentally rewrite some of the output symbols of one of the previous rewrite rules).
+%
+\begin{examplebox}[Rewrite Rules for a Projection]
+    Suppose we have a projection $\pi$ between $\Sigma \is \setof{a,b,c}$ and $\Omega \is \setof{c,d}$ that is given by the following table:
+    %
+    \begin{center}
+        \begin{tabular}{cc}
+            \toprule
+            \textbf{input} & \textbf{output}\\
+            \midrule
+            a & c\\
+            b & c\\
+            c & d\\
+            \bottomrule
+        \end{tabular}
+    \end{center}
+    %
+    This projection maps the string $\String{abbacc}$ to $\String{ccccdd}$.
+    
+    When converting this projection into an SPE grammar, we first have to make the two alphabets disjoint.
+    This is accomplished by a rewrite rule that rewrite every $\sigma \in \Sigma$ by $\sigma_i$.
+    %
+    \[
+        \sigma \rewrite \sigma_i
+    \]
+    %
+    Now all we have to do is write a rewrite rule for every row in the table.
+    %
+    \begin{align*}
+        a_i &\rewrite c\\
+        b_i &\rewrite c\\
+        c_i &\rewrite d
+    \end{align*}
+    %
+    The table below shows how $\String{abbacc}$ is rewritten as $\String{ccccdd}$ by running one rule after another.
+    %
+    \begin{center}
+        \begin{tabular}{cc}
+            \toprule
+            \textbf{rule} & \textbf{output}\\
+            \midrule
+            input & $\String{abbacc}$\\
+            $\sigma \rewrite \sigma_i$ & $\String{a_i b_i b_i a_i c_i c_i}$\\
+            $a_i \rewrite c$ & $\String{c b_i b_i c c_i c_i}$\\
+            $b_i \rewrite c$ & $\String{c c c c c_i c_i}$\\
+            $c_i \rewrite d$ & $\String{c c c c d d}$\\
+            \bottomrule
+        \end{tabular}
+    \end{center}
+    %
+    If we hadn't rendered the two alphabets disjoint, the output string would have looked very different.
+    %
+    \begin{center}
+        \begin{tabular}{cc}
+            \toprule
+            \textbf{rule} & \textbf{output}\\
+            \midrule
+            input & $\String{abbacc}$\\
+            $a \rewrite c$ & $\String{c b b c c c}$\\
+            $b \rewrite c$ & $\String{c c c c c c}$\\
+            $c \rewrite d$ & $\String{d d d d d d}$\\
+            \bottomrule
+        \end{tabular}
+    \end{center}
+\end{examplebox}
+
+This procedure works for every projection over arbitrary alphabets $\Sigma$ and $\Omega$, which means that SPE, coupled with a strictly $2$-local language of underlying forms, generates all regular languages.
+%
+\begin{lemma}
+    SPE can compute every projection between two arbitrary alphabets.
+\end{lemma}
+%
+Some phonologists might object, though, that using a strictly $2$-local language for the set of underlying representations is rather generous and that this set is not as restricted.
+\Note{It should be noted, though, that richness of the base is an invention of OT and was never entertained during the reign of SPE.}
+The \emph{richness of the base} assumption, for instance, contends that every element of $\Sigma^*$ is a well-formed underlying representation.
+But this objection is moot since SPE can generate all regular languages even with a rich base.
+
+Recall that every language can be turned into a transduction by looking at its identity function, so the strictly $2$-local language $L$ itself is just a finite state transduction $\idfunc(L)$. 
+Therefore we can assume that the set of underlying forms includes every element of $\Sigma^*$, which is then restricted to $L$ via the transduction $\idfunc(L)$.
+As long as $\idfunc(L)$ can be translated into a rewrite rule, SPE can restrict the set of underlying forms to this language and then compute its projection, yielding a regular output language. 
+%
+\begin{lemma}
+    For every strictly $2$-local language $L$ over $\Sigma$, there is a sequence of SPE rewrite rules that generates the image of $\Sigma^*$ under $\idfunc(L)$.
+\end{lemma}
+%
+\begin{proof}
+    The basic idea is that the rewrite rule completely ignores the input string and instead produces strings of $L$ in a non-deterministic fashion.
+    The first rewrite rule deletes all segments of the input string:
+    %
+    \[
+        \sigma \rewrite \emptystring \text{, where } \sigma \in \Sigma
+    \]
+    %
+    This is followed by a rewrite rule that inserts a single left edge marker.
+    %
+    \[
+        \emptystring \rewrite \LeftEdge
+    \]
+    %
+    Then the grammar applies a collection of rewrite rules of the form
+    %
+    \[
+        a \rewrite
+            a
+            \left \{
+                \begin{matrix}
+                    b_1\\
+                    \vdots\\
+                    b_n
+                \end{matrix}
+            \right \}
+    \]
+    %
+    such that for all $1 \leq i \leq n$, $\String{ab_n} \in \Bigrams(\augmented{w})$ for some $w \in L$.
+    %
+    The last two rewrite rules remove the edge markers.
+    %
+    \begin{align*}
+        \LeftEdge &\rewrite \emptystring\\
+        \RightEdge &\rewrite \emptystring
+    \end{align*}
+    %
+    An SPE grammar that applies these rules from left to right is guaranteed to generate all members of $L$, and only those.
+\end{proof}
+%
+\begin{corollary}
+    Every regular language is generated by some SPE grammar.
+\end{corollary}
+
+
+\subsection{SPE Generates Only Regular Languages}
+
+We just proved that SPE can generate every regular language, but can it generate even more complex languages, languages that are not regular?
+There are two answers to this question.
+If we go by the definition of what an SPE grammar looks like, then SPE is shockingly powerful: every recursively enumerable ($\approx$ computable) language is generated by some SPE grammar.
+That is about as powerful as it gets, and it is due to SPE using both context-sensitive rewriting and deletion of input segments.
+If every such SPE grammar where a possible natural language phonology, phonological dependencies could involve center embedding, crossing dependences, arbitrary copying, and restrictions that hold only if a word encodes a theorem of first-order logic.
+So from this perspective, SPE overgenerates to a ludicrous degree and utterly fails to make distinctions between natural and unnatural dependencies.
+
+This view of SPE is at odds with how phonologists think of SPE\@.
+While it is true that SPE is considered too powerful, it is commonly assumed to be mostly in the right ballpark.
+And if we look at the analyses in the literature, it seems unlikely that any of them could be used to generate any of the patterns listed above.
+This is an important insight that was first pointed out by \citet{Johnson72} and later formalized by \citet{KaplanKay94}: SPE \emph{as used by linguists} generates only regular languages.
+
+The restriction that phonologists follow without even being aware of it is that the material rewritten by a rule may not be operated on by the very same rule.
+More precisely, suppose that we have a rewrite rule $R$ that rewrites the substrings $w_{i,j}$ spanning from position $i$ to $j$ in $R$'s input string $w$.
+Let $w^R_{i,j}$ be the substring of the output of $R$ that corresponds to $w_{i,j}$.
+Then $R$ may not rewrite any material of $w^R_{i,j}$.
+
+Intuitively, Johnson simply realized that we may think of a rewrite rule as a scanner window that moves through the string from left to right and rewrites material.
+If the window rewrites $w_{i,j}$ as $w^R_{i,j}$, then $w^R_{i,j}$ winds up immediately to the left of the window and thus cannot be operated on again.
+%
+\begin{examplebox}[Recursive and Non-Recursive Rewrite Rule Application]
+    Consider the rewrite rule $\emptystring \rewrite \String{ab} | \_ b$, which inserts $\String{ab}$ in front of $b$.
+    With Johnson's restriction, this rule rewrites the string $\String{ab}$ as $\String{a(ab)^+b}$.
+    Without it, on the other hand, it also produces strings of the form $a^n b^n$, among others.
+    See the table for an illustration, with the application domain highlighted in \rewritten{red}.
+    %
+    \begin{center}
+        \begin{tabular}{cc}
+            \toprule
+            \textbf{recursive}        & \textbf{non-recursive}\\
+            \midrule
+            \String{a\rewritten{b}}       & \String{a\rewritten{b}}\\
+            \String{aa\rewritten{b}b}     & \String{aab\rewritten{b}}\\
+            \String{aaa\rewritten{b}bb}   & \String{aabab\rewritten{b}}\\
+            \String{aaaa\rewritten{b}bbb} & \String{aababab\rewritten{b}}\\
+            \bottomrule
+        \end{tabular}
+    \end{center}
+\end{examplebox}
+
+A rule that rewrites a single symbol and applies in parallel at all possible rewriting sites is fairly easy to translate into an FST\@.
+Suppose the rewrite rule in question is $a \rewrite b \mid c \_ d$.
+Then this rule can be thought of as a transducer that rewrites every symbol by itself except for $a$s that are preceded by a $c$ and followed by a $d$.
+The FST is depicted below, where $\complementof{\sigma}$ is a placeholder for every $\sigma \in \Sigma \setminus \setof{\sigma}$.
+%
+\begin{center}
+    \input{./img/tikz/SPE_RuleFST_Simple.tikz}
+\end{center}
+%
+More sophisticated parallel rules are generalizations of this template, whereas left-to-right and right-to-left application of rules requires special diacritic symbols and is a lot more complicated.
+Nonetheless \citet{KaplanKay94} showed successfully that all three types of rule application can be modeled with FSTs.
+The transduction carried out by a given SPE grammar with ordered rules $R_1 \cdots R_n$ thus is the composition of the FSTs corresponding to these rules.
+As FSTs are closed under composition, every SPE grammar can be represented by a single FST\@. 
+And since FSTs generate regular languages, it follows that SPE generates only regular languages.
+%
+\begin{theorem}
+    SPE generates exactly the class of regular languages.
+\end{theorem}
+
+\section{Comparing SPE and OT}
