@@ -1,0 +1,7 @@
+\begin{tikzpicture}
+    \node[state,initial,accepting] (0) {0};
+    \node[state] [right=of 0] (1) {1};
+
+    \path[->] (0) edge [bend left] node [above] {$a$} (1)
+              (1) edge [bend left] node [below] {$b$} (0);
+\end{tikzpicture}

@@ -1,0 +1,12 @@
+\begin{tikzpicture}
+    \node[state,initial,accepting] (00) {00};
+    \node[state] (11) [right=of 00] {11};
+    \node[state,accepting] (01) [right=of 11] {01};
+    \node[state] (12) [right=of 01] {12};
+
+    \path[->] (00) edge node [above] {$a:b$} (11)
+              (11) edge node [above] {$b:a$} (01)
+              (01) edge node [above] {$a:c$} (12)
+              (12) edge [bend left] node [above] {$b:a$} (00)
+              ;
+\end{tikzpicture}

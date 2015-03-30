@@ -1,0 +1,12 @@
+\begin{tikzpicture}
+    \node[state,initial,accepting] (0) {0};
+    \node[state,accepting] [right=of 0] (1) {1};
+    \node[state] [right=of 1] (2) {2};
+
+    \path[->] (0) edge [loop above] node {$\complementof{c}:\complementof{c}$} (0)
+                  edge [bend left] node [above] {$c:c$} (1)
+              (1) edge [bend left] node [below] {$\complementof{a}:\complementof{a}$} (0)
+                  edge node [above] {$a:b$} (2)
+              (2.south) edge [bend left=45] node [below] {$d:d$} (0.south)
+              ;
+\end{tikzpicture}

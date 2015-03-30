@@ -1,0 +1,24 @@
+\begin{tikzpicture}
+    \node[state,initial] (q0) {$q_0$};
+
+    \node[state,accepting] [above right=of q0] (0-A) {0$_A$};
+    \node[state] [right=of 0-A] (1-A) {1$_A$};
+
+    \path[->] (0-A) edge [bend left] node [above] {$a:b$} (1-A)
+              (1-A) edge [bend left] node [below] {$b:a$} (0-A);
+
+    \node[state,accepting] [below right=of q0] (0-B) {0$_B$};
+    \node[state,accepting] [right=of 0-B] (1-B) {1$_B$};
+    \node[state,accepting] [right=of 1-B] (2-B) {2$_B$};
+
+    \path[->] (0-B) edge [loop above] node {$a:a$} (0-B)
+                  edge node [above] {$b:b$} (1-B)
+              (1-B) edge [loop above] node {$a:a$} (1-B)
+                  edge [bend left] node [above] {$b:c$} (2-B)
+              (2-B) edge [bend left=40] node [above] {$a:a$} (0-B)
+                  edge [bend left] node [above] {$b:b$} (1-B)
+              ;
+
+    \path[->] (q0) edge node [left] {$\emptystring:\emptystring$} (0-A)
+                   edge node [left] {$\emptystring:\emptystring$} (0-B);
+\end{tikzpicture}

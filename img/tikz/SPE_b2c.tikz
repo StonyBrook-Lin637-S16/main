@@ -1,0 +1,13 @@
+\begin{tikzpicture}
+    \node[state,initial,accepting] (0) {0};
+    \node[state,accepting] [right=of 0] (1) {1};
+    \node[state,accepting] [right=of 1] (2) {2};
+
+    \path[->] (0) edge [loop above] node {$a:a$} (0)
+                  edge node [above] {$b:b$} (1)
+              (1) edge [loop above] node {$a:a$} (1)
+                  edge [bend left] node [above] {$b:c$} (2)
+              (2) edge [bend left=40] node [above] {$a:a$} (0)
+                  edge [bend left] node [above] {$b:b$} (1)
+              ;
+\end{tikzpicture}

@@ -1,0 +1,7 @@
+\begin{tikzpicture}
+    \node[state,initial,accepting] (0) {\phantom{0}};
+
+    \path[->] (0) edge [loop above] node {$a:b$} (0)
+                  edge [loop right] node {$c:d$} (0)
+                  edge [loop below] node {$e:b$} (0);
+\end{tikzpicture}
