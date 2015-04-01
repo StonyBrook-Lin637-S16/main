@@ -118,7 +118,7 @@ Obviously it is this third perspective that is of particular interest to us.
     And we can combine both views by first determining that $\String{abab}$ is recognized via the sequence $\tuple{0,a:b,1}$, $\tuple{1,b:a,0}$, $\tuple{0,a:b,1}$, $\tuple{1,b:a,0}$, and that the string jointly described by the second components of the transitions is $\String{baba}$.
 \end{examplebox}
 
-Formally, a FST is an FSA that has been extended with an output alphabet.
+Formally, an FST is an FSA that has been extended with an output alphabet.
 %
 \begin{definition}[Finite State Transducer]
     A \emph{finite state transducer} (FST) is a 6-tuple $A \is \tuple{\Sigma, \Omega, Q, I, F, \Delta}$, where
@@ -137,6 +137,9 @@ Formally, a FST is an FSA that has been extended with an output alphabet.
     % For deterministic FSA, we also write $\delta(q,a) = q'$ instead of $\tuple{q,a,q'} \in \Delta$.
 \end{definition}
 %
+Note that in contrast to non-deterministic automata, non-deterministic transducers cannot always be made deterministic.
+Characterizing the subclass of non-deterministic transducers that can be determinized is too advanced a topic for us.
+
 An FST does not generate a language, i.e.\ a set of strings, but a binary relation, i.e.\ pairs of strings.
 Such a binary relation between strings is also called a \emph{transduction}, and a transduction that can be computed by an FST is called a \emph{finite state transduction} or a \emph{rational relation}.
 Note that if we only consider the first component of each pair in the transduction we get the input language, whereas restricting our attention to the second component yields the output language.
@@ -189,7 +192,7 @@ This is implied by a few simple observations.
         Notice that the image of $\Sigma^*$ under $\idfunc(L) \circ T$ is exactly the image of $L$ under $T$.
     \item If $\Sigma^*$ is the input language for an FST, then the output language consists of all strings that can be derived from some path through the FST\@.
         In other words, the output language is exactly the language of the FSA that is obtained by dropping the first component of each arc label.
-    \item It follows that $T(L) = \idfunc(L) \circ T(\Sigma^*)$ is a regular language.
+    \item It follows that $T(L) = (\idfunc(L) \circ T)(\Sigma^*)$ is a regular language.
 \end{enumerate}
 %
 \Note{Why do we need FST composition for this result?
@@ -231,7 +234,7 @@ Non-closure under intersection and closure under union jointly imply non-closure
     The class of finite state transductions is closed under composition and union, but not intersection or (relative) complement.
     The class of regular language is closed under finite state transductions.
 \end{theorem}
-
+%
 Closure under intersection does hold for a proper subclass of finite state transductions, though, namely those that are computed by \emph{$\emptystring$-free} FSTs: no arc label has $\emptystring$ as its first component (``do not insert new nodes'') or as its second component (``do not delete any nodes'').
 Such transductions only relate strings of equal length, which is why they're called \emph{equal length relations}.
 An equal length relation can be viewed not just as binary relation, i.e.\ a set over pairs of strings, but also as sets of strings of pairs of symbols.
@@ -334,7 +337,10 @@ This procedure works for every projection over arbitrary alphabets $\Sigma$ and 
 \end{lemma}
 %
 Some phonologists might object, though, that using a strictly $2$-local language for the set of underlying representations is rather generous and that this set is not as restricted.
-\Note{It should be noted, though, that richness of the base is an invention of OT and was never entertained during the reign of SPE.}
+\Note{%
+    Richness of the base is an invention of OT and was never entertained during the reign of SPE.
+    However, for practical applications that use rewrite rules in conjunction with a lexicon it is actually more efficient to turn the lexicon into a transduction as described here so that it can be composed with the rewrite rules.%
+}
 The \emph{richness of the base} assumption, for instance, contends that every element of $\Sigma^*$ is a well-formed underlying representation.
 But this objection is moot since SPE can generate all regular languages even with a rich base.
 
@@ -347,40 +353,26 @@ As long as $\idfunc(L)$ can be translated into a rewrite rule, SPE can restrict 
 \end{lemma}
 %
 \begin{proof}
-    The basic idea is that the rewrite rule completely ignores the input string and instead produces strings of $L$ in a non-deterministic fashion.
-    The first rewrite rule deletes all segments of the input string:
+    We will use rewrite rules to construct a filter that eliminates all strings of $\Sigma^*$ that contain a bigram $g_i$ that is not a member of $\Bigrams(w)$ for any $w \in L$.
+    The first rewrite rule inserts a special symbol $*$ at the beginning of all such strings:
     %
     \[
-        \sigma \rewrite \emptystring \text{, where } \sigma \in \Sigma
-    \]
-    %
-    This is followed by a rewrite rule that inserts a single left edge marker.
-    %
-    \[
-        \emptystring \rewrite \LeftEdge
-    \]
-    %
-    Then the grammar applies a collection of rewrite rules of the form
-    %
-    \[
-        a \rewrite
-            a
+        \emptystring \rewrite * \mid \_ (\Sigma^+)
             \left \{
                 \begin{matrix}
-                    b_1\\
+                    g_1\\
                     \vdots\\
-                    b_n
+                    g_n
                 \end{matrix}
             \right \}
     \]
     %
-    such that for all $1 \leq i \leq n$, $\String{ab_n} \in \Bigrams(\augmented{w})$ for some $w \in L$.
-    %
-    The last two rewrite rules remove the edge markers.
+    Since this is a parallel, mandatory rewrite rule, every ungrammatical string now starts with $*$.
+    All we have to do is delete all symbols that occur to the left of a $*$, as well as $*$ itself.
     %
     \begin{align*}
-        \LeftEdge &\rewrite \emptystring\\
-        \RightEdge &\rewrite \emptystring
+        \sigma & \rewrite \emptystring \mid * (\Sigma^+) \_ \text{, for every } \sigma \in \Sigma\\
+        *      & \rewrite \emptystring
     \end{align*}
     %
     An SPE grammar that applies these rules from left to right is guaranteed to generate all members of $L$, and only those.
