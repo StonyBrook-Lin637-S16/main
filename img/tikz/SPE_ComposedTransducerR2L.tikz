@@ -1,0 +1,11 @@
+\begin{tikzpicture}
+    \node[state,initial,accepting] (00) {00};
+    \node[state] (10) [right=of 00] {10};
+    \node[state,accepting] (01) [right=of 10] {01};
+    \node[state] (11) [right=of 01] {11};
+
+    \path[->]
+        (00) edge node [above] {$a:b$} (10)
+        (10) edge node [above] {$b:a$} (01)
+        (01) edge node [above] {$a:b$} (11);
+\end{tikzpicture}

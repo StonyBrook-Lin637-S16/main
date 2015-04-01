@@ -26,7 +26,7 @@ A rewrite rule takes the form
 \]
 which means that a substring $\alpha$ that occurs between $\gamma$ and $\delta$ is rewritten as $\beta$.
 For instance, $\String{aa} \rewrite \emptystring \mid b \_ \String{bb}$ rewrites all instances of $\String{baabb}$ as $\String{bbb}$.
-The part before the vertical bar --- $\alpha \rewrite \beta$ --- is the actual rewriting step, whereas $\gamma \_ \delta$ is the context specification.
+The part before the vertical bar, i.e.\ $\alpha \rewrite \beta$, is the actual rewriting step, whereas $\gamma \_ \delta$ is the context specification.
 A rule can apply from left-to-right, right-to-left, or in parallel to all licit target sites.
 %
 \begin{examplebox}[Directionality of Rule Application]
@@ -179,12 +179,23 @@ Their composition is $A \circ B \is \tuple{Q_A \times Q_B, \Sigma, \Omega, I_A \
     \end{center}
     %
     It is easy to see that this transducer rewrites $\String{abab}$ as $\String{baca}$. 
+
+    Notice that composition is not commutative.
+    Running the right transducer before the left one maps $\String{abab}$ to nothing at all because $\String{abac}$ is not in the domain of the first transducer.
+    You can verify this by looking at their composition; in order to highlight the differences with the previous transducer, the states are still labeled such that their first component represents the state of the left transducer and the second one that of the right transducer.
+    %
+    \begin{center}
+        \input{./img/tikz/SPE_ComposedTransducerR2L.tikz}
+    \end{center}
 \end{examplebox}
 %
 Closure under composition entails another important property: the image of a regular language $L$ under an FST $T$ is always regular.
 This is implied by a few simple observations.
 %
 \begin{enumerate}
+\Note{Why do we need FST composition for this result?
+    That is to say, why isn't it enough to observe that every FST can be turned into an FSA by dropping the first component of every arc label?
+}
     \item If we drop the first component from each arc of the FST $T$, we get an FSA that defines a regular output language.
     \item Every language $L$ can be lifted to a transduction by looking at its identity function $\idfunc(L) \is \setof{\tuple{w,w} \mid w \in L}$.
         If $L$ is regular, this transduction is obtained by taking an FSA for $L$ (which must exist thanks to $L$ being regular) and expanding each arc label $a$ to $a:a$.
@@ -195,9 +206,6 @@ This is implied by a few simple observations.
     \item It follows that $T(L) = (\idfunc(L) \circ T)(\Sigma^*)$ is a regular language.
 \end{enumerate}
 %
-\Note{Why do we need FST composition for this result?
-    That is to say, why isn't it enough to observe that every FST can be turned into an FSA by dropping the first component of every arc label?
-}
 
 Besides composition, it is also of interest to look at the Boolean closure properties.
 %
@@ -445,3 +453,251 @@ And since FSTs generate regular languages, it follows that SPE generates only re
 \end{theorem}
 
 \section{Comparing SPE and OT}
+
+\subsection{A Formal Definition of OT}
+In the mid 90s, a new theory became the dominant paradigm in phonological research: Optimality Theory (OT; \citealp{PrinceSmolensky04}).
+OT uses violable (``soft''), ranked constraints in place of SPE's rewrite rules.
+It has been claimed that this limits its generative capacity in comparison to SPE and also allows it to state generalizations that could not be captured with SPE\@.
+We will see that at least the first claim is false.
+
+First, the \emph{generator} $\Gen$ maps every input string to its possible \emph{output candidates}, which is usually taken to be every string that can be formed over the same alphabet.
+Since richness of the base is a standard assumption in OT, the generator computes the transduction $\Sigma^* \times \Sigma^*$.
+In addition, each constraint $\con$ restricts the range of a given transduction $\transduction$ such that if $i\transduction \is \setof{ o \mid \tuple{i,o} \in \transduction }$ is the set of output candidates for input $i$, then $\con$ only keeps those $o \in i\transduction$ that are \emph{optimal} with respect to $\con$.
+Optimality holds of $o$ iff there is no $o' \in i\transduction$ such that $\cardof{\con(o')} < \cardof{\con(o)}$, where $\con(o)$ is the number of violations $o$ incurs with respect to $\con$.
+For example, the constraint $^*\String{ab}$ penalizes $a$s being followed by $b$ and is violated $2$ times in $\String{abab}$, but $3$ times in $\String{ababab}$.
+We denote the result of restricting transduction $\transduction$ via $\con$ by $\transduction \glencomp \con$.
+The transduction computed by an OT grammar with constraints $\con_1, \ldots, \con_n$, with $\con_i$ higher ranked than $\con_j$ for all $i < j$, is $\Gen \glencomp \con_1 \glencomp \cdots \glencomp \con_n$.
+%
+\begin{examplebox}[A Small OT Grammar]
+    Suppose that we have an OT grammar with two constraints, one being $^*\String{ab}$, the other one $2a!$, which requires at least two $a$s to occur in the string.
+    What are the optimal output candidates for $\String{ab}$ under this grammar?
+    This is easily determined via an \emph{OT tableaux}.
+    %
+    \begin{center}
+        \begin{tabular}{rcc}
+            \toprule
+            $\String{ab}$ & $^*\String{ab}$ & $2a!$\\
+            \midrule
+            \emptystring & & **\\
+            $a$ & & *\\
+            $b$ & & **\\
+            $\String{aa}$ & & \\
+            $\String{ab}$ & * & *\\
+            $\String{ba}$ &  & *\\
+            $\String{bb}$ &  & **\\
+            $\vdots$ & & \\
+            $\String{aaaa}$ & & \\
+            $\vdots$ & & \\
+            $\String{aabb}$ & * & \\
+            $\vdots$ & & \\
+            $\String{abab}$ & ** & \\
+            $\vdots$ & & \\
+            \bottomrule
+        \end{tabular}
+    \end{center}
+    %
+    As you can see, the optimal output candidates are exactly those strings that contain at least $2$ $a$s and not a single instance of $\String{ab}$.
+    Note that these optimal output candidates do not violate either constraint, so it does not matter how we rank the two constraints.
+
+    Now suppose that we also have a third constraint \textsc{Id} that punishes any deviation from the input string.
+    Then the ranking of constraints does make a difference.
+    For example, if \textsc{Id} is the highest ranked constraint, $\String{ab}$ is the only optimal output candidate for $\String{ab}$.
+    If it the lowest ranked constraint, then the sole optimal output candidate is $\String{aa}$.
+    %
+    \begin{center}
+        \begin{tabular}{rccc}
+            \toprule
+            $\String{ab}$ & \textsc{Id} & $^*\String{ab}$ & $2a!$\\
+            \midrule
+            \emptystring & ** & & **\\
+            $a$ & * & & *\\
+            $b$ & * & & **\\
+            $\String{aa}$ & * & & \\
+            $\String{ab}$ & & * & *\\
+            $\String{ba}$ & * &  & *\\
+            $\String{bb}$ & * &  & **\\
+            $\vdots$ & & \\
+            $\String{aaaa}$ & *** & & \\
+            $\vdots$ & & & \\
+            $\String{aabb}$ & ** & * & \\
+            $\vdots$ & & \\
+            $\String{abab}$ & ** & ** & \\
+            $\vdots$ & & \\
+            \bottomrule
+        \end{tabular}
+        %
+        \hspace{2em}
+        %
+        \begin{tabular}{rccc}
+            \toprule
+            $\String{ab}$ & $^*\String{ab}$ & $2a!$ & \textsc{Id}\\
+            \midrule
+            \emptystring & & ** & **\\
+            $a$ & & * & *\\
+            $b$ & & ** & *\\
+            $\String{aa}$ & & & *\\
+            $\String{ab}$ & * & * & \\
+            $\String{ba}$ &  & * & **\\
+            $\String{bb}$ &  & ** & *\\
+            $\vdots$ & & & \\
+            $\String{aaaa}$ & & & ***\\
+            $\vdots$ & & \\
+            $\String{aabb}$ & * & & **\\
+            $\vdots$ & & \\
+            $\String{abab}$ & ** & & **\\
+            $\vdots$ & & \\
+            \bottomrule
+        \end{tabular}
+    \end{center}
+\end{examplebox}
+
+The constraints used in the previous example fall into two distinct classes. 
+The first two, $^*\String{ab}$ and $2a!$, do not take the input into account. 
+They are called \emph{markedness constraints}.
+The constraint \textsc{Id}, on the other hand, is a \emph{faithfulness constraint}, as it requires the output to deviate as little as possible from the input.
+%
+\begin{definition}[OT Constraints]
+    An OT constraint is a function $\Sigma^* \times  \Sigma^* \times \NatNum$ that maps input-output pairs to natural numbers.
+    A constraint $\con$ is a \emph{markedness} constraint iff there are no distinct inputs $i$ and $j$ such that $\cardof{\con(\tuple{i,o})} \neq \cardof{\con(\tuple{j,o})}$.
+    Otherwise it is a \emph{faithfulness} constraint.
+\end{definition}
+
+\begin{definition}
+    An OT grammar is a pair $O \is \tuple{\conset, <}$, where $\conset \is \setof{\con_1, \ldots, \con_n}$ is a finite set of OT constraints and $<$ a linear order over $\conset$.
+    The grammar $O$ computes the transduction $\transduction\is \Gen \glencomp \con_1 \glencomp \cdots \glencomp \con_n$, where
+    %
+    \begin{itemize}
+        \item $\con_i < \con_{i+1}$ for all $1 \leq i < n$, and
+        \item $R \glencomp \con_j \is \setof{ \tuple{i,o} \in R \mid \neg \exists o' \big [ \tuple{i,o'} \in R \wedge \cardof{\con_j(\tuple{i,o'})} < \cardof{\con_j(\tuple{i,o})} \big ] }$.
+    \end{itemize}
+    %
+    The language generated by $O$ is $O(L) \is \bigcup_{i \in \Sigma^*} i\transduction$.
+\end{definition}
+
+\subsection{Finite-State OT}
+
+It is obvious that the power of an OT grammar depends on its constraints.
+Without restrictions on what counts as a valid OT constraint, every recursively enumerable language can be generated by an OT grammar.
+Recall that the same is true for SPE if we do not block rewrite rules from rewriting their own output.
+In the case of SPE, phonologists intuitively followed that restriction, and likewise the set of commonly entertained OT constraints follows certain restrictions.
+For instance, there is no constraint in the literature that is satisfied by only those strings whose length is prime, or the Gödel number of a theorem of first-order logic.
+Nor has anybody proposed anything like a constraint that requires the same number of $a$s and $b$s to occur in a string.
+In the following, we will show that the generative capacity of OT is exactly that of SPE as long as the constraints obey certain properties.
+We start out with a simple fragment of OT \citep{FrankSatta98,Karttunen98}, which is subsequently extended to a more faithful formalization \citep{Jaeger02}.
+
+\paragraph{Categorical constraints}
+Suppose that all constraints are markedness constraint and each string in $\Sigma^*$ violates it at most once.
+In other words, each constraint $\con$ defines a language $L(\con)$ of well-formed strings.
+If this language is regular, then the OT grammar generates a regular language.
+%
+\begin{theorem}
+    Let $O \is \tuple{\conset,<}$ be an OT grammar such that every $\con \in \conset$ is a markedness constraint that defines a regular language.
+    Then $\transduction$ is a finite state transduction and $O(L)$ is regular.
+\end{theorem}
+%
+\begin{proof}
+    The regularity of $O(L)$ follows immediately from the fact that $\Sigma^*$ is regular and regular languages are closed under finite state transductions.
+    The following is an inductive proof that $\transduction$ is a finite-state transduction.
+    
+    The base case is trivial, as $\Gen \is \Sigma^* \times \Sigma^*$ is obviously finite-state.
+    Suppose, then, that $R$ is a finite-state transduction.
+    In this case, we have 
+    \[
+        R \glencomp \con_i \is
+            \begin{cases}
+                R \circ \idfunc(L(\con_i)) & \text{if } L(\con_i) \neq \emptyset\\
+                R & \text{otherwise.}
+            \end{cases}
+    \]
+    %
+    For every regular language $L$, one can test whether it is empty.
+    \Note{Testing for emptiness can be omitted by using a more complicated definition instead, see \citet{Karttunen98} for details.}
+    So we can remove from $O$ all $\con_i$ that define an empty language, yielding a compacted grammar $O'$ that computes the same transduction as $O$.
+    Since $\idfunc(L)$ is a finite-state transduction if $L$ is regular, and since finite-state transductions are closed under composition, the transduction computed by $O'$ --- and thus $O$ --- is finite-state.
+\end{proof}
+%
+Note that every regular language $L$ (except the empty language $\emptyset$) can be generated by such a restricted version of OT\@: we simply limit the set of constraints to a single $\con$ with $L(\con) = L$.
+Since the empty language is of no interest to linguists, we can already conclude that OT is at least as powerful as SPE\@.
+
+\paragraph{FST constraints}
+Virtually no constraint in the literature satisfies the requirement that every string violates it at most once.
+Fortunately, though, the result can be extended to constraints that have no such upper bound.
+
+Every markedness constraint $\con$ defines a relation $R_\con$ over $\Sigma^*$ such that $\tuple{o,o'} \in R$ iff $\cardof{\con(o)} < \cardof{\con(o')}$.
+So the optimal outputs are exactly those for which there is no $o'$ such that $\tuple{o',o} \in R_\con$.
+Now suppose that $\con$ is the $i$-th constraint of the OT grammar $O$, and that $\transduction \is \Gen \glencomp \con_1 \glencomp \cdots \glencomp c_{i-1}$.
+Then we can relativize $R_{\con_i}$ to $\transduction$ by removing all rankings that pertain to an output candidate that has already been eliminated: $\relrank{\con}{\transduction} \is R_{\con} \cap (\invof{\transduction} \circ \transduction)$.
+The relation $\invof{\transduction} \circ \transduction$ holds between outputs $o$ and $o'$ iff they are competing candidates for some input $i$.
+In other words, $\transduction$ contains both $\tuple{i,o}$ and $\tuple{i,o'}$.
+%
+\begin{definition}[Rational constraint]
+    A constraint $\con$ is \emph{rational} with respect to transduction $\transduction$ iff there is a finite state transduction $S$ such that $S \cap \transduction = \relrank{\con}{\transduction}$.
+\end{definition}
+%
+Intuitively, a constraint $\con$ is rational if we can find a finite state transduction $S$ that describes the same ranking over the set of output candidates produced by $\transduction$.
+So the finite state transduction does not have to fully replicate $\con$, the two only need to agree on the remaining candidates.
+Given such an $S$, the set of suboptimal candidates is simply $\range(R \circ S) \is \setof{ o \mid \tuple{i,o} \in R \circ S}$.
+The relative complement $\range(R) \setminus \range(R \circ S)$ thus is the set of optimal output candidates.
+Notice that this is guaranteed to be a regular language thanks to the closure properties of finite state transductions and regular languages.
+Consequently, the identity function over this set is a finite state transduction, so it follows that
+%
+\[
+    R \glencomp \con_i \is
+        R \circ \idfunc(\range(R) \setminus \range(R \circ S_i))
+\]
+%
+is a finite state transduction, too.
+%
+\begin{theorem}
+    Let $O \is \tuple{\conset,<}$ be an OT grammar such that every $\con_i \in \conset$ is a rational markedness constraint with respect to $\Gen \glencomp \con_1 \glencomp \cdots \glencomp \con_{i-1}$.
+    Then $\transduction$ is a finite state transduction and $O(L)$ is regular.
+\end{theorem}
+%
+Two things should be kept in mind.
+First, if $\con_i$ can be defined in terms of a finite state transducer, then it is always a rational constraint since one valid choice for $S$ in this case is the transitive closure of $\con_i$.
+%
+\begin{examplebox}[A Rational OT Constraint]
+    The constraint $^*\String{ab}$ can be modeled by a transducer that non-deterministically inserts
+    %
+    \begin{itemize}
+        \item a $b$ after an $a$, or
+        \item $ab$ at arbitrary points.
+    \end{itemize}
+    %
+    For instance $\String{a}$ can be rewritten as $\String{ab}$, $\String{aba}$, or $\String{abaab}$, but not as $\String{ba}$.
+    Hence we have $\String{a} < \String{ab}$, $\String{a} < \String{aba}$, and $\String{a} < \String{abaab}$, but $\String{a} \not< \String{ba}$ (note that $\String{aba} < \String{abaab}$, too).
+\end{examplebox}
+%
+More importantly, the generalized lenient composition gives the intended result only if optimality is a global property that is independent of the choice of input.
+%
+\begin{definition}[Global Optimality]
+    Given an OT grammar $O$, optimality is \emph{global} iff it holds for all $o$ that $\tuple{i,o} \in \transduction$ and $\tuple{j,o} \in \Gen$ implies $\tuple{j,o} \in \transduction$.
+\end{definition}
+%
+Global optimality requires for every output candidate that is optimal for input $i$ that it is also optimal for every other input $j$ that is an output candidate for.
+This is the case as long as $\Gen = \Sigma^* \times \Sigma^*$ and all constraints are markedness constraints, but not if the grammar also contains faithfulness constraints.
+So this approach still cannot handle faithfulness constraints.
+
+\paragraph{Faithfulness constraints}
+\citet{Riggle04} develops a very different formalization in terms of \emph{weighted FSTs}.
+These are FSTs where every arc also has a weight attached it.
+Riggle uses these weights to encode constraint violations: whenever a string takes a specific path, it may incur a violation of a specific constraint that corresponds to the weight of the arc.
+Unfortunately we do not have the time to discuss this approach in greater detail.
+
+\section{Insights about SPE and OT}
+We have seen that both SPE and OT can generate every regular language, even if we consider only very weak fragments of the formalisms.
+For SPE, it suffices to have a strictly $2$-local set of underlying forms and a few simple rewrite rules that compute the desired projection.
+If one wants to also eliminate the set of underlying representations, one needs three additional rules that act as a filter on $\Sigma^*$.
+For OT, a single markedness constraint is sufficient to generate every regular language.
+A realistic OT grammar with output and faithfulness constraints might even generate non-regular languages, disproving the common assumption that OT is more restricted than SPE\@.
+At any rate, both formalisms are more powerful than what is needed for phonology.
+In fact, they are so powerful that the language class they describe cannot be learned in the limit from positive text, and there is no obvious way to limit their expressivity.
+
+Crucially, though, our notion of power focuses on the generated languages.
+But it could be argued that a phonological theory must go beyond describing the correct output forms and also has to specify the correct mappings from underlying forms to surface forms.
+After all, the knowledge that \textipa{[Ra:t]} is a well-formed string of German is rather useless if the speaker cannot map the word to the lexical entry \textipa{/Ra:d/} `wheel'.
+Maybe a theory that is expressive enough to describe all these mappings cannot do without a certain amount of power that also allows it to generate arbitrary regular languages.
+That seems rather odd --- why, then, is the range of attested natural language phonologies such a narrowly restricted subset of the regular languages?
+But this scenario cannot be ruled out as too little is currently known about the computational properties of the mappings from underlying forms to surface forms.
+Fortunately this subject has gotten a lot more attention in recent years, see e.g.\ \citet{Chandlee14}.
+Incomplete as the picture may be at this point, these first forays already provide tentative evidence that SPE and OT overgenerate even with respect to the mappings and that their increased power does not allow for significantly more succinct descriptions of the empirical phenomena.
