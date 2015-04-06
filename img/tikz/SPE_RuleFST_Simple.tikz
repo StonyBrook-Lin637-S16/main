@@ -1,12 +1,21 @@
 \begin{tikzpicture}
     \node[state,initial,accepting] (0) {0};
-    \node[state,accepting] [right=of 0] (1) {1};
-    \node[state] [right=of 1] (2) {2};
+    \node[state,accepting] [right=5em of 0] (1) {1};
+    \node[state] [below=5em of 0] (2) {2};
+    \node[state,accepting] [below=5em of 1] (3) {3};
 
     \path[->] (0) edge [loop above] node {$\complementof{c}:\complementof{c}$} (0)
-                  edge [bend left] node [above] {$c:c$} (1)
-              (1) edge [bend left] node [below] {$\complementof{a}:\complementof{a}$} (0)
-                  edge node [above] {$a:b$} (2)
-              (2.south) edge [bend left=45] node [below] {$d:d$} (0.south)
+                  edge node [below] {$c:c$} (1)
+              (1) edge [bend right] node [above] {
+                                                  \begin{tabular}{c}
+                                                      $b:b$\\
+                                                      $d:d$
+                                                  \end{tabular}
+                                                } (0)
+                  edge [loop above] node {$c:c$} (1)
+                  edge node [right,pos=.85] {$a:b$} (2)
+                  edge node [right] {$a:a$} (3)
+              (2) edge node [left] {$d:d$} (0)
+              (3) edge node [right,pos=.8] {$\complementof{d}:\complementof{d}$} (0)
               ;
 \end{tikzpicture}
