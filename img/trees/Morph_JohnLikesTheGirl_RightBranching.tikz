@@ -1,0 +1,15 @@
+\begin{forest}
+    [S
+        [John]
+        [VP
+            [likes]
+            [NP
+                [the]
+                [N
+                    [girl]
+                    [.]
+                ]
+            ]
+        ]
+    ]
+\end{forest}

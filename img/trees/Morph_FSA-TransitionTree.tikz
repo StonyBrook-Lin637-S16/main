@@ -1,0 +1,5 @@
+\begin{forest}
+    [$p$
+        [$a$] [$q$]
+    ]
+\end{forest}

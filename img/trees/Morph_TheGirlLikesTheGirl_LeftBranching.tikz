@@ -1,0 +1,18 @@
+\begin{forest}
+    [S
+        [Det
+            [VP
+                [NP
+                    [Det
+                        [.]
+                        [the]
+                    ]
+                    [girl]
+                ]
+                [likes]
+            ]
+        [the]
+        ]
+    [girl]
+    ]
+\end{forest}
