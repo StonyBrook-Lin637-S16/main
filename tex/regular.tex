@@ -711,12 +711,13 @@ So they are indeed just a different way of specifying the kind of dependencies t
         \item $\Delta \subseteq Q \times \Sigma \times Q$ is a finite set of transition rules.
     \end{itemize}
     %
-    The FSA is \emph{deterministic} iff $I$ is a singleton set and $\Delta$ contains no two $\tuple{p,a,q}$ and $\tuple{p,a,r}$ with $q \neq r$.
+    The FSA is \emph{deterministic} iff $I$ is a singleton set $\Delta$ contains no two $\tuple{p,a,q}$ and $\tuple{p,a,r}$ such that $q \neq r$ or $a = \emptystring$.
     Otherwise it is non-deterministic.
     For deterministic FSA, we also write $\delta(q,a) = q'$ instead of $\tuple{q,a,q'} \in \Delta$.
 \end{definition}
 %
-In our graphical representation, determinism holds iff all outgoing branches of a state have distinct labels.
+In our graphical representation, determinism holds iff there is never a choice as to which outgoing branch the automaton should follow.
+This is the case only if, first, all outgoing branches of a state have distinct labels, and second, no outgoing arc is labeled $\emptystring$. 
 The example automaton above is non-deterministic because both branches leaving the state o are labeled $b$.
 %fixme: add definition of generation, recognition
 
