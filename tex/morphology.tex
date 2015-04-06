@@ -47,10 +47,54 @@ For instance, consonant clusters can have greater complexity if they span a morp
 This can be seen in German, where /tstpR/ cannot occur in any monomorphemic word but is perfectly acceptable in the compound \emph{Arztpraxis} `doctor's office'.
 The interaction of morphology and phonology is also known as \emph{morphophonology} or, slightly shortened, \emph{morphonology}.
 The close interaction of those two domains, with morphology sometimes relying phonological processes and phonology being sensitive to morphological information, means that the two are often treated by one and the same mechanism in real-life applications.
+%
+\begin{table}
+\centering
+    \begin{tabular}{llll}
+        \toprule
+        \textbf{Marker} & \textbf{Process type} & \textbf{Example}                                                       & \textbf{Language}\\
+        \midrule
+        no marking      & derivational          & \emph{the anger} --- \emph{to anger} & \\
+                        & inflectional          & \emph{I eat} --- \emph{you eat} & \\
+                        &                       & \emph{this sheep} --- \emph{these sheep} & \\
+        \midrule
+        prefix          & derivational          & \emph{do} --- \emph{undo} & \\
+                        & inflectional          & \emph{i-ausipu} (\textsc{3sg}-put.down)                                & Nuaulu\\
+        \midrule
+        suffix          & derivational          & \emph{do} --- \emph{doable} & \\
+                        &                       & \emph{quick} --- \emph{quickly} & \\
+                        & inflectional          & \emph{I eat} --- \emph{he eats} & \\
+                        &                       & \emph{dog} --- \emph{dogs} & \\
+        \midrule
+        infix           & derivational          & \emph{unbelievable} --- \emph{un-fucking-believable} & English (marginal)\\
+                        &                       & \emph{Óscar} --- \emph{Osquítar} (diminutive of `Oscar')               & Nicaraguan Spanish\\
+                        & inflectional          & \emph{hafal} `celebrate' --- \emph{h-t-afal} `celebrated'& Arabic\\
+                        &                       & (person and gender affixes omitted) & \\
+        \midrule
+        circumfix       & derivational          & \emph{adil} `fair' --- \emph{ke-adil-an} `fairness'                    & Malay\\
+                        & inflectional          & \emph{kauf-en} `to buy' --- \emph{ge-kauf-t} `bought.\textsc{PstPart}' & German\\
+        \midrule
+        sound change    & derivational          & \emph{biegen} `to bend' --- \emph{Bogen} `bow, arch' & German (not productive)\\
+                        & inflectional          & \emph{Laden} `store' --- \emph{Läden} `stores'                         & German\\
+                        &                       & \emph{woman} --- \emph{women} & English (not productive)\\
+        \midrule
+        prosodic change & derivational          & \emph{the export} --- \emph{to export} & \\
+                        & inflectional          & \emph{standen} `stand.\textsc{Pst}' --- \emph{stünden} `stand.\textsc{Subj}' & German\\
+        \midrule
+        reduplication   & derivational          & \emph{to like} --- \emph{to like-like} `love' &\\
+                        &                       & \emph{``Rules, schmules!''} & American English\\
+                        &                       & \emph{kagir} `belt' --- \emph{kagir-gir} `to wear a belt' & Marshallese\\
+                        & inflectional          & \emph{kanak} `child' --- \emph{kanak kanak} `children' & Indonesian \\
+        \bottomrule
+    \end{tabular}
+\caption{Overview of morphological marking strategies}    
+\label{tab:Morph_MarkerOverview}
+\end{table}
 
 \subsection{Two-Level Morphology}
 
 Just like phonology, morphology has been analyzed in terms of rewrite rules for the largest part of recent history.
+\Note{Why is this a better strategy than simply listing every word with all its inflected forms?}
 To the best of my knowledge, morphologists instinctively followed the same ban against a rule rewriting its own output that guaranteed the regularity of phonology.
 This makes it very likely that morphology, or at least a large part of it, is regular, too.
 So the finite state methods we used for phonology can be used just as well for morphology, which makes it possible to have one big rewrite grammar that intersperses phonological and morphological rewriting to capture the interaction of the two.
@@ -65,25 +109,53 @@ Suppose you have a phonological surface form $s$ for a word that sounds like \em
 Then $s$ could be simply a compound of \emph{wipe} and \emph{board}, or a compound of \emph{white} and \emph{board} where /t/ was replaced by /p/ due to the following /b/.
 Now if you take the FST for your rewrite grammar and construct its inverse, which maps surface forms to underlying forms, it can return either option as a possible underlying form (since the FST is non-deterministic, even getting this set of all possible underlying forms is not trivial).
 In order to determine the correct underlying form, you then have to lookup each form in the lexicon, where you will eventually find an entry for \emph{white board} but none for \emph{wipe board}.
-Keep in mind that a lexicon can contain hundreds of thousands of entries, so this search can also take a long time unless one uses a hashtable, which wasn't feasible back then due to memory limitations.
+Keep in mind that a lexicon can contain hundreds of thousands of entries, so this search may take a long time unless one uses a hashtable, which wasn't feasible back then due to memory limitations.
 
 Nowadays the solution is obvious: take the identity function over the lexicon and compose it with the FST for the grammar.
 If this composed FST is run in reverse, it only outputs items in the lexicon, so that no search is needed.
-But this simple trick wasn't known until the mid 90s, and instead \emph{two-level morphology} was developed as a more practical tool for morphological analysis \citep{Koskenniemi83}.
+But this simple trick wasn't worked out until the mid 90s, and instead \emph{two-level morphology} was developed as a more practical tool for morphological analysis \citep{Koskenniemi83}.
 
 From a formal perspective, two-level morphology is a very simple modification of the rewrite paradigm.
 Rather than applying rewrite rules sequentially, one after another, they are all applied in parallel.
 Consequently, the grammar isn't a cascade of FSTs but runs all FSTs in parallel instead.
 The overall transduction is the intersection of these FSTs.
 Recall that the intersection of arbitrary FSTs is not guaranteed to be an FST\@.
-However, the class of $\emptystring$-free FSTs is closed under intersection, and two-level morphology exploits this fact by using a special symbol $0$ that is used to indicate unpronounced nodes.
+However, the class of $\emptystring$-free FSTs is closed under intersection, and two-level morphology exploits this fact by using a special symbol $0$ to indicate unpronounced nodes.
 That way, deletion of a symbol $\sigma$ amounts to relabeling it as $0$, and insertion of $\sigma$ is emulated by relabeling $0$ as $\sigma$.
+
+The process of pluralizing \emph{index} to \emph{indices}, for instance, is modeled as first composing the stem \emph{index} and the plural marker +00, and this string \emph{index}+00 is rewritten as \emph{indic}0\emph{es}, which is pronounced \emph{indices}.
+Formally, the transduction contains the pair $\tuple{\text{\emph{index}}+00,\text{\emph{indic}}0\text{\emph{es}}}$, and since both strings have the same length, we are dealing with an equal length relation, which instead can be viewed as a string of pair symbols
+\[
+    \begin{pmatrix}
+        i\\i
+    \end{pmatrix}
+    \begin{pmatrix}
+        n\\n
+    \end{pmatrix}
+    \begin{pmatrix}
+        d\\d
+    \end{pmatrix}
+    \begin{pmatrix}
+        e\\i
+    \end{pmatrix}
+    \begin{pmatrix}
+        x\\c
+    \end{pmatrix}
+    \begin{pmatrix}
+        +\\0
+    \end{pmatrix}
+    \begin{pmatrix}
+        0\\e
+    \end{pmatrix}
+    \begin{pmatrix}
+        0\\s
+    \end{pmatrix}
+\]
+This shift in perspective turns the relation into a regular language, and closure under intersection holds.
 A rather inelegant trick, but it gets the job done.
 
 As is implied by the name, two-level morphology posits only two levels, one for underlying forms, one for surface forms.
-For example, the word \emph{moved} may be analyzed as the underlying form \emph{move+ed} and the surface form \emph{mov00ed}.
-Since the two forms always have the same length, they can be analyzed as a single string of pair symbols (similar to how we formalized strictly local languages with a hidden alphabet).
-
+The two forms are padded with zeros if necessary to ensure they have the same length, wherefore they can always be analyzed as a single string of pair symbols as above.
 The rewrite rules operate over such pair symbols $u:s$, where $u$ is the underlying segment and $s$ the surface segment.
 The rewrite rules are of the form $u:s \diamond \alpha \_ \beta$, where $\alpha$ and $\beta$ are strings over pair symbols (and may also include SPE-style notation like brackets for optionality and $+$ for iteration).
 The symbol $\diamond$ is a placeholder for two different types of rewrite arrows: $\Rightarrow$ and $\Leftarrow$.
@@ -126,3 +198,263 @@ Putting aside reduplication, though, all of known morphology seems to fall withi
 And just like in phonology, the overwhelming majority of processes do not come close to exploiting the full power FSTs.
 
 \section{Syntax}
+
+\subsection{A Weak Argument That Syntax is Not Regular}
+Syntax regulates the well-formedness of sentences, which includes basic factors like word-order but also much more arcane properties such as the distribution of so-called negative polarity items (\emph{ever}) and anaphors (\emph{himself}, \emph{herself}, \emph{itself}).
+It is usually believed to be more complex than phonology and morphology.
+For example, the basic data structure is assumed to be trees rather than strings, so that a simple sentence like \emph{John likes Mary} actually involves a lot of hidden structure:
+%
+\begin{center}
+    \input{./img/trees/Morph_JohnLikesTheGirl.tikz}
+\end{center}
+%
+Trees of this form are generated by phrase structure grammars, which are finite sets of rewrite rules without context specifications.
+The tree above is generated by the grammar below:
+%
+\begin{center}
+    \begin{tabular}{rcl}
+        S  & \rewrite & NP VP\\
+        NP & \rewrite & (Det) N\\
+        VP & \rewrite & V NP
+    \end{tabular}
+    %
+    \hspace{2em}
+    %
+    \begin{tabular}{rcl}
+        Det & \rewrite & the\\
+        N   & \rewrite & John | girl\\
+        V   & \rewrite & likes
+    \end{tabular}
+\end{center}
+
+At first sight it seems that this shift to trees --- if it is indeed called for --- renders our current tools useless because they generate strings, not trees.
+But this is not quite correct.
+Consider the transition $\tuple{p,a,q}$ some FSA\@.
+We can represent this as a tree with $p$ as the root and $a$ and $q$ as left and right sibling, respectively.
+%
+\begin{center}
+    \input{./img/trees/Morph_FSA-TransitionTree.tikz}
+\end{center}
+%
+And every such tree corresponds to a rewrite rule $p$ \rewrite $a$ $q$.
+So every FSA corresponds to a phrase structure grammar where every node has exactly two daughters, the first of which is a symbol from the alphabet whereas the second one is a state symbol.
+That is not enough to produce the tree above, but it allows us to generate a very similar version (the dot indicates the final state).
+%
+\begin{center}
+    \input{./img/trees/Morph_JohnLikesTheGirl_RightBranching.tikz}
+\end{center}
+%
+\Note{Every FSA can also be converted into a grammar that generates strictly left-branching trees.
+    What does this translation look like?
+}
+Such a tree is called \emph{strictly right-branching}, and its mirror image would be \emph{strictly left-branching}.
+This terminology also applies to phrase structure grammars that only generate trees of this kind.
+
+An argument that FSAs are insufficient for syntax cannot simply invoke the fact that syntax uses trees.
+Every FSA can be converted into a grammar that generates trees, albeit strictly right-\slash left-branching ones.
+Consequently, a tree-based argument has to show that these types of trees are unsuitable for natural language.
+That is a lot more difficult than one would expect.
+
+For example, one may object that both the strictly right-branching and the strictly left-branching tree do not represent the true structure of \emph{The girl likes the girl}.
+%
+\begin{center}
+    \input{./img/trees/Morph_TheGirlLikesTheGirl_RightBranching.tikz}
+    \hspace{2em}
+    \input{./img/trees/Morph_TheGirlLikesTheGirl_LeftBranching.tikz}
+\end{center}
+%
+But how does one determine what the true structure should be?
+In contrast to phonology, where we could check the generated strings against the observed surface forms, we have no direct access to the tree structure of a sentence, assuming it even exists.
+All we have is indirect evidence.
+In the case at hand, the two instances of \emph{the girl} have different structures but seem to exhibit very similar behavior.
+For example, both can be coordinated with another noun phrase.
+%
+\begin{exe}
+    \ex
+    \begin{xlist}
+        \ex The girl likes the girl.
+        \ex The girl and the boy like the girl.
+        \ex The girl likes the girl and the boy.
+        \ex The girl and the boy like the girl and the boy.
+    \end{xlist}
+\end{exe}
+%
+Linguists have an enormous battery of tests to probe the \emph{constituency} of a sentence, i.e.\ how words combine into subtrees.
+It is important to keep in mind, though, that these tests are theory-laden, starting with the very basic assumption that if two substrings show similar behavior, this is indicative of a structural similarity between the subtrees.
+Often it is also implicitly assumed that constituency tests identify the \emph{unique} structure of a substring, rather than one of several varieties.
+\Note{For example, many debates about English possessive constructions focus on whether the possessor or the possessee is a sibling of the possessive marker \emph{'s}, when the simplest account is simply that both options are licit.}
+There are licit scientific assumptions, but they invariably weaken any results obtained this way --- if the assumptions are rejected or shown faulty, then the array of findings that build on them, no matter how impressive, is at risk of collapsing like a house of cards.
+A proof that does not rely on any of these assumptions is more reliable and general and insightful, and thus to preferred.
+
+Instead of focussing on how well regular methods may describe the tree structure of sentences, it is a lot simpler to verify whether the string languages are even regular.
+If the set of well-formed English sentences, understood as strings of words, is not regular, then obviously no FSA can generate this set and it follows immediately that FSAs cannot produce the necessary tree structures, either.
+
+\subsection{A String-Based Proof that Syntax is Not Regular}
+In our discussion of morphology it was mentioned that a pattern like \emph{ge$^n$-kauft-t$^n$}, where $n$ instances of \emph{ge} must be followed by $n$ instances of \emph{t}, is not regular.
+While it is unclear that such a pattern is ever instantiated in morphology, it is actually fairly easy to construct for syntax.
+%
+\begin{exe}
+    \ex
+    \begin{xlist}
+        \ex That John surprised me annoyed me.
+        \ex That that John surprised me surprised me annoyed me.\\
+        $\vdots$
+        \ex That$^n$ John (surprised me)$^n$ annoyed me.
+    \end{xlist}
+\end{exe}
+%
+The pattern above relies on the fact that each \emph{that} introduces a sentential subject, and since each one of them must have its finite verb, the number of occurrences of \emph{that} must be exactly the number of finite verbs, \emph{modulo} the finite verb in the highest clause.
+The sentence is fairly unnatural, but the basic idea can easily be generalized to other constructions.
+%
+\begin{exe}
+    \ex
+    \begin{xlist}
+        \ex The cheese was rotten.
+        \ex The cheese that the mouse ate was rotten.
+        \ex The cheese that the mouse that the cat chased ate was rotten.
+        \ex The cheese that the mouse that the cat that the dog dislikes chased ate was rotten.\\
+        $\vdots$
+        \ex The cheese (that the \emph{noun})$^n$ (\emph{transitive verb})$^n$ was rotten.
+    \end{xlist}
+\end{exe}
+%
+Quite generally, any kind of \emph{center embedding construction} will give rise to to these kinds of number matching conditions $a^n b^n$.
+
+We still have to proof, though, that $a^n b^n$ and related languages are not regular.
+The intuition that FSAs do not have enough memory homes in on the essential problem, but it does not constitute a proof.
+We will flash it out via a so-called \emph{pumping lemma}.
+First, suppose that $A$ is an FSA with $k$ states that generates an infinite language $L(A)$.
+Then for any $w \in L(A)$ with $\cardof{w} > k$ it must be the case that two nodes $m$ and $n$ of $w$ are assigned the same state $q$ by $A$.
+But then $A$ must contain a loop that leads from $q$ back to $q$.
+More precisely, let $w[m:n]$ be the substring of $w$ that spans from $m$ to $n$.
+Then $w[m:n]$ describes a path through $A$ from $q$ to $q$.
+Clearly this path can be taken multiple times.
+Each instance of following this loop is called a \emph{pump} $p$.
+Hence if $w \is x \cdot w[m:n] \cdot y$ belongs to $L(A)$, so does every \emph{pumped string} $x \cdot w[m:n]^p \cdot y$ for all $p \geq 1$.
+%
+\begin{theorem}[Regular Pumping Lemma]
+    If a language $L$ is regular, then there exists an integer $k \geq 1$ such that every $w \in L$ of length at least $k$ has a decomposition $w \is x \cdot z \cdot y$, where
+    %
+    \begin{itemize}
+        \item $\cardof{z} \geq 1$,
+        \item $\cardof{x} + \cardof{y} < k$,
+        \item $x z^p y \in L$, $p \geq 1$.
+    \end{itemize}
+\end{theorem}
+%
+\begin{proof}
+    If $L$ is finite, the claim is trivial.
+    For $L$ infinite, it follows from the representation via FSAs as discussed above.
+\end{proof}
+%
+Note that the pumping lemma is a necessary condition for a language to be regular, but not a sufficient one.
+That is to say, there are non-regular languages that satisfy the pumping lemma.
+Consequently, the pumping lemma cannot be used to prove that a language is regular, but failure of the pumping lemma does prove non-regularity.
+
+With the pumping lemma, it is fairly easy to show that $a^n b^n$ is not regular.
+All we have to do is consider all the possible decompositions of $a^k b^k$ into $xzy$ and show that we never end up with the right kind of pump, irrespective of the value for $k$.
+First, if $x$ contains at least one $b$, then $z$ can only contain $b$s and thus pumping $z$ introduces new $b$s but not new $a$s, so we got from $a^k b^k$ to $a^k b^m$, $m > n$, which is not in $a^n b^n$.
+An analogous argument holds if $y$ contains at least one $a$.
+So $z$ must be some string of the form $a^i b^j$.
+But then $z^2 = a^i b^j a^i b^j$, and no string with $z^2$ as a substring can be contained in $a^n b^n$.
+It follows that $a^n b^n$ is not regular.
+
+Showing that $a^n b^n$ is not regular is not enough to demonstrate that English is not regular, though.
+We have to translate the English patterns into the formal language $a^n b^n$.
+To this end, we let $\transduction$ be a finite state transduction that deletes the first two words \emph{the cheese}, maps each instance of \emph{that the noun} to $a$, each instance of a transitive verb to $b$, and deletes the last two words \emph{was rotten}.
+This turns the language \emph{the cheese (that the noun)$^n$ (transitive verb)$^n$ was rotten} into $a^n b^n$.
+As regular languages are closed under finite-state transductions, $a^n b^n$ is regular if the fragment of English is regular.
+Since the former is not, the latter is not either.
+
+It is tempting to stop at this point and conclude that English is not regular, but this would be a grave (and unfortunately very common) mistake.
+Showing that a fragment of a language has a certain complexity does not imply that the whole language is of the same complexity.
+For example, $\Sigma^*$ is strictly $1$-local even though it contains the fragment $(aa)^+$, which is regular.
+The whole language can be much simpler than a given fragment. 
+In the case at hand, English may actually be regular if we can also have sentences of the form \emph{the cheese that the mouse was rotten} or \emph{the cheese that the mouse chased ate was rotten}, where the number of NPs and transitive verbs no longer match.
+The crucial property --- which is implicit in our claim that English center embedding is captured by the pattern $a^n b^n$ --- is that all strings that deviate from this pattern in a specific way are ungrammatical (obviously there are strings that deviate in some other way yet are well-formed, e.g.\ \emph{John likes Mary}).
+Directly defining this set of related yet ungrammatical strings is tricky, so often it is more efficient to use closure properties to extend the proof to the entire language.
+
+In the case at hand, we construct a fragment of English that contains all relevant center embedding constructions via regular intersection.
+Evidently the language given by the pattern \emph{the cheese (that the noun)$^*$ (transitive verb)$^*$ was rotten} is regular, and its intersection with English is the language \emph{the cheese (that the noun)$^n$ (transitive verb)$^n$ was rotten}.
+But we already know that this language is not regular and as regular languages are closed under intersection, it follows that English cannot be regular.
+And since English is a natural language, we can finally conclude that natural language syntax is not adequately modeled by FSAs and FSTs.
+
+\subsection{Myhill-Nerode Characterization of Regular Languages}
+
+The pumping lemma has the disadvantage that it may yield false positives in the sense that some non-regular languages may satisfy it.
+A much stronger result is the \emph{Myhill-Nerode theorem}, which gives a full characterization of the regular languages.
+
+Suppose that $A$ is a deterministic FSA with state set $Q$ that recognizes $L$.
+Then we can identify with every state $q \in Q$ a set $\tails{q}$ of \emph{good tails} $t$ such that $t$ describes a path from $q$ to a final state of $A$.
+In the same vein, we can identify the set $\heads{q}$ of \emph{good heads} that describe a path from the initial state of $A$ to $q$.
+Concatenating a good head of $q$ with one of its good tails produces a string of $L$.
+In fact, $L$ is exactly $\bigcup_{q \in Q} \heads{q} \cdot \tails{q}$.
+The Myhill-Nerode theorem generalizes this idea so that it can be stated over strings without referencing automata or states.
+
+Given two strings $u$ and $v$, we write $u \equiv_L v$ iff $u$ and $v$ have the same good tails in $L$:
+\[
+    u \equiv_L v \Leftrightarrow \setof{ x \mid u \cdot x \in L } = \setof{ x \mid v \cdot x \in L}
+\]
+It is easy to see that $\equiv_L$ is an equivalence relation.
+%
+\begin{techinfo}[Equivalence relation]
+    An equivalence relation is a binary relation $R$ over a set $S$ that satisfies three conditions:
+    %
+    \begin{description}
+        \item[reflexive] for all $x \in S$, $\binrel{R}{x}{x}$
+        \item[symmetry] for all $x, y \in S$, $\binrel{R}{x}{y}$ implies $\binrel{R}{y}{x}$, 
+        \item[transitivity] for all $x, y, z \in S$, $\binrel{R}{x}{y}$ and $\binrel{R}{y}{z}$ jointly imply $\binrel{R}{x}{z}$.
+    \end{description}
+\end{techinfo}
+%
+The equivalence relation partitions $L$ into equivalence classes of strings that have the same good tails.
+But if these strings all have the same good tails, we can paraphrase this in FSA-terms: they all lead to the same state. 
+So each equivalence class is the (possibly infinite) set of paths that lead to a state $q$.
+This basic insight is enough to show that a language is regular iff $\equiv_L$ induces a finite number of equivalence classes.
+One also says that $\equiv_L$ has \emph{finite index}.
+%
+\begin{definition}[Index]
+    Let $R$ be an equivalence relation over set $S$, and let $\eclass{a} = \setof{ b \mid \binrel{R}{a}{b} }$.
+    The \emph{index} of $R$ is $\cardof{\setof{ \eclass{a} \mid a \in S}}$.
+\end{definition}
+%
+\begin{theorem}[Myhill-Nerode]
+    A string language $L$ is regular iff the corresponding equivalence relation $\equiv_L$ has finite index.
+\end{theorem}
+%
+\begin{proof}
+    If $L$ is regular, then we have $u \equiv_L v$ if they lead to the same state in some deterministic FSA $A$.
+    Hence, if $A$ has $k$ states, the index of $\equiv_L$ must be less than $k$ and thus finite.
+
+    In the other direction, we use $\equiv_L$ to construct a deterministic FSA $A$.
+    First, pick one string $w$ from each equivalence class of $\equiv_L$.
+    The state set of $A$ contains $q_w$ for every such $w$.
+    We mark $q_w$ as final iff $w \in L$, and $q_w$ is initial iff $\eclass{w}$ contains $\emptystring$.
+    Finally, $\delta(q_w,a) = q_z$ iff there are $u \in \eclass{w}$ and $v \in \eclass{z}$ such that $v = u \cdot a$.
+    Verifying that $A$ is deterministic and recognizes $L$ is left as an exercise to the reader.
+\end{proof}
+%
+% fixme: add figure with partitioned language and how one constructs the automaton
+
+The Myhill-Nerode theorem furnishes another way of showing that $a^n b^n$ is not regular, one that is much closer to the original intuition that an FSA does not have enough memory for this pattern.
+For every string $a^n$, its set of good tails is given by $\setof{a^i b^j \mid i \leq 0, j = n+i}$.
+Hence we have $a^m \equiv_L a^n$ iff $m = n$, i.e.\ each substring of $a$s has its own equivalence class.
+Consequently, $\equiv_L$ cannot be of finite index.
+
+So now we have yet another characterization of regular languages, but this one is particularly noteworthy because it completely abstracts away from grammars, automata and such devices to instead gives a direct characterization of regular languages. 
+In that respect, it is very similar to our characterization of the strictly local languages via substring substitution closure.
+%
+\begin{corollary}
+    Let $L$ be a string language.
+    Then the following claims are equivalent:
+    %
+    \begin{enumerate}
+        \item $L$ is generated by a refined strictly $2$-local grammar,
+        \item $L$ is a projection of a strictly $2$-local language,
+        \item $L$ is recognized by a finite-state automaton,
+        \item $L$ is the output language of a finite-state transducer,
+        \item $L$ is generated by a strictly right-\slash left-branching grammar,
+        \item $\equiv_L$ has finite index,
+        \item $L$ is regular.
+    \end{enumerate}
+\end{corollary}
