@@ -1,0 +1,23 @@
+\begin{forest}
+    [LIKES
+        [Subject
+            [John]
+        ]
+        [Modifier
+            [really]
+        ]
+        [Head
+            [likes]
+        ]
+        [Object
+            [GIRL
+                [Modifier
+                    [the]
+                ]
+                [Head
+                    [girl]
+                ]
+            ]
+        ]
+    ]
+\end{forest}

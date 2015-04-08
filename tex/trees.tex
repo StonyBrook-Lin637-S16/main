@@ -1,0 +1,304 @@
+\chapter{Moving From Strings to Trees}
+\label{cha:Trees}
+
+We have been able to show that English is not a regular language due to the structural complexity of center embedding.
+This leaves us with two choices: we may either stick with finite-state models and claim that center embedding does not pose a challenge in practice, or we can once again move to a more expressive model.
+The first choice is a valid option in a variety of applications but requires some major sacrifices.
+We will see that these sacrifices cannot be reconciled with our project of exploring the properties of language from a computational perspective, and thus we will take a hint from linguists and expand our model by moving from strings to trees.
+
+\section{Finite-State Methods and the Role of Unboundedness}
+
+As mentioned last time, the reason that center-embedding patterns --- abstractly represented as $a^n b^n$ --- are beyond the capabilities of finite-state methods is that there is no upper bound on the depth of embedding.
+An FSA has to memorize the exact number of $a$s in order to ensure that the same number of $b$s follow, but since an FSA has a fixed number $k$ of states, it can only partition strings into $k+1$ distinct equivalence classes (one equivalence class for each state, plus one for strings for which there is no defined transition).
+Hence some strings with distinct numbers of $a$s must wind up in the same equivalence class and thus can be followed by the same number of $b$s according to the automaton, which is clearly not the case for the language $a^n b^n$.
+
+This argument is mathematically flawless, but it faces a major empirical challenge: center-embedding is \textbf{not} unbounded in the data we have access to.
+No speaker spontaneously produces a sentence with ten levels of center-embedding, and even if we found a speaker with a propensity for convoluted center embedding constructions and convinced that person to spend the rest of their life uttering a single sentence full of center embeddings, that person could only produce a fixed number of embeddings before they die of old age.
+Even if we somehow could found a tradition of center-embedding performance art, where one speaker starts a sentence with center embeddings that are then continued by another speaker, and then another, on and on until the end of time, we could only reach a final level of embeddings before the universe collapses in on itself.
+We live in a finitistic universe, wherefore unboundedness is not an empirically verifiable property.
+
+A slightly different, more application-oriented argument posits that even if humans might be theoretically capable of unbounded center-embedding, there is little reason to incorporate this property into our model if they never make use of it.
+Why make your model more powerful if that power is never needed?
+This is indeed a valid concern for industrial-grade applications, where time equals money and programs should run as quickly as possible.
+But even there this issue is not cut and dry.
+After all, ``time equals money'' also means that programs should be easy to extend, modify and maintain, since the manhours spent on these tasks do not come for free.
+When given a choice between an efficient but complicated tool on the one hand or a slower yet elegant tool on the other, the latter might be the better solution.
+%
+\Note{
+    The ideal solution would be an elegant tool that can be automatically translated into an efficient one if necessary, but that is not always feasible.
+}
+In addition, the elegant tool might actually be the faster one in practice --- just because it can theoretically perform much worse does not entail that is does so for the specific task at hand.
+As you can see, the unboundedness questions does not have a clear cut answer, it all depends on what your goals are.
+
+Our inquiry is driven by scientific curiosity, so questions of efficiency affect us only to the extent that the resource usage of our model has to be reconcilable with what we know about human cognition.
+And even this restriction does not outweigh our desire to state insightful generalizations.
+That is why we put such a high premium on abstraction: by deliberately excluding certain factors we can home in on broad, appealing generalizations.
+These generalizations still hold in a more detailed model that is closer to the wetware, but they are much harder to discern due to all the complicating factors that come with a more faithful model.
+
+For our purposes, unboundedness is an essential assumption because boundedness acts as a great equalizer that pushes everything with the bounds of finite-state machinery.
+Recall that we assumed in our discussion of phonology that some long-distance processes are unbounded even though for all practical purposes the length of words is bounded in the same way as the number of center embeddings.
+We did this because it allowed us to formalize important differences between local and non-local processes without losing track of their commonalities.
+Similarly, assuming that center embedding is unbounded brings out an important difference between this non-regular kind of embedding and right embedding, which is still regular.
+This contrast is even reflected in human processing, where right embeddings are much easier to parse than center embeddings.
+Distinguishing bounded center embedding from bounded right embedding would be more involved. 
+%fixme: FSA for center embedding and right embedding here
+
+A brief glance at an FSA for bounded center embedding also reveals that redundancy of this account.
+Each level of embedding corresponds to a specific subgraph of the automaton, but all these subgraphs look exactly the same.
+So we have a big number of states that all do exactly the same work, the only difference is that one is used in embedding level $2$ and another one in level $5$.
+This also raises the question why natural language grammars treat all those levels exactly the same --- if the automaton distinguishes level $2$ from level $3$, why can't $3$ use the opposite word order of $2$?
+This level-sensitive automaton would have exactly the same number of states as the one that treats all levels of embedding the same.
+If we assume that center embedding is unbounded, though, then it might be possible to show that level-sensitive formalisms are more complicated than those that treat all levels the same.
+
+To sum up, unboundedness is not an undisputable fact, first and foremost it is yet another abstraction in the service of exploring specific questions.
+However, what we find may serve as indirect evidence for unboundedness when embedded in a system of ancillary assumptions.
+For example, the enormous size of FSAs with bounded center embedding and the lack of level-sensitive embeddings in natural language suggest that unboundedness is cognitively real, at least if one assumes that small, succinct grammars are preferred for some reason.
+With other constructions, there may be less of a reason to assume that they are unbounded (for instance multiple wh-movement), so we will always have to weigh carefully what the benefits of unboundedness may be on a case-by-case basis.
+
+\section{Tree Languages}
+
+\subsection{Context-Free Grammars}
+
+While unbounded center embedding exceeds the limits of finite-state methods, it is easily accounted for with phrase structure rules.
+The language $a^n b^n$, $n \geq 1$, is generated by two rules, which can even be conflated into a single one with some syntactic sugar:
+%
+\begin{center}
+    \begin{tabular}{rcl}
+        S & \rewrite & ab | aSb
+    \end{tabular}    
+\end{center}
+%
+We can interpret this rule as a mechanism for rewriting strings, where we start with S and then apply rules until no more rewriting steps are possible.
+%
+\begin{center}
+    \begin{tabular}{lc}
+        \toprule
+        \textbf{Rule}  & \textbf{String}\\
+        \midrule
+        start          & S\\
+        S \rewrite aSb & aSb\\
+        S \rewrite aSb & aaSbb\\
+        S \rewrite aSb & aaaSbbb\\
+        S \rewrite ab  & aaaabbbb\\
+        \bottomrule
+    \end{tabular}
+\end{center}
+%
+Linguists are more familiar with the tree-based representation of rule application.
+%
+\begin{center}
+    \input{./img/trees/Trees_anbn.tikz}
+\end{center}
+
+Phrase structure grammars are also known as \emph{context-free grammars} (CFGs).
+The latter term focuses on the rule format, which must be of the form $A \rewrite \alpha$, where $\alpha$ is a string of symbols.
+These rules lack the context specification used by SPE, among others, so they are indeed context-free.
+The term phrase structure grammar instead focuses on what the grammar is meant to describe, namely the phrase structure of sentences.
+Obviously CFGs can be used to describe other kinds of structures.
+For instance, the sentence \emph{John really likes the girl} could be assigned the tree below, which represents the functional relations between words (this tree is inspired by Dependency Grammar, which we will discuss at a later point).
+%
+\begin{center}
+    \input{./img/trees/Trees_SimplifiedDependency.tikz}
+\end{center}
+%
+As you can see, the term context-free grammars is slightly more general even though it refers to exactly the same kind of mathematical object.
+Fans of generality that we are, we will henceforth speak of CFGs rather than phrase structure grammars.
+%
+\begin{definition}[CFG]
+    A \emph{context-free grammar} is a triple $G \is \tuple{\Sigma,S,R}$, where
+    %
+    \begin{itemize}
+        \item $\Sigma$ is an alphabet,
+        \item $S \in \Sigma$ is the \emph{start symbol},
+        \item $R$ is finite set of rules $A \rewrite \alpha$ such that $A \in \Sigma$ and $\alpha \in \Sigma^*$.
+    \end{itemize}
+    %
+    A symbol $a \in \Sigma$ is \emph{terminal} iff $R$ contains no rule of the form $a \rewrite \alpha$.
+    Otherwise $a$ is \emph{non-terminal}.
+    The corresponding subsets of $\Sigma$ are denoted $T_\Sigma$ and $N_\Sigma$.
+    We always require $S \in N_\Sigma$.
+    The language $L(G)$ generated by $G$ is the smallest set containing all strings that \textsc{i}) can be obtained from $S$ by finitely many applications of rules in $R$, and \textsc{ii}) contain no non-terminal.
+\end{definition}
+
+Since CFGs can handle center embedding and are equivalent to the familiar linguistic formalism of phrase structure rules, they are a promising starting point for a formal model of syntax.
+We will soon see that they are indeed very closely related to a model that we have explored in great detail.
+
+\subsection{Trees and Tree Languages}
+
+Before we move on, it will be useful to formalize trees.
+This can be done in a plethora of ways, but we will opt for the definition in terms of \emph{Gorn domains} \citep{Gorn67} because it couples each node with an address that directly represents its location in the tree.
+Intuitively, a Gorn domain is a set of addresses of the form $m \cdot l$, where $m$ is the address of the node's mother and $l$ the number of left siblings it has.
+So the tree for \emph{John really likes the girl} that was given in the previous section would be associated with node addresses as shown below:
+%
+\begin{center}
+    \input{./img/trees/Trees_GornDomain.tikz}
+\end{center}
+%
+The address for the root is $\emptystring$ since it has neither a mother nor a left sibling.
+For all other nodes, the formula $m \cdot l$ applies as described.
+
+Notice that an entry like $40$ is read ``four-zero'' since it is the leftmost daughter of the fifth daughter of the root, whereas $40$ ``forty'' would refer to the $41$st daughter of the node.
+This ambiguity is due to the decimal system being incapable of representing the difference between $4 \cdot 0$ and $40$.
+Strictly speaking, and address like $401$ should actually be written as $4-0-1$ to distinguish it from $40-1$ and $401$, but this creates clutter that is best avoided when possible.
+%
+\begin{definition}[Gorn domain]
+    A \emph{Gorn domain} $D$ is a subset of $\NatNum^*$ such that
+    %
+    \begin{description}
+        \item[dominance closure] $ui \in D$ implies $u \in D$,
+        \item[left sibling closure] $ui \in D$ implies $uj \in D$ for all $0 \leq j < i$.
+    \end{description}
+    %
+    We call $u \in D$ a \emph{leaf} iff there is no $i \in \NatNum$ such that $ui \in D$.
+    Given some subset $S$ of $D$, $ui$ is a \emph{root} of $S$ iff $u \notin S$.
+\end{definition}
+
+A tree is a Gorn domain that maps each node address to a node label.
+%
+\begin{definition}[Tree]
+    A (finite) \emph{$\Sigma$-tree} is a pair $t \is \tuple{D,\LabelFunc}$, where
+    %
+    \begin{itemize}
+        \item $D$ is a (finite) Gorn Domain,
+        \item $\LabelFunc: D \rightarrow \Sigma$ is a total function.
+    \end{itemize}
+    %
+    The \emph{string yield} $\Yield(t)$ of $t$ is the longest string $s_1 \cdots s_n$ such that
+    %
+    \begin{itemize}
+        \item $s_i$ is a leaf of $D$ ($0 \leq i \leq n$),
+        \item for  $s_i \is mu$ and $s_j \is nv$ ($m,n \in \NatNum$, $u,v \in \NatNum^*$), $i < j$ iff $m < n$.
+    \end{itemize}
+    %
+    The \emph{depth} of subtree $t$ with root $u$ is the length of the longest $i$ such that $ui \in D$.
+\end{definition}
+%
+Unless indicated otherwise, all trees are assumed to be finite.
+
+Since we now have both strings and trees as mathematical objects, it makes sense to distinguish between \emph{string languages} and \emph{tree languages}.
+The former are sets of strings, the latter sets of trees.
+All the languages we have seen so far were string languages.
+%
+\begin{definition}[Tree Language]
+    A \emph{tree language} $L$ over $\Sigma$ is a set of $\Sigma$-trees.
+    Its string yield is the string language $\Yield(L) \is \setof{ \Yield(t) \mid t \in L }$.
+\end{definition}
+
+
+\subsection{Tree Languages of Context-Free Grammars}
+
+Our definition of CFGs defines the string language generated by the grammar, but not the tree language even though we saw that sequences of rewriting steps can be represented as trees.
+The intuition for going from rewriting rules to trees is simple enough:
+%
+\begin{enumerate}
+    \item Draw a node with label $S$.
+    \item If $A$ is rewritten as $\alpha \is a_1 \cdots a_n$, add $a_1$, $\ldots$, $a_n$ as daughters of the corresponding node (in the same left-to-right order).
+\end{enumerate}
+%
+This way a CFG can be treated as a mechanism for building trees rather than just strings.
+But what exactly is the tree language generated by some random CFG?
+
+Let us first think about whether certain trees are generated by a specific grammar, and why this is the case.
+Below you have several trees.
+The left one is generated by the CFG $\tuple{\setof{S,a,b}, \setof{S \rewrite aSb, S \rewrite ab}}$, the others are not.
+%
+\begin{center}
+    \input{./img/trees/Trees_anbn.tikz}
+    %
+    \hspace{2em}
+    %
+    \input{./img/trees/Trees_anbabn.tikz}
+    %
+    \hspace{2em}
+    %
+    \input{./img/trees/Trees_ancbn.tikz}
+\end{center}
+%
+The left one satisfies all the conditions the rewrite rules establish with respect to the mother-of and the left-sibling relation.
+The tree in the middle contains a subtree where $S$ is a left sibling of $a$, which can never happen with the specified rewrite rules.
+The third tree contains $c$ as a daughter of $S$, which is also impossible.
+Notice that all these violations can be verified in a local fashion: we only have to look at a node and its daughters to find ill-formed subtrees.
+So we can postulate the following:
+%
+\begin{definition}[CFG Tree Language]
+    A CFG $G$ generates a tree $t$ iff
+    %
+    \begin{itemize}
+        \item the root of $t$ is the start symbol, and
+        \item all leaves of $t$ are terminal, and
+        \item for every subtree $s$ of $t$ such that $s$ is of the form $[_A\ A_1 \cdots A_n]$, $G$ contains a rule $A \rewrite A_1 \cdots A_n$.
+    \end{itemize}
+    %
+    The tree language of $G$ is the set of all trees that are generated by $G$.
+\end{definition}
+
+This is a definition, not a theorem.
+We are simply describing what kind of trees are built via the translation procedure used by linguists.
+But we can show that this definition is useful in the sense that the tree language yields the same string language as the grammar.
+%
+\begin{theorem}
+    Let $G$ be a CFG\@ that generates string language $L$ and tree language $T$.
+    Then $L = \Yield(T)$.
+\end{theorem}
+%
+\begin{proof}
+    To see that $L \subseteq \Yield(T)$, take any string $w \in L$.
+    By definition, $w$ was obtained from $S$ via a finite number of applications of rewrite rules of $G$.
+    The standard translation from such rule applications to trees yields a tree that is generated by $G$ and has $w$ as its string yield.
+
+    In the other direction $\Yield(T) \subseteq L$ follows from the fact that if $t$ is generated by $G$, then each subtree $[_A\ A_1 \cdots A_n]$ is matched by a rewrite rule of $G$.
+    Hence there is a sequences of rewrite rules that produces the string yield of $t$. 
+    Since $t$'s string yield consists only of terminal symbols, and $t$'s root is $S$, $\Yield(t)$ is generated by $G$.
+\end{proof}
+
+\subsection{Strictly Local Tree Languages}
+
+The condition that every subtree of depth $1$ must be matched by a rewrite rule could be simplified by converting each rewrite rule into a tree of depth $1$.
+Instead of a finite set of rewrite rules, one would then have a finite set of subtrees of depth $1$, and a tree is generated by the grammar iff all its subtrees of depth $1$ are included in this set.
+This idea should sound awfully familiar to you: it is the tree analogue of strictly local grammars.
+%
+\begin{definition}[$k$-trees]
+    A \emph{$k$-tree} over alphabet $\Sigma$ is a tree of depth $k-1$.
+    A \emph{$k$-augment} is a unary branching tree of depth $k-1$ where every node is labeled $\LeftEdge$.
+    Given a $\Sigma$-tree $t$, its \emph{$k$-augmented} counterpart $\augmented{t}_k$ is the result of adding a $k$-augment above the root and below each leaf.
+    The set of $k$-trees of a tree $t$ is given by $\ktrees(t) \is \setof{ s \mid s \text{ is a subtree of } t \text{ with depth } k-1}$.
+\end{definition}
+%
+\begin{definition}[Strictly Local Tree Language]
+    A finite set of $k$-trees is called a \emph{strictly $k$-local tree grammar}.
+    A positive strictly $k$-local tree grammar $G$ generates the tree language $L(G) \is \setof{ t \mid \ktrees(t) \subseteq G}$.
+    A negative strictly $k$-local tree grammar $G$ generates the tree language $L(G) \is \setof{ t \mid \ktrees(t) \cap G = \emptyset}$.
+    A tree language $L$ is strictly $k$-local iff it is generated by some strictly $k$-local tree grammar.
+    The class $\SLT$ of \emph{strictly local tree languages} is given by $\bigcup_{k \geq 1} \setof{ L \mid L \text{ is strictly $k$-local}}$.
+\end{definition}
+
+\begin{lemma}
+    For every positive strictly $k$-local grammar, there is a negative strictly $k$-local grammar that generates the same tree language, and \emph{vice versa}.    
+\end{lemma}
+%
+\begin{proof}
+    A simple extension of the proof for strictly $k$-local string grammars.
+\end{proof}
+
+\begin{theorem}
+    The class of tree languages generated by CFGs is properly included in the class of strictly $2$-local tree languages.
+\end{theorem}
+%
+\begin{proof}
+    For every CFG $G$ one can construct an equivalent strictly $2$-local tree grammar $G_2$.
+    For every rewrite rule $A \rewrite A_1 \cdots A_n$ of $G$, $G_2$ contains the $2$-tree $[_A\ A_1 \cdots A_n]$.
+    For every terminal symbol $a$, we add $[_a \LeftEdge ]$.
+    Finally, $G$ also contains $[_\LeftEdge S]$.
+    It is easy to see that $G_2$ generates exactly the same tree language.
+
+    Inclusion is proper because a symbol can be both terminal and non-terminal in a strictly $2$-local tree language.
+    Consider for instance the grammar $\setof{[_\LeftEdge S], [_S \LeftEdge]}$, which generates only the tree $S$.
+\end{proof}
+
+\begin{theorem}
+    For all $k \geq 1$, $\SLT[k-1] \subsetneq \SLT[k]$.
+\end{theorem}
+
+\begin{theorem}
+    For all $k \geq 1$, $\Yield(\SLT[k-1]) = \Yield(\SLT[k])$.
+\end{theorem}

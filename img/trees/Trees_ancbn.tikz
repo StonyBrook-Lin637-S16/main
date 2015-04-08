@@ -1,0 +1,19 @@
+\begin{forest}
+    [S
+        [a]
+        [S
+            [a]
+            [S
+                [a]
+                [S
+                    [a]
+                    [c]
+                    [b]
+                ]
+                [b]
+            ]
+            [b]
+        ]
+        [b]
+    ]
+\end{forest}
