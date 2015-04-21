@@ -596,7 +596,7 @@ For this is just a corollary of the fact that the class of context-free language
     \begin{itemize}
         \item If $k$ is of the form $[_{\kState{q}{\LeftEdge}} \kState{q_1}{A_1}]$, then $G_C$ contains the rewrite rule $S \rewrite \tuple{A_1,q_1}$.
         \item If $k$ is of the form $[_{\kState{q}{A}} \kState{q_1}{\RightEdge}]$, then $G_C$ contains the rewrite rule $\tuple{A,q} \rewrite A$.
-        \item In all other cases, $k$ is of the form $[_{\kState{q}{A}} \kState{q_1}{A_1} \cdots \kState{q_n}{A_n}]$ ($n \leq 1$) and $G_C$ contains the rewrite rule $\tuple{A,q} \rewrite \tuple{A_1,q_1} \cdots \tuple{A_n,q_n}$.
+        \item In all other cases, $k$ is of the form $[_{\kState{q}{A}} \kState{q_1}{A_1} \cdots \kState{q_n}{A_n}]$ ($n \geq 1$) and $G_C$ contains the rewrite rule $\tuple{A,q} \rewrite \tuple{A_1,q_1} \cdots \tuple{A_n,q_n}$.
     \end{itemize}
 
     Let $\transduction$ be the projection that maps every non-terminal symbol $\tuple{A,q}$ to $A$.
