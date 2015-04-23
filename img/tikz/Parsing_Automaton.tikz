@@ -1,0 +1,16 @@
+\begin{tikzpicture}
+    \node[state,initial]   (0) at (0,0) {0};
+    \node[state]           (1) [right=of 0] {1};
+    \node[state]           (2) [right=of 1] {2};
+    \node[state]           (3) [right=of 2] {3};
+    \node[state]           (4) [right=of 3] {4};
+    \node[state]           (5) [right=of 4] {5};
+    \node[state,accepting] (6) [right=of 5] {6};
+
+    \path[->] (0) edge node [above] {a} (1)
+              (1) edge node [above] {a} (2)
+              (2) edge node [above] {a} (3)
+              (3) edge node [above] {b} (4)
+              (4) edge node [above] {b} (5)
+              (5) edge node [above] {b} (6);
+\end{tikzpicture}
