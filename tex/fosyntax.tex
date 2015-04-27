@@ -1,5 +1,5 @@
-\chapter{Syntax is and isn't Context-Free}
-\label{cha:MCS}
+\chapter{Syntax as First-Order Logic}
+\label{cha:FO}
 
 We are now operating under the assumption that syntax can be adequately described in terms of regular tree languages.
 They are sufficiently expressive to capture advanced linguistic concepts like headedness, projection, subcategorization, agreement, adjunction, and instances of displacement like wh-movement and topicalization in English.
@@ -144,17 +144,18 @@ Assuming certain standard conventions about operator scope switching to infix no
 Defining the set of well-formed formulas gives us only one half of a logic, the much more important half is to endow each well-formed formula with a specific meaning.
 This is achieved by the notion of a \emph{model}.
 A mathematical structure $M$ is a model of formula $\phi$ (written $M \models \phi$) iff $\phi$ holds in $M$ under a fixed interpretation.
-This interpretation is defined in a piece-wise fashion, where $\phi[x \leftarrow u]$ is the result of replacing every instance of $x$ by $u$.
+This interpretation is defined in a piece-wise fashion, where $\phi[x \leftarrow u]$ is the result of replacing every free instance of $x$ (= not c-commanded\slash dominated by $\forall x$ or $\exists x$ in the phrase structure\slash dependency tree) in $\phi$ by $u$.
+%fixme: explain free variable notion via c-command
 %
 \begin{center}
-    \begin{tabular}{rcl}
-        $M \models$ & $\phi \wedge \psi$          & iff both $M \models \phi$ and $M \models \psi$\\
-        $M \models$ & $\phi \vee \psi$            & iff $M \models \phi$ or $M \models \psi$\\
-        $M \models$ & $\phi \rightarrow \psi$     & iff $M \models \phi$ implies $M \models \psi$\\
-        $M \models$ & $\phi \leftrightarrow \psi$ & iff $M \models \phi$ implies $M \models \psi$ and the other way round\\
-        $M \models$ & $\neg \phi$                 & iff $M \models \phi$ does not hold\\
-        $M \models$ & $\forall x \phi$            & iff $M \models \phi[x \leftarrow u]$ for all $u$ of $M$\\
-        $M \models$ & $\exists x \phi$            & iff $M \models \phi[x \leftarrow u]$ for some $u$ of $M$\\
+    \begin{tabular}{ll}
+        $M \models \phi \wedge \psi$          & iff both $M \models \phi$ and $M \models \psi$\\
+        $M \models \phi \vee \psi$            & iff $M \models \phi$ or $M \models \psi$\\
+        $M \models \phi \rightarrow \psi$     & iff $M \models \phi$ implies $M \models \psi$\\
+        $M \models \phi \leftrightarrow \psi$ & iff $M \models \phi$ implies $M \models \psi$ and the other way round\\
+        $M \models \neg \phi$                 & iff $M \models \phi$ does not hold\\
+        $M \models \forall x \phi$            & iff $M \models \phi[x \leftarrow u]$ for all $u$ of $M$\\
+        $M \models \exists x \phi$            & iff $M \models \phi[x \leftarrow u]$ for some $u$ of $M$\\
     \end{tabular}
 \end{center}
 %
@@ -316,17 +317,171 @@ With a little bit of ingenuity, pretty much all syntactic constraints can be exp
 First-order logic is a fragment of monadic second-order logic (MSO), which enriches first-order logic with the option to quantify over sets of nodes.
 It turns out that MSO is exactly as powerful as refined strictly $2$-local tree grammars, so one can freely translate between grammars and MSO formulas \citep{Buechi60}.
 The construction is fairly involved (see \citealt{Morawietz03} for details), and the computational complexity of the translation is unbounded --- it doesn't get any less tractable than that.
-Nonetheless there have been several successful implementations, and the fact that linguistic constraints can be stated without set quantification reduces the complexity a lot.
+Nonetheless the conversion is reasonably fast in practice, and the fact that linguistic constraints can be stated without set quantification reduces the complexity a lot.
 Overall, then, it is a viable strategy to formalize linguistic theories in terms of first-order formulas, which are then automatically translated into refined tree grammars or possibly even CFGs.
+%
+\begin{conjecture}[FO-Syntax]
+    All aspects of natural language syntax can be expressed in terms of first-order formulas over trees without interior node labels.
+\end{conjecture}
 
 \section{Pushing the Limits}
 
 \subsection{Polarity Items}
 
+There are a few phenomena that push the limits of what can be expressed in first-order logic.
+One of them is the distribution of so-called \emph{polarity items}, or at least their predicted distribution according to standard generalizations.
+Polarity items can only occur in a context of a specific polarity.
+Negative polarity items (NPIs) are restricted to sentences where they appear in the scope of some negative element, though it is difficult to characterize what counts as such a negative element, as the examples below illustrate for the idiomatic NPI \emph{lift a finger}:
+%
+\begin{exe}
+    \ex
+    \begin{xlist}
+        \ex[]  {Nobody did so much as lift a finger.}
+        \ex[*] {Everybody did so much as lift a finger.}
+        \ex[]  {You didn't so much as lift a finger.}
+        \ex[*] {You did so much as lift a finger.}
+        \ex[]  {You never did so much as lift a finger.}
+        \ex[]  {You hardly did so much as lift a finger.}
+        \ex[*] {You always did so much as lift a finger.}
+    \end{xlist}
+\end{exe}
+%
+Negation and negative quantifiers license this NPI, but so do adverbials like \emph{never} and \emph{hardly}.
+The licensing element can also occur in a higher clause, in which case it may be a verb like \emph{doubt}.
+%
+\begin{exe}
+    \ex
+    \begin{xlist}
+        \ex[]   {Nobody believes you did so much as lift a finger.}
+        \ex[*]  {I believe you did so much as lift a finger.}
+        \ex[]   {I doubt you did so much as lift a finger.}
+    \end{xlist}
+\end{exe}
+
+The standard explanation is in term of semantic entailment patterns, with NPIs like \emph{lift a finger} and \emph{ever} restricted to downward entailing patterns, while positive polarity items (PPIs) like \emph{somewhat} are restricted to contexts that are not downward entailing.
+The specifics of this proposal are not all that relevant to us except for one crucial property: negation switches downward entailing contexts into non-downward entailing ones, and \emph{vice versa}.
+So if an NPI is licensed in configuration $C$, it should not be licensed in $\neg C$, but be licensed again in $\neg \neg C$.
+If this is indeed the correct analysis, then the distribution of NPIs and PPIs cannot be defined in first-order logic.
+That's because we are dealing with a \emph{modulo} counting pattern, similar to what we saw for the string language $(aa)^+$, and these patterns require the full power of regular languages.
+Since first-order logic is a fragment of MSO, it does not have access to this additional power and thus cannot express the semantic generalization.
+
+But whenever one is faced with generalizations that need more power than expected, the first step of action is to verify that \textsc{i}) the generalization is empirically correct, and \textsc{ii}) there isn't a structurally simpler generalization that covers the same data.
+In the case of NPI and PPI licensing, the predicted pattern of alternating licensing contexts simply does not obtain.
+%
+\begin{exe}
+    \ex
+    \begin{xlist}
+        \ex[]  {I doubt you did so much as lift a finger. (predicted grammatical)}
+        \ex[?] {I doubt you didn't do so much as lift a finger. (predicted ungrammatical)}
+        \ex[?] {Nobody doubts you did so much as lift a finger. (predicted ungrammatical)}
+        \ex[??] {Nobody doubts you didn't do so much as lift a finger. (predicted grammatical)}
+    \end{xlist}
+\end{exe}
+%
+In addition, NPIs are frequently accepted in contexts that look downward entailing but actually aren't.
+%
+\begin{exe}
+    \ex Every politican that no news paper reported on in great detail has ever made it past the first round.
+\end{exe}
+%
+These effects are usually attributed to processing errors, but in combination with the other facts they cast further doubt on the canonical analysis.
+Perhaps the distribution of NPIs and PPIs is subject to a first-order definable constraint after all, a constraint that looks quite a bit different from the semantic generalization simply due to the fact that first-order logic is incapable of expressing such a generalization.
+
 \subsection{Binding Theory}
 
-\subsection{Copy Movement}
+Binding theory regulates the distribution of elements whose reference depends on some other element in the sentence.
+These usually take the form of reflexives (\emph{himself}, \emph{herself}, \emph{itself}), pronouns (\emph{her}, \emph{him}, \emph{it}), and reciprocals (\emph{each other}).
+The involvement of reference and meaning turns binding theory into a very wide and vaguely circumscribed phenomenon that spans syntax, semantics, and pragmatics.
+How exactly it can and should be factored across these components is difficult to decide, and as we will see next, the FO-syntax conjecture hinges on what kind of factorization one assumes.
 
-\subsection{Crossing Dependencies}
+The canonical view of binding theory is that DPs and referentially dependent elements are assigned referential indices as in the examples below.
+%
+\begin{exe}
+    \ex
+    \begin{xlist}
+        \ex[]  {John$_i$ hit himself$_i$.}
+        \ex[]  {John$_i$ threatened Bill$_j$ to hit him$_j$.}
+        \ex[*] {John$_i$ hit him$_i$.}
+        \ex[*] {Mary$_i$ hit himself$_j$.}
+    \end{xlist}
+\end{exe}
+%
+Sentences are then filtered out according to whether these indixations satisfy certain principles.
+The exact nature of said principles vary across languages, but we can identify to macro-parameters (cf.\ \citealp{Kiparsky02, Kiparsky12}).
+%
+\begin{description}
+    \item[$\pm$ s-bound] Does the referentially dependent element need a \emph{syntactic} antecedent within a certain locality domain? (rather than just a previously established discourse referent)?
+    \item[$\pm$ obviative] Must the index of the referentially dependent element be unique within a certain syntactic locality domain?
+\end{description}
+%
+English \emph{himself} for instance, must be s-bound within the smallest TP containing a subject, but it is not obviative.
+English \emph{him}, on the other hand, is more ambiguous.
+
+In general, \emph{him} needs no syntactic antecedent, but it does presuppose a previously established discourse referent.
+This requirement is lifted when the pronoun is used \emph{deictically}, e.g.\ by pointing at somebody in the room.
+Obviation is a little trickier to determine.
+The sentence \emph{Gatsby$_i$ is much older than him$_i$} seems perfectly fine when the speaker, mistaken about Gatsby's appearance, is unknowingly pointing at Gatsby.
+\Note{See \citet{Heim98} for a detailed discussion of such sentences.}
+At the same, it is unclear that this sentence actually involves two identical indices, rather than two distinct indices (= distinct people in the speaker's mind) that happen to map to the same person in the real world.
+Excluding these special cases, though, \emph{him} is obviative with the smallest TP containing a subject, which is witnessed by the fact that \emph{John$_i$ hit him$_i$} cannot mean the same thing as \emph{John hit himself}.
+
+Other languages allow for different combinations.
+The Icelandic reflexive \emph{sig}, for example, mirrors \emph{himself} in that it is not obviative, but at the same time its locality domain for s-binding is much larger.
+Swedish \emph{sig} and Marathi \emph{aapan} have a similar s-binding requirement within a large locality domain but in addition they are obviative within the smallest TP containing a subject.
+
+Given such a tremendous amount of cross-linguistic variation, one might be rightfully worried about the feasibility of a first-order formalization of binding theory.
+These worries are justified, but the culprit isn't variation; it is indexation.
+By assumption, languages are infinite and the length of sentences is unbounded.
+Consequently, there is no upper limit on how many referents may be mentioned in a sentence, which in turn implies that there is no finite bound on the number of indices we need --- for every sentence with one more DP we may have to add one more index.
+This is obviously a problem given our assumption that alphabets must be finite, but there are ways to encode indices without putting them in the alphabet --- for example, if all indices are natural numbers then \emph{John$_n$} could be represented as a node \emph{John} whose sister is the root of a unary branching tree of depth $n$.
+But \citet{Rogers98} shows that no matter how indices are represented, the free-indexation system at the core of binding theory increases the power of the system so much that it becomes \emph{undecidable}.
+That is to say, it is no longer possible to determine for arbitrary, freely indexed trees whether they are well-formed or not.
+So binding theory as commonly envisioned isn't just a problem for first-order logic, it is an insurmountable task for all computational machinery.
+
+Of course this formal result seems at odds with our intuition that speakers do not have a hard time determining referents, so either all real-world problems simply happen to be the most trivial instances of an enormously complex system, or free indexation isn't the right way to think about binding theory --- or possibly both.
+Index-free theories of binding theory have been developed in the meantime \citep{Bonato05,Kobele06}, defusing the problem to some extent.
+%fixme: add Sauerland reference
+This is no guarantee, though, that binding theory is first-order definable.
+In order to show that, we have to go one step further.
+
+As mentioned at the outset of this section, binding theory combines three different mechanisms:
+%
+\begin{itemize}
+    \item a syntactic mechanism that regulates whether specific lexical items may occur in a given context,
+    \item a semantic mechanism that links the interpretation of referentially dependent elements to antecedents in the structure or the discourse,
+    \item a discourse mechanism that keeps track of referents and uses pragmatic principles to help in discourse resolution.
+\end{itemize}
+%
+The FO-conjecture is about the complexity of syntax, not semantics or pragmatics.
+So only the syntactic part of binding theory can furnish a licit counterexample.
+This syntactic part does not have to pay attention to specific meanings, since those are established by semantics.
+Instead, it only has to ensure that the distributional requirements are satisfied, which is the case as long as there is at least one possible reading.
+In other words, syntax only has to rule out sentences where the referentially dependent elements are distributed in such a fashion that it is impossible to assign a meaning according to the laws of binding theory.
+
+With this shift in perspective, binding theory becomes a lot simpler at the syntactic level.
+Determining that s-binding is satisfied isn't all that different from our constraint earlier on that every trace needs to be c-commanded by a mover.
+The definition of locality differs quite a bit, and what counts as a valid antecedent is more restricted (\emph{Mary} cannot be an antecedent of \emph{himself} due to gender mismatch), still it all fits comfortably within the bounds of first-order logic.
+Obviation is a lot harder.
+Due to the unbounded nature of various constructions, it is theoretically possible to have an unbounded number of obviative elements within the same obviation domain.
+\Note{%
+    This is a necessary condition, not a sufficient one.
+    We ignore the extra conditions here for the sake of exposition.
+    See \citet{GrafAbner12TAG} for a full discussion.
+}
+Now it necessarily holds that if there are $n$ obviative elements within the same obviation domain, then there must be at least $n$ possible antecedents outside the obviation domain.
+You might remember that this kind of unbounded counting cannot be achieved with finite-state methods, which are equivalent to MSO, which subsumes first-order logic.
+So first-order logic cannot even handle syntactic binding theory unless the following additional restriction holds in every natural language:
+%
+\begin{description}
+    \item[Limited Obviation] There is an upper bound $k$ such that if an obviation domain contains $n > k$ obviative elements, $k$ antecedents suffice to furnish a grammatical reading.
+\end{description}
+%
+Limited Obviation thus posits that some obviative elements within the same obviation domain can have the same referent, and that only a fixed number of antecedents are ever needed thanks to this potential overlap.
+
+Limited Obviation is not the kind of condition linguists would come up with, it follows strictly from our search for a restriction that renders binding theory first-order definable.
+This makes it even more surprising that Limited Obviation seems to be an actual language universal, as is argued by \citet{GrafAbner12TAG} based on a careful examination of a variety of unbounded constructions.
+So even though binding theory is a tight fit, it does stay within the bounds of first-order logic.
+
+\subsection{Copy Movement}
 
 \section{Towards a Context-Free Solution}
