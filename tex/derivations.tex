@@ -445,7 +445,7 @@ A more elegant solution is to provide a first-order definable locality mechanism
 We now have an incredibly flexible and powerful yet first-order definable theory of syntax.
 %
 \begin{enumerate}
-    \item Lexical items are richly annotated AVMs whose features determine subcategorization and movement dependencies.
+    \item Lexical items are richly annotated AVMs whose features determine subcategorization and movement dependencies (the latter via \Target\ and \Displace).
     \item Syntactic trees are label-free and represent movement only indirectly through the features.
     \item Movement is regulated by the first-order definable occurrence predicate and the first-order constraint Determinism.
     \item The PF mapping turns syntactic trees into phrase structure trees.
@@ -485,10 +485,69 @@ The binary branching nodes on the other hand correspond to items being combined 
 So the structural descriptions that we have converged on due to our desire to maintain first-order definability are the derivation trees of the leading syntactic framework.
 In a certain sense we have come full circle, seeing how originally we viewed phrase structure trees as the derivation trees of CFGs.
 
-The moral of the story is that even though CFGs are not powerful enough to generate the right string languages for syntax, that shortcoming is due to their simple PF mapping where the string yield is obtained by simply reading the leaves from left to right.
+The moral of the story is that even though CFGs are not powerful enough to generate the right string languages for syntax, that shortcoming is due to their simple PF mapping: the string yield is obtained by simply reading the leaves from left to right.
 In our new system, we still have very simple tree structures, but the PF mapping is more complex since it now also has to take movement into account.
-But once the complexity of computing the string yield is factored out, the remainder is a first-order definable tree language that can accommodate all syntax dependencies.
+But once the complexity of computing the string yield is factored out, the remainder is a first-order definable tree language that can accommodate all syntactic dependencies.
 
 This is the core insight of recent work on \emph{Minimalist grammars} (MGs), a formalization of Minimalism by \citet{Stabler97}.
 In the last 10 years, MGs have generalized the ideas above to allow for new movement types, provide a corresponding LF mapping, and much more.
 For an extensive overview, see \citet{Graf13Thesis}.
+At this point, we only note that the first few years of MG research were rather messy and it was difficult to estimate how the formalism might behave when new operations or constraints are introduced.
+\Note{%
+    This insight is not restricted to MGs or linguistics, of course.
+    All science proceeds by breaking down the complex into simpler subparts, and we see the same in mathematics and computer science.
+    For example, tree transducers (the tree analog of FSTs) come in dozens of varieties, and the common strategy for bringing out their commonalities is to decompose them into cascades of simpler transducers.
+    That way, a top-down tree transducer with regular look ahead turns out to be the composition of a cylindrification and a top-down tree transducer.
+    See \citet{Comon.etal08} and \citet{GecsegSteinby84,GecsegSteinby97} for more examples.%
+}
+The factorization of MGs into a first-order definable derivation tree language and a mapping from derivations to output trees (or simply strings) has made many of these questions downright trivial.
+This shows that the full scope of a system often proves difficult to grasp and progress is best achieved by isolating its components and how they interact.
+
+Some important linguistic insights have come out of MG research, including:
+%
+\begin{enumerate}
+    \item The ECP, which requires that a mover c-commands its trace, is too strict as MGs with the ECP generate only context-free languages.
+        We already saw that ECP-obeying movement can be encoded via slash-feature percolation over phrase structure trees and thus can be handled by CFGs, so it is not surprising that ECP movement gives only context-free languages.
+        %fixme: add reference to chapter
+        But the result comes with a complementary finding, which is discussed next.
+        %
+    \item MGs with non-ECP obeying movement can generate languages that aren't context-free even if the movement does not involve copying.
+        That's because such instances of movement are very complex in the phrase structure tree --- the trace of a mover can now occur at various positions that the mover does not c-command.
+        This relaxation makes the process of matching movers and their traces so difficult that it can no longer be accomplished with first-order logic (nor monadic second-order logic) over phrase structure trees.
+        In the derived tree, though, ECP-obeying movement and non-ECP-obeying movement have exactly the same complexity since phrases remain in their base position in the derivation tree anyways.
+        %
+    \item As a nice corollary, it follows that blocking non-ECP-obeying movement requires a rather unnatural constraint over derivation trees.
+        So the derivational perspective suggests that a formalism with movement should have both ECP-obeying and non-ECP-obeying movement, which is indeed the received opinion in Minimalist syntax nowadays.
+        %
+    \item MGs with non-ECP-obeying movement weakly generate exactly the class of \emph{multiple context-free languages} (MCFL).
+        % fixme: weakly generate should be introduced earlier
+        This class does not contain languages like $a^{2^n}$, but it does include languages like $a^n b^n c^n$, which are the formal counterpart of cross-serial dependencies. 
+        %
+    \item The copy language $\setof{ww \mid w \in \Sigma^*}$ is also an MCFL\@.
+        In fact, $\setof{w^i \mid w \in \Sigma^*}$ is an MCFL for every $i \geq 0$.
+        So one does not need copy movement to create multiple copies.
+        Copy movement is only required when the output of copying is part of another copying operation.
+        %
+    \item That said, creating a copy language without copy movement requires highly convoluted and unintuitive grammars.
+        This is a case where one might want to move to a more powerful operation not because it is mandated by weak generative capacity, but because the weaker variant cannot express important generalizations as elegantly. 
+        %
+    \item Adding other non-copying movement types like sidewards movement or lowering to the formalism does not increase its weak generative capacity beyond MCFLs, but strong generative capacity does increase.
+        %
+    \item Every movement type can be decomposed into an instance of standard upward movement that is possibly followed by an instance of downward movement.
+        %
+    \item All common parsing strategies for CFGs can be extended to MGs because the derivation trees are context-free and contain all necessary information.
+        Adapting a parser from CFGs to MGs boils down to switching out the simple yield-mapping used with CFGs for a more complex one that recognizes the fact that linear order in MG derivations does not reflect linear order in the string.
+        %
+    \item The parsing facts immediately imply that MGs can be parsed top-down (see \citealt{Stabler12}), so despite claims to the contrary in the psycholinguistic literature it is not the case that Minimalist syntax only allows for (empirically inadequate) bottom-up processing.
+        %
+    \item Various debates about the shape of phrase structure trees, such as whether they are trees or multidominance trees or what kind of label is projected become immaterial because the central data structure is derivation trees, which can be label-free trees and still be first-order definable.
+        %
+    \item Similarly, the ongoing debate between derivational ($\approx$ process-based) and representational ($\approx$ constraint-based) frameworks makes little sense from this perspective.
+        While we interpret the underlying trees as derivation trees, that is just one of many possible interpretations.
+        The only thing that is for sure is that they are trees that produce the intended outputs under specific mappings --- nothing about them is inherently derivational.
+        And although the tree language and the mappings are defined declaratively via first-order logic, which is close to the spirit of representational approaches, we could just as well have used a tree automaton and a tree transducer instead, which are operational and thus derivational.
+        In other words, the MG perspective is neither inherently derivational nor inherently representational, and even the machinery used in the specification can be freely picked from either camp.
+\end{enumerate}
+
+This list is not exhaustive, of course, but it shows how a computationally informed perspective can complement and enhance standard linguistic research.
+And this is ultimately what this journey of ours has been all about: to look at language from a computational lens, to give formal characterizations and identify classes that capture specific properties, to make out important similarities, distinctions and limitations of linguistic submodules, and to use this knowledge in an effort to study and explain specific processes, phenomena and universals.
