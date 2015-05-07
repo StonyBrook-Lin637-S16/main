@@ -11,6 +11,8 @@
 !*.tex
 !*.tikz
 !tex/
+!bib/
+!bib/**/
 !img/
 !img/**/
 !code/
