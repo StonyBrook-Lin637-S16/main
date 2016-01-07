@@ -29,15 +29,15 @@ Homeworks
 
 Each homework will be hosted in its own private repository. Only course participants have access to these repositories.
 
-[Homework 1](../../../homework1): due Wed, Feb 11, 11:59am
-
-[Homework 2](../../../homework2): due Wed, Feb 18, 11:59am
-
-[Homework 3](../../../homework3): due Wed, Feb 25, 11:59am
-
-[Homework 4](../../../homework4): due Mon, Mar 9, 11:59am
-
-[Homework 5](../../../homework5): due Wed, Apr 15, 11:59am
+<!-- [Homework 1](../../../homework1): due Wed, Feb 11, 11:59am -->
+<!--  -->
+<!-- [Homework 2](../../../homework2): due Wed, Feb 18, 11:59am -->
+<!--  -->
+<!-- [Homework 3](../../../homework3): due Wed, Feb 25, 11:59am -->
+<!--  -->
+<!-- [Homework 4](../../../homework4): due Mon, Mar 9, 11:59am -->
+<!--  -->
+<!-- [Homework 5](../../../homework5): due Wed, Apr 15, 11:59am -->
 
 
 Compilation Instructions
@@ -83,6 +83,7 @@ Link List
 
 - A succinct yet extensive [tutorial for Python 3](http://www.python-course.eu/python3_course.php)
 - The official [Python 3 documentation](https://docs.python.org/3/)
+- [Automate the Boring Stuff with Python](https://automatetheboringstuff.com/) is an excellent introduction that covers the basics of Python and applies them to real-world tasks.
 
 [department]: http://linguistics.stonybrook.edu
 [pdf]: ../../tree/master/pdf
