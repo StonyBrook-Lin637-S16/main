@@ -76,7 +76,7 @@ Link List
 ### LaTeX
 
 - [Overleaf](https://www.overleaf.com/) (formerly writeLaTeX) is an online LaTeX editor with live preview
-- List of [commonly used math symbols](http://www.artofproblemsolving.com/Wiki/index.php/LaTeX:Symbols)
+- List of [commonly used math symbols](http://web.ift.uib.no/Teori/KURS/WRK/TeX/symALL.html)
 - Andrew Roberts' [Getting to Grips with LaTeX](http://www.andy-roberts.net/writing/latex)
 
 ### Python
