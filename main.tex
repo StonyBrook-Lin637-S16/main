@@ -7,10 +7,13 @@
 \newcommand{\lastname}{Graf}
 \newcommand{\university}{Stony Brook University}	
 \newcommand{\emailaddress}{lin637@thomasgraf.net}
-\newcommand{\coursenumber}{Lin637}
+\newcommand{\coursenumber}{Lin 637}
 \newcommand{\coursename}{Computational Linguistics 2}
-\newcommand{\semester}{Spring 2015}
-\newcommand{\thetitle}{\coursename\ [\coursenumber, \semester]}
+\newcommand{\semester}{Spring 2016}
+\newcommand{\thetitle}{\texorpdfstring{%
+            {\Huge \coursename}\\
+            \semester}%
+            {\coursename\ [\coursenumber, \semester]}}
 \newcommand{\thekeywords}{graduate level, lecture, computational linguistics, phonology, syntax}
 \newcommand{\thedate}{}
 
@@ -28,7 +31,7 @@
 %=================================================================
 %			content
 %=================================================================
-% \includeonly{./tex/spe}
+\includeonly{./tex/formalization}
 
 \pagestyle{empty}
 \begin{document}
