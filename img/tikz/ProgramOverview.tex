@@ -25,12 +25,12 @@
     \node (AI) [below=of Machine, align=center] {Artificial Intelligence\\ (CSE 537)};
 
     % Linguistics branch
-    \node (CompSem) [below=of CL2, xshift=-16em, align=center] {Computational Semantics\\ (Lin 626)};
-    \node (CompPhon) [below=of CompSem, align=center] {Computational Phonology\\ (Lin 627)};
-    \node (CompSyn) [below=of CompPhon, align=center] {Computational Syntax\\ (Lin 628)};
+    \node (CompPhon) [below=of CL2, xshift=-16em, align=center] {Computational Phonology\\ (Lin 626)};
+    \node (CompSem) [below=of CompPhon, align=center] {Computational Semantics\\ (Lin 627)};
+    \node (CompSyn) [below=of CompSem, align=center] {Computational Syntax\\ (Lin 628)};
 
-    \node (Learn) [right=of CompSem, xshift=4em, align=center]  {Learnability\\ (Lin 629)};
-    \node (Parse) [right=of CompPhon, xshift=4em, align=center] {Parsing and Processing\\ (Lin 630)};
+    \node (Parse) [right=of CompSem, xshift=4em, align=center] {Parsing and Processing\\ (Lin 630)};
+    \node (Learn) [right=of CompPhon, xshift=4em, align=center]  {Learnability\\ (Lin 629)};
 
     % Branches
     \draw[sug] (Syntax) |- (CL2);
