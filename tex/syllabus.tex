@@ -7,23 +7,28 @@
 \fcolorbox{gray!25}{gray!25}{%
     \centering
     \begin{tabular}{ll}
-        \textbf{Course:} Computational Linguistics 2\quad\qquad\qquad&
+        \textbf{Course:} Computational Linguistics 2&
         \textbf{Name:} Thomas Graf\\
         \textbf{Course\#:} Lin637 &
-        \textbf{Email:} lin637@thomasgraf.net\\
+        \textbf{Email:} \href{mailto:lin637@thomasgraf.net}{lin637@thomasgraf.net}\\
         \textbf{Time:} TR 10:00--11:20am &
-        \textbf{Office hours:} Tue 11:30--2:30pm\\
-        \textbf{Location:} Psychology A 144 &
+        \textbf{Office hours:} tba \\
+        \textbf{Location:} Humanities 2047 &
         \textbf{Office:} SBS N249\\
         \textbf{Course Website:} \href{http://lin637.thomasgraf.net} {lin637.thomasgraf.net} &
         \textbf{Personal Website:} \href{http://thomasgraf.net}{thomasgraf.net}
     \end{tabular}
 }
 
-
 \section{Course Outline}
 
-\subsection{Contents}
+\subsection{Bulletin Description}
+An introduction to the theoretical foundation of computational linguistics.
+The course emphasizes the importance of algorithms, algebra, logic, and formal language theory in the development of new tools and software applications.
+Empirical phenomena in phonology and syntax are sampled from a variety of languages to motivate and illustrate the use of concepts such as strictly local string languages, tree transducers, and semirings.
+Students will develop familiarity with the literature and tools of the field.
+
+\subsection{Full Description}
 
 This course serves a specific purpose in our program (see Fig.~\vref{fig:Syllabus_Program}):
 it acts as the bridge from introductory courses in linguistics (Syntax 1, Phonology 1, Phonetics) and computational methods (Statistics, Mathematical Methods in Linguistics, Computational Linguistics 1) to advanced courses and seminars in computational\slash mathematical linguistics.
@@ -49,7 +54,7 @@ This emphasis is also reflected in the selection of topics for this course.
         \end{itemize}
     \item \textbf{List of topics}
         \begin{itemize}
-            \item \emph{Phonology}
+            \item \emph{Phonology and Morphology}
                 \begin{itemize}
                     \item The role of formalization
                     \item String languages
@@ -79,27 +84,27 @@ Make no mistake, though, we'll talk a lot about language and linguistics --- thi
 
 \begin{table}
     \centering
-    \begin{tabular}{rlp{4.5cm}p{4.5cm}}
+    \begin{tabular}{rp{5.5cm}p{5.5cm}}
         \toprule
-        \emph{Wk} & \emph{Classes} & \emph{Formal} & \emph{Linguistics} \\
+        \emph{Wk} & \emph{Formal} & \emph{Linguistics} \\
         \toprule
-        1         & Jan 27, 29     & What is computation? & Marr's Three Levels\\
-        2         & Feb 3, 5       & Formalizing phonology & Why formalize?\\
-        3         & Feb 10, 12     & Strictly local languages & Local dependencies\\
-        4         & Feb 17, 19     & Subregular hierarchy & How powerful is phonology?\\
-        5         & Feb 24, 26     & Regular languages & Abstractness\\
-        6         & (DGFS)         & & \\
-        7         & Mar 10, 12     & String transductions & SPE-OT equivalence\\
+        1         & What is computation? & Marr's Three Levels\\
+        2         & Formalizing phonology & Why formalize?\\
+        3         & Strictly local languages & Local dependencies\\
+        4         & Subregular hierarchy & How powerful is phonology?\\
+        5         & Regular languages & Abstractness\\
+        6         & String transductions & SPE-OT equivalence\\
+        7         & Two-level morphology & Null morphemes\\
         \midrule
-        8         & (Spring Break) & & \\
+        8         & (Spring Break) & \\
         \midrule
-        9         & Mar 24, 26     & Weak Generative Capacity & $\text{Phonology} < \text{Syntax}$\\
-        10        & Mar 31, Apr 2  & Tree languages & Headedness, feature percolation\\
-        11        & Apr 7, 9       & Local tree languages & GPSG\\
-        12        & (GLOW)         & & \\
-        13        & Apr 21, 23     & Recognizable tree languages & GB\\
-        14        & Apr 28, 30     & TAG and MGs & Minimalist syntax\\
-        15        & May 5, 7       & Tree transductions & Reinterpreting the T-model\\
+        9         &  Weak Generative Capacity & $\text{Phonology} < \text{Syntax}$\\
+        10        &  Tree languages & Headedness, feature percolation\\
+        11        &  Local tree languages & GPSG\\
+        12        &  Recognizable tree languages & GB\\
+        13        &  TAG and MGs & Minimalist syntax\\
+        14        &  Tree transductions & Reinterpreting the T-model\\
+        15        &  Unification via first-order logic & Strictly Derivational Minimalism\\
         \bottomrule
     \end{tabular}
 \caption{Tentative course outline}
@@ -119,6 +124,7 @@ Make no mistake, though, we'll talk a lot about language and linguistics --- thi
 
 The only official prerequisite is Computational Linguistics 1 (Lin 537) or comparable programming skills in Python.
 Python will be used to illustrate some formal concepts, and some of the homeworks will require you to implement an algorithm or procedure in Python.
+Prior experience with git, markdown, and \LaTeX\ is useful for the homeworks but not required.
 
 It is also helpful to have some basic familiarity with linguistics (phonemes, phrase structure rules, syntactic trees) and mathematics (sets, functions, relations, and first-order logic as covered in Semantics 1, for instance).
 You can take an online survey to identify weaknesses, and several introductory readings on these topics are available on the course website.
@@ -129,7 +135,7 @@ You can take an online survey to identify weaknesses, and several introductory r
 \begin{tabular}{ll}
     \textbf{Survey URL:} & 
     \href{https://testmoz.com/432409}{https://testmoz.com/432409}\\
-    \textbf{Password:} &
+    \textbf{Password (if required):} &
     CompLing2
 \end{tabular}
 
@@ -159,15 +165,15 @@ You can take an online survey to identify weaknesses, and several introductory r
     \item \textbf{Homework}
         \begin{itemize}
             \item weekly exercises, programming assignments, or critical evaluations of assigned readings
-            \item a random sample of homeworks will be collected and graded
-            \item solutions will be made available online after the due date
+            \item Homework submission and grading is done via github.
+            \item No late hand-ins!
             \item Collaboration on homework problems is encouraged as long as you write up the solutions by yourself, using your own words, examples, notation, and code.
         \end{itemize}
         %
     \item \textbf{Readings}
         \begin{itemize}
             \item about two readings per week
-            \item you have to collectively write a summary for each reading in the course wiki
+            \item you have to collaboratively write a summary for each reading in the course wiki
         \end{itemize}
         %
     \item \textbf{Survey Squibs}
@@ -189,24 +195,9 @@ You can take an online survey to identify weaknesses, and several introductory r
 \end{itemize}
 
 
-\section{Policies}
-
-\subsection{Contacting me}
-\begin{itemize}
-    \item Emails should be sent to \href{mailto://lin637@thomasgraf.net}{lin637@thomasgraf.net} to make sure they go to my high priority inbox.
-        Disregarding this policy means late replies and is a sure-fire way to get on my bad side.
-    \item Reply time < 24h in simple cases, possibly more if meddling with bureaucracy is involved.
-    \item If you want to come to my office hours and anticipate a longer meeting, please email me so that we can set apart enough time and avoid collisions with other students.
-\end{itemize}
-
-\subsection{Special Needs}
-If you have any special needs that might impact your class performance (learning disabilities, impaired sight or hearing, etc.), please come to my office hours or contact me via mail so we can make suitable arrangements.
-
-
 \section{Online Component}
 
-This class will use some online tools to facilitate homework collaboration and submission, student discussions, and dynamic lecture evaluation.
-This is the first time I'm trying something like this for one of my courses, so expect a few bumps in the road.
+This class uses some online tools to facilitate homework collaboration and submission, student discussions, and dynamic lecture evaluation.
 
 \begin{itemize}
     \item \textbf{Homework submission}\\
@@ -230,7 +221,7 @@ This is the first time I'm trying something like this for one of my courses, so 
         \emph{How it works:}
         Every github repository comes with an issue (= ticket) tracker.
         If you have a question or wish to discuss a topic, you can open a ticket on the main repository (note: tickets support markdown).
-        I will also use tickets to leave comments on your homeworks.
+        I may also use tickets to leave comments on your homeworks.
 
         \emph{Why we do it:}
         Once again this is an essential part of modern software development.
@@ -280,6 +271,21 @@ This is the first time I'm trying something like this for one of my courses, so 
         I will not bring handouts to class unless I could not upload them on time the day before.
 
         \emph{Why we do it:}
-        The department copier has a nasty habit of breaking down at the most inopportune times, and even when it is able to print other things like the stapler do not work.
-        And most students throw away the handout anyways if they also have the PDF.
+        Mostly because I just don't like paper.
+        Also keep in mind that you can fork the lecture notes repository and include your notes directly in the Latex source files.
+        Then you can compile a version of the lecture notes with your own notes already included.
 \end{itemize}
+
+
+\section{Policies}
+
+\subsection{Contacting me}
+\begin{itemize}
+    \item Emails should be sent to \href{mailto://lin637@thomasgraf.net}{lin637@thomasgraf.net} to make sure they go to my high priority inbox.
+        Disregarding this policy means late replies and is a sure-fire way to get on my bad side.
+    \item Reply time < 24h in simple cases, possibly more if meddling with bureaucracy is involved.
+    \item If you want to come to my office hours and anticipate a longer meeting, please email me so that we can set apart enough time and avoid collisions with other students.
+\end{itemize}
+
+\input{./tex/blabla.tex}
+
