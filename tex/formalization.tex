@@ -123,7 +123,30 @@ More fine-grained distinctions are completely unthinkable, such as whether one o
     \pythonfile[firstline=5]{./code/list_search/linear_search.py}
 \end{center}
 \begin{center}
+    \begin{pythoncode}
+        >>> test_list = ['a', 'c', 'd', 'e', 'b', 'f']
+        >>> linear_search(test_list, 'e')
+        3
+        >>> linear_search(test_list, 'g')
+        False
+    \end{pythoncode}
+\end{center}
+
+\begin{center}
     \pythonfile[firstline=5]{./code/list_search/binary_search.py}
+\end{center}
+\begin{center}
+    \begin{pythoncode}
+        >>> test_list = ['a', 'c', 'd', 'e', 'b', 'f']
+        >>> binary_search(sorted(test_list), 'e')
+        4
+        >>> binary_search(sorted(test_list), 'g')
+        False
+        >>> binary_search(test_list, 'c')
+        1
+        >>> binary_search(test_list, 'e')
+        False
+    \end{pythoncode}
 \end{center}
 %
 The binary search algorithm is a lot more sophisticated than linear search, and it is also much faster on average.
@@ -152,11 +175,12 @@ Imagine traversing a network where \emph{doctor} takes you in one direction, and
 Memory is also considered to be very limited in size and possibly stratified according to certain types of content.
 These properties are then coupled with certain models of memory activation and retrieval to explain specific aspects of human cognition, e.g.\ priming effects.
 
-The downside of this approach is that is relies on assumptions that are hard if not even impossible to prove conclusively, that there's often many alternative solutions with no obvious way of choosing between them, and that complex accounts --- by virtue of being complex --- make it very hard to assess how much work is done by each individual part.
+The downside of this approach is that it relies on assumptions that are hard if not even impossible to prove conclusively, that there's often many alternative solutions with no obvious way of choosing between them, and that complex accounts --- by virtue of being complex --- make it very hard to assess how much work is done by each individual part.
 The lack of conclusive proof is not too much of an issue, uncertainty is a given in almost every scientific endeavor.
 One cannot help but wonder, though, if the degree of uncertainty could be lowered.
 If there is a higher-level explanation that does not rely on quite as specific assumptions about working memory, that should be preferable.
-The same goes for the problem of many solutions: if you can cook up multiple models that use slightly different memory architectures but yield the same result if each one of them is also coupled with slightly different amount of memory, that indicates that the essential property may be more abstract, with the proposed psychological model being but one of many different ways of enforcing this property.
+The same goes for the problem of too many solutions: if you can cook up multiple models that use slightly different memory architectures but yield the same result when each one of them is also coupled with slightly different amount of memory, that indicates that the essential property may be more abstract.
+The proposed psychological model would then be but one of many different ways of enforcing this property.
 And since there are usually many alternative solutions, it is very hard to show that certain parts of the machinery are indispensable to get the desired result.
 
 \subsubsection{Interim Summary and a Promise}
@@ -172,7 +196,7 @@ We can conclusively answer questions such as
     \item What is the weakest competence model that is sufficiently powerful for a given empirical domain, e.g.\ local processes in phonology.
     \item Do alternative competence models describe the same class of computations?
     \item Is there an alternative representation of a given model that lowers memory requirements?
-    \item How we carve up complex models into simple subparts? 
+    \item How can we carve up complex models into simple subparts? 
     \item What kind of computational universals hold of language?
 \end{itemize}
 
@@ -180,6 +204,7 @@ We can conclusively answer questions such as
 \section{Marr's Three Levels and the Virtue of Abstractness}
 
 The observations made so far are far from new, they were already encompassed in \emph{Marr's three levels of analysis} \citep{MarrPoggio76}.
+%fixme: Marr reference
 Marr proposes that any aspect of cognition can be described on three levels of increasing abstraction:
 %
 \begin{description}
@@ -212,7 +237,7 @@ The problem with abstraction is that one can no longer reason on a purely intuit
 Since the objects are characterized by a few basic properties, it is important that these properties are described as precisely as possible.
 A minor misunderstanding may be enough to lead to completely contradictory conclusions.
 In the worst case, we may end up with an \emph{inconsistent} theory, meaning that there is at least one property that is both true and false at the same time.
-This may be perfectly fine in a post-modern analysis of ableist slurs in humoristic epitaphs, but it has no place in a scientific theory.
+This may be perfectly fine in a post-modern analysis of transphobic slurs in humoristic epitaphs, but it has no place in a scientific theory.
 So abstraction necessarily requires a certain degree of rigor.
 
 This shouldn't come as a big shock to you.
@@ -231,4 +256,4 @@ You will get stuck sometimes, but that just means you have to think about the pr
 And if you do know it, I highly recommend that you read it again.
 }
 Nothing we do in here is really difficult, but it takes patience and dedication.
-Remember: the most important trait of a good researcher is to enjoy feeling stupid.
+If some of the material we cover seems overwhelming to you, remember: the most important trait of a good researcher is to enjoy feeling stupid.
