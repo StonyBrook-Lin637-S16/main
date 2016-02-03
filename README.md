@@ -38,8 +38,8 @@ Homeworks
 
 Each homework will be hosted in its own private repository. Only course participants have access to these repositories.
 
-<!-- [Homework 1](../../../homework1): due Wed, Feb 11, 11:59am -->
-<!--  -->
+[Homework 1](../../../homework1): due Wed, Feb 10, 11:59am
+
 <!-- [Homework 2](../../../homework2): due Wed, Feb 18, 11:59am -->
 <!--  -->
 <!-- [Homework 3](../../../homework3): due Wed, Feb 25, 11:59am -->
