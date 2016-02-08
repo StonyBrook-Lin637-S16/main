@@ -4,8 +4,8 @@
     negative/.style = {draw=red!75,fill=red!25}%
     ]
     \node[positive] (pos-member) at (0,0) {$w \in L(\posG{G})$};
-    \node[positive] (subset) [below=of pos-member] {$\Bigrams(\augmented{w}) \subseteq G$};
-    \node[negative] (disjoint) [right=5em of subset] {$\Bigrams(\augmented{w}) \cap \complementof{G} = \emptyset$};
+    \node[positive] (subset) [below=of pos-member] {$\Bigrams(w) \subseteq G$};
+    \node[negative] (disjoint) [right=5em of subset] {$\Bigrams(w) \cap \complementof{G} = \emptyset$};
     \node[negative] (neg-member) [above=of disjoint] {$w \in L(\negG{\complementof{G}})$};
 
     \foreach \Source/\Target in {%
