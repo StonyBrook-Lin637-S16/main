@@ -3,17 +3,29 @@
 
 Bigram grammars are a step in the right direction from the initial list phonology model.
 Every grammar is still just a list of items, but now we use this list to determine the well-formedness of a word in a compositional manner.
-The problem of bigram grammars is that they are not powerful enough to capture certain phonological processes like intervocalic voicing --- in linguistic parlance, the size of the grammars locality domain is limited to two adjacent symbols, so bigger contexts cannot be represented correctly.
+The problem of bigram grammars is that they are not powerful enough to capture certain phonological processes like intervocalic voicing --- in linguistic parlance, the size of the grammars' locality domain is limited to two adjacent symbols, so bigger contexts cannot be represented correctly.
 The obvious solution is to extend the size of the scanner window so that the grammar uses trigrams, 4-grams, or maybe even something bigger.
 We will see today that this generalization is a natural one in the sense that it preserves the essential properties of bigram grammars while increasing their empirical coverage.
 
 \section{Generalization to Strictly Local Grammars}
 
-In order to generalize bigram grammars to grammars with grams of arbitrary length, we just have to change a few parameters in our original definition.
-We also use this opportunity to slightly change our terminology: instead of \emph{$k$-gram grammar} and \emph{$k$-gram languages}, we will speak of \emph{strictly $k$-local grammars}.
+Lifting the notion of bigrams to arbitrary $k$-grams works almost exactly as one would suspect.
+The set of trigrams of the string $\String{abcd}$, for example, includes $\String{\LeftEdge a b}$, $\String{abc}$, $\String{bcd}$, and $\String{cd\RightEdge}$.
+However, it also includes $\String{\LeftEdge \LeftEdge a}$ and $\String{d \RightEdge \RightEdge}$.
+Why the extra trigrams with multiple edge markers?
+For one thing, we still want to directly express basic facts like ``a word may start with $a$'', while the trigram $\String{\LeftEdge a b}$ encodes ``a word may start with $a$ followed by $b$''.
+More importantly, as the length of $k$-grams increase, more and more words won't have a single $k$-gram unless we pad them with $k-1$ edge markers.
+For example, the augmented version of the empty string would just be $\LeftEdge \RightEdge$, which is too short for a trigram.
+Similarly, the string $\String{ab}$ would be $\String{\LeftEdge ab \RightEdge}$, which is too short any $k$-gram with $k > 4$.
+The simplest solution is to simply add $k-1$ edge markers instead of just a single one.
+For bigrams, the number of edge markers does not change since $2 - 1 = 1$.
+
+On the formal side, the generalization from bigrams to $k$-grams requires but a few minor modifications in our original definition.
+We also use this opportunity to slightly change our terminology: instead of \emph{$k$-gram grammar} and \emph{$k$-gram languages}, we will speak of \emph{strictly $k$-local grammars} and \emph{strictly $k$-local languages}.
 This will make it easier later on to distinguish this formalism from a related one that also operates with $k$-grams but interprets them differently.
 
 \begin{definition}[$k$-grams]
+    Let $k$ be some natural number.
     A \emph{$k$-gram}, or \emph{$k$-factor}, over alphabet $\Sigma$ is an element of $(\Sigma \cup \setof{\LeftEdge, \RightEdge})^k$.
     Given a string $w$ over $\Sigma$, its \emph{$k$-augmented} counterpart $\augmented{w}_k \is \LeftEdge^{k-1} \stringcat w \stringcat \RightEdge^{k-1}$ consists of $w$ with $k-1$ left edge markers and $k-1$ right edge markers, and its set of $k$-grams is given by
     \(
@@ -29,6 +41,12 @@ This will make it easier later on to distinguish this formalism from a related o
 %
 You can see that this definition of $k$-gram is a natural extension of the concept of bigrams for if we replace $k$ by $2$ in the definition, we get exactly the original definition of bigrams.
 The concept of bigram languages is generalized in the same fashion to $k$-gram languages, which jointly form the class of \emph{strictly local languages}.
+%
+\Note{%
+    Notice that the definition of strictly $k$-local also allows for $k = 0$.
+    Can you list all strictly $0$-local languages?
+    \emph{Hint}: There's only two of them.
+}
 %
 \begin{definition}[Strictly Local Languages]
     A finite set of $k$-grams is called a \emph{strictly $k$-local grammar}.
@@ -50,42 +68,144 @@ The concept of bigram languages is generalized in the same fashion to $k$-gram l
 \end{definition}
 %
 Intuitively, a language is strictly local iff all its well-formedness conditions are restricted to a locality domain of finitely bounded size.
-\Note{%
-    Notice that the definition of strictly $k$-local also allows for $k = 0$.
-    Can you list all strictly $0$-local languages?
-    \emph{Hint}: There's only two of them.
-}
+\Note{At first glance it seems that the grammars in Fig.~\ref{fig:SL_Scanner} and~\ref{fig:SLMath_Scanner} generate the same language, but that is not the case.
+What is the difference between the respective languages?}
+This also means that every strictly local language can be recognized by a scanner that can adapt the size of its search window to any finite size depending on the grammar the scanner operates with.
+Figure~\ref{fig:SLMath_Scanner} shows such a scanner working with a positive strictly $4$-local grammar.
+%
+\begin{figure}[tbph]
+\centering
+\input{./img/tikz/SLMath_kgramScanner}
+\caption{Scanner for a positive strictly $4$-local grammar}
+\label{fig:SLMath_Scanner}
+\end{figure}
+%
+\begin{examplebox}[A Strictly $3$-Local Grammar for $(\String{aba})^+$]
+    Consider the language $(\String{aba})^+$, which consists of the strings $\String{aba}$, $\String{abaaba}$, $\String{abaabaaba}$, and so on.
+    This language is not strictly $2$-local, because any positive strictly $2$-local grammar that generates the string $\String{abaaba}$ must contain the bigram $\String{aa}$ and thus would also generate any string of the form $\String{abaa^+ba}$.
+    But there is a positive strictly $3$-local grammar that generates the language:
+    %
+    \begin{center}
+        \begin{tabular}{lll}
+            $\LeftEdge \LeftEdge a$
+            &
+            \String{aba}
+            &
+            \String{ba \RightEdge}
+            \\
+            \String{\LeftEdge a b }
+            &
+            \String{baa}
+            &
+            $a \RightEdge \RightEdge$
+            \\
+            &
+            \String{aab}
+        \end{tabular}
+    \end{center}
+    %
+    Substituting C for $a$ and V for $b$, we can conclude from this example that natural languages with a CVC syllable template require a locality domain of at least $3$.
+\end{examplebox}
+\Note{The example only shows that no \emph{positive} strictly $2$-local grammar generates $\String{(aba)^+}$, but this implies that no negative strictly $2$-local grammar can generate it either.
+If this is not immediately apparent to you, reread chapter~\ref{cha:SL}.}
 
 The phonological processes we have looked at so far --- word-final devoicing, nasal assimilation, and intervocalic devoicing --- are all strictly local.
 The first two are strictly 2-local, the third one strictly 3-local.
+%
+\begin{examplebox}[Intervocalic Voicing is Strictly 3-Local]
+    It is easy to see that intervocalic voicing cannot be captured with strictly $2$-local grammars.
+    Suppose the language under investigation contains the words \textipa{bIsta} and \textipa{bItsa}.
+    Any positive strictly $2$-local grammar generating these two strings contains at least the bigrams \LeftEdge\textipa{b}, \textipa{bI}, \textipa{Is}, \textipa{sa}, and \textipa{a\RightEdge}.
+    Consequently, whatever language it generates must contain the string \textipa{bIsa}, which violates intervocalic voicing.
 
-It is also easy to see that constraints on syllable structure are strictly local.
+    A negative strictly $3$-local grammar, on the other hand, can easily enforce intervocalic voicing.
+    It only needs to contain all trigrams of the form $\String{UsV}$, where $U$ and $V$ are vowels and $s$ is some voiceless consonant.
+\end{examplebox}
+%
+It is also readily apparent that constraints on syllable structure are strictly local.
 Take some language that only allows for syllables of the form V, VC, CV, and CVC, but not CCV, VCC, CVCC, or CCVCC\@.
 In other words, a well-formed word cannot contain more than two consecutive consonants, and these consonants cannot occur at the beginning or the end of the word, where they would necessarily be part of the same syllable.
 The set of illicit substrings, then, consists of \LeftEdge CC, CCC, and CC \RightEdge.
 This can be compiled out into a set of illicit sequences of phones by substituting for each C the phones that are specified for [+cons].
 So this example of a restricted syllable template does note exceed the power of a negative strictly $3$-local grammar.
 
-If desired, the negative strictly local grammar can be converted into a positive one using our standard procedure --- go back to the proof of our theorem that positive and negative bigram grammars are equivalent, you will see that it does not at all rely on the length of the $n$-grams being $2$, so the theorem can easily be generalized to all strictly local grammars.
+If desired, the negative strictly local grammar can be converted into a positive one using our standard procedure.
+\Note{Why does equivalence of positive and negative grammars break down for strictly $0$-local grammars?}
+Go back to the proof of our theorem that positive and negative bigram grammars are equivalent, and you will see that it does not rely on the length of the $k$-grams being $2$.
+Therefore the theorem can be trivially generalized to all strictly $k$-local grammars ($k \geq 1$).
 
-Feel free to design strictly local grammars for other local processes in phonology, e.g.\ assimilation across word boundaries, vowel harmony, umlaut, or spirantization.
-As long as these processes describe surface true generalizations --- that is to say, they do not make reference to an underlying form and can be stated purely in terms of which output forms are licit --- you should not run into any problems.
+We could spend much more time designing strictly local grammars for other local processes in phonology, e.g.\ assimilation across word boundaries, vowel harmony, umlaut, or spirantization.
+As long as these processes describe surface true generalizations --- that is to say, they do not make reference to an underlying form and can be stated purely in terms of which output forms are licit --- writing down the grammars might require quite a bit of ink, but very little genuine thought.
 Notice that these processes must be local but can nonetheless be globally unbounded.
 Vowel harmony, for instance, may apply throughout an entire word via a sequence of local vowel harmony steps.
-This kind of behavior is exactly what we expect given how strictly local grammars operate: the $n$-grams only regulate the shape of local domains, but the well-formedness of the word is evaluated by moving through the word and checking each local domain.
+%
+\begin{examplebox}[Strictly $4$-Local Vowel Harmony]
+    Suppose language $L$ has an alphabet with two vowels, $i$ and $u$, and two consonants $p$ and $l$.
+    All words match the syllable template (CVC)$^+$.
+    In addition, $i$ triggers progressive vowel harmony that turns each $u$ following an $i$ into $i$.
+    Consequently, no surface form may contain an $i$ followed by a $u$.
+    Assuming that no other processes or constraints apply in $L$, the language is strictly $4$-local.
+
+    We first construct a positive strictly $4$-local grammar $\posG{S}$ for the syllable template.
+    This grammar contains all $4$-grams, and only those, that can be obtained from the entries below by substituting $i$ and $u$ for occurrences of V and $p$ and $l$ for occurrences of C (which yield a total of 76 $4$-grams).
+    %
+    \begin{center}
+        \begin{tabular}{lll}
+            \LeftEdge\LeftEdge\LeftEdge C
+            &
+            C V C C
+            &
+            C V C \RightEdge
+            \\
+            \LeftEdge\LeftEdge C V
+            &
+            V C C V
+            &
+            V C \RightEdge\RightEdge
+            \\
+            \LeftEdge C V C
+            &
+            C C V C
+            &
+            C \RightEdge\RightEdge\RightEdge
+        \end{tabular}
+    \end{center}
+    %
+    Vowel harmony is enforced by the negative strictly $4$-local grammar $\negG{V}$ with the $4$-grams $\String{ilpu}$ and $\String{iplu}$.
+    We then convert $\posG{S}$ into an equivalent negative grammar and take their union.
+    A brief moment of reflection reveals that $L(\negG{\complementof{S}} \cup \negG{V}) = L$.
+\end{examplebox}
+%
+\Note{Give a rough approximation of the size of $\negG{\complementof{S}}$ and compare it to $\negG{V}$.
+    Does the size difference match your intuition about the complexity of the respective phonotactic constraints encoded by these grammars?
+}
+%
+Locally bounded processes giving rise to locally unbounded dependencies is exactly what we expect given how strictly local grammars operate: the $k$-grams only regulate the shape of local domains, but the well-formedness of the word is evaluated by moving through the word and checking each local domain.
 So not only are strictly local grammars powerful enough to capture local well-formedness conditions in phonology, the way they enforce them mirrors linguists' intuitions about how local processes can produce global patterns.
 
 The connection between strictly local grammars and local processes in phonology allows us to study the latter through the former.
 Since strictly local grammars generate strictly local languages, this implies that the properties of strictly local languages can tell us something about local processes in phonology.
-So now the theoretical task of proving formal properties of strictly local languages has suddenly morphed into an empirically minded investigation of phonology.
+Let us repeat this for emphasis:
+%
+\begin{center}
+    \begin{tikzpicture}
+        \node[draw=red, fill=red!10, thick, align=center]
+            {The properties of our formal objects\\ are properties of (specific aspects of) language.};
+    \end{tikzpicture}
+\end{center}
+%
+The theoretical task of proving formal properties of strictly local languages has suddenly morphed into an empirically minded investigation of phonology.
 
 \section{Exploring Strictly Local Languages}
 
 \subsection{A Proper Hierarchy of Strictly Local Languages}
-One may expect that the power of strictly local grammars increases with the size of the locality domain.
-This can indeed be shown to be the case by recourse to the strictly local languages.
+The examples discussed so far suggest that the power of strictly local grammars increases with the size of the locality domain.
+This is indeed the case, but is best proved by recourse to the strictly local languages.
 If we order the strictly local languages by the size of their locality domain, we get a proper hierarchy: one level properly subsumes the next.
 Denoting the class of strictly $k$-local languages by $\SL_k$, we have $\SL_k \subsetneq \SL_{k-1}$ for all $k \geq 0$.
+
+This is a complex claim, as it asserts that each strictly $k$-local language is strictly $k+1$-local, but that the opposite does not hold for some languages.
+Following our standard strategy, we establish lemmata for these weaker claims and then combine them into the original theorem.
 %
 \begin{lemma}
     It holds for every $k \geq 0$ that if language $L$ is strictly $k$-local, then $L$ is also $k+1$-local.
@@ -93,6 +213,7 @@ Denoting the class of strictly $k$-local languages by $\SL_k$, we have $\SL_k \s
 %
 The proof for this lemma is slightly more complicated than anything we have seen so far, but behind the notation lies a very simple idea:
 the size of the locality domain can be increased from $k$ to $k+1$ by padding the edge markers and by combining two overlapping $k$-grams into a single $k+1$-gram.
+Consequently, for every strictly $k$-local grammar there is an equivalent strictly $k+1$-local one.
 %
 \begin{proof}
     If $L$ is strictly $k$-local then it is generated by some positive strictly $k$-local grammar $G$ over some alphabet $\Sigma$.
@@ -121,6 +242,35 @@ the size of the locality domain can be increased from $k$ to $k+1$ by padding th
     But then $\Bigrams[k](w)$ is not a subset of $G$, contradicting once more our initial assumption.
     It follows, then, that $\Bigrams[k+1](w)$ is a subset of $G'$ after all, wherefore $L \subseteq L(G')$.
 \end{proof}
+%
+\begin{examplebox}[Converting Bigrams Into Trigrams]
+    Consider the strictly $2$-local language $(\String{ab})^+$ and its positive strictly $2$-local grammar $G$ with the bigrams $\LeftEdge a$, $\String{ab}$, $\String{ba}$, and $b\RightEdge$.
+    In order to construct an equivalent strictly $3$-local grammar, we have to pad out the edge markers and combine overlapping bigrams.
+    So $\LeftEdge a$ and $b \RightEdge$ become $\LeftEdge\LeftEdge a$ and $\RightEdge\RightEdge b$, respectively.
+    We also see that $\LeftEdge a$ overlaps with $\String{ab}$, so we can combine them into $\String{\LeftEdge a b}$.
+    The same procedure produces $\String{ab \RightEdge}$ from $\String{ab}$ and $b \RightEdge$.
+    Finally, $\String{ab}$ and $\String{ba}$ overlap in two ways depending on which one is put in front of the other, so that we obtain two trigrams from them: $\String{aba}$ and $\String{bab}$.
+    This exhausts the number of possible combinations. 
+    The strictly $3$-local grammar is shown below:
+    %
+    \begin{center}
+        \begin{tabular}{lll}
+            \String{\LeftEdge\LeftEdge a}
+            &
+            \String{aba}
+            &
+            \String{b \RightEdge\RightEdge}
+            \\
+            \String{\LeftEdge a b}
+            &
+            \String{bab}
+            &
+            \String{a b \RightEdge} 
+        \end{tabular}
+    \end{center}
+    %
+    This grammar generates all strings of $(\String{ab})^+$, and only those.
+\end{examplebox}
 
 \begin{lemma}
     For every $k$ there is some strictly $k+1$-local language that is not strictly $k$-local.
@@ -142,8 +292,7 @@ the size of the locality domain can be increased from $k$ to $k+1$ by padding th
 \end{theorem}
 
 Now we know for sure that the size of the locality domain has a direct effect on generative capacity.
-This may seem barely surprising, but it is far from trivial.
-In the coming weeks we will see that for a very similar formalism, all $k \geq 2$ have exactly the same power.
+This is hardly surprising, but still far from trivial --- in Chapter~\ref{cha:REG} we will encounter a very similar formalism for which all $k \geq 2$ have exactly the same power.
 
 
 \subsection{Relation to Finite Languages}
@@ -151,13 +300,13 @@ In the coming weeks we will see that for a very similar formalism, all $k \geq 2
 Remember that the list phonology model of Lecture~\ref{cha:ListPhonology} was restricted to lists of finite length, so it could only generate finite languages.
 This restriction is empirically inadequate as it conflicts with the assumption that the list of phonological words in a given natural language is infinite and fails to handle nonce words and linguistic creativity in general.
 But not only is the list phonology model restricted to finite languages, it adds insult to injury with its ability to generate all finite languages.
-Every finite language is a viable natural language phonology, according to the list model, and we have already seen why this is typologically untenable.
-So the class of languages that can be generated by the list phonology model is exactly the class of finite languages, which is the class that is least likely to provide an insightful or empirically adequate model of language.
+Every finite language is a viable natural language phonology according to the list model, and we have already seen why this is typologically untenable.
+The class of finite languages is the class that is least likely to provide an insightful or empirically adequate model of language, so we should strive to work with formalisms that cannot generate this class.
 
-The strictly local languages improve on this significantly, but only if one adopts the right perspective.
+The strictly local languages are a marked improvement over the list phonology model in this respect, but only if one adopts the right perspective.
 First, it is obvious that strictly local languages can be infinite, so not every strictly local language is finite.
 Let us make this claim fully explicit via a proof.
-We already know that every strictly $k$-local language is strictly $k+1$-local, so all we need is an example of a strictly $1$-local language.
+We already know that every strictly $k$-local language is strictly $k+1$-local, so all we need is an example of a language that is both infinite and strictly $1$-local language.
 
 \Note{%
 Further reflection reveals that almost every $1$-local language is infinite.
@@ -175,13 +324,13 @@ Can you define them?
     Then $L(\posG{G}) = \setof{\emptystring, a, \String{aa}, \String{aaa}, \ldots} = a^*$, which is infinite.
 \end{proof}
 %
-\begin{theorem}
+\begin{corollary}
     For every $k \geq 1$, $\SL_k$ contains an infinite language.
-\end{theorem}
+\end{corollary}
 %
 This is a welcome result because it shows that no matter what size of locality domain we pick, we are never restricted to just finite languages.
 An even more appealing property of strictly local languages is that for every level of the infinite hierarchy there are some finite languages that cannot be defined.
-Consequently, strictly local grammars improve on the list phonology model in that they cannot define any arbitrary phonological systems.
+Consequently, strictly local grammars improve on the list phonology model in that they cannot define just about any arbitrary phonological systems.
 %
 \begin{theorem}
     For every $k \geq 1$, there is some finite language that is not contained in $\SL_k$. 
@@ -200,20 +349,39 @@ Consequently, strictly local grammars improve on the list phonology model in tha
 \end{proof}
 %
 The proof above is rather sneaky.
-It exploits the fact that every strictly $k$-local grammar is a finite set of strings of length $k$, which can be viewed as a finite language.
+It exploits the fact that every strictly $k$-local grammar is a finite set of strings of length $k$, but this very set can also be viewed as a finite language.
 This is an interesting perspective: a strictly $k$-local grammar $G$ is a finite language $L_G$ coupled with a specific algorithm $A$ for creating a new language from $L_G$.
-If we try to generate $L_G$ via a strictly $k$-local grammar, this grammar automatically uses the algorithm $A$, so for certain choices of $L_G$ the grammar generates additional strings via $A$ that do not belong to $L_G$.
+If we try to generate $L_G$ via a second strictly $k$-local grammar, this grammar automatically uses the algorithm $A$, so for certain choices of $L_G$ the grammar generates additional strings via $A$ that do not belong to $L_G$.
 
-There is, however, a much simpler proof that uses the same trick that we already encountered in the proof of Lem.~\ref{lem:SLMath_SL-HierarchyProper}.
+If you still find this horribly confusing, do not despair:
+there is a much simpler proof that uses the same trick that we already encountered in the proof of Lem.~\ref{lem:SLMath_SL-HierarchyProper}.
 %
 \begin{proof}
     Consider the finite language that consists only of the string $a^k$.
     Note that $\Bigrams[k](a^k) = \setof{\LeftEdge a^{k-1}, a^k, a^{k-1} \RightEdge} = \Bigrams[k](a^{k+1})$.
     Thus every strictly $k$-local grammar that generates $a^k$ also generates $a^{k+1}$.
+    This entails that no strictly $k$-local grammar generates the finite language $\setof{a^k}$.
 \end{proof}
+%
+Why would anyone ever want to use the more complicated proof if there is a much simpler one?
+In poetic terms: because the journey is the destination.
+Proofs aren't just about establishing results, they tell us why a specific result holds and hence provide us with deeper insights.
+The simpler proof does not highlight that each strictly local grammar it itself a finite language, an obvious yet nonetheless surprising fact.
+New perspective like this are always useful.
+Remember the Keenan-Moss credo:
+%
+\begin{center}
+    \begin{tikzpicture}
+        \node[draw=red, fill=red!10, thick]
+            {If you can't say something two ways you can't say it at all.};
+    \end{tikzpicture}
+\end{center}
+%
+This isn't restricted to definitions, it also extends to proofs.
+The more routes takes us towards a specific result, the better.
 
-Careful though: The previous theorem holds only when the size of the locality domain is fixed by some $k$.
-The whole class of strictly local languages properly subsumes the class of finite languages.
+One important point that both proofs share is that they presuppose that the size of the locality domain is fixed to some $k$.
+Hence they do not apply if we consider the whole class of strictly local languages, which turns out to properly subsume the class of finite languages.
 %
 \begin{theorem}
     Every finite language is strictly local.
@@ -225,11 +393,12 @@ The whole class of strictly local languages properly subsumes the class of finit
     Since every $k$-gram starts with $\LeftEdge$ or ends in $\RightEdge$, $L(G) = L$, wherefore $L$ is strictly $k$-local.
 \end{proof}
 %
-The relation between strictly local languages and finite languages thus is more involved than one would expect.
+We see that the relation between strictly local languages and finite languages is more involved than one would expect.
 Without restrictions on the size of the locality domain, the strictly local languages include all finite languages.
 However, the class of strictly $k$-local languages and the class of finite languages are incomparable --- they have a non-empty intersection, but neither subsumes the other (cf.\ Fig.~\ref{fig:SLMath_SL-Fin}).
 So assuming that $k$ is fixed for natural language phonology, e.g.\ as part of Universal Grammar, strictly local grammars are a good approximation of local processes in phonology.
 They can handle infinity and do not incorrectly predict languages to vary freely across all dimensions.
+In particular, they naturally give rise to iterated local processes such as progressive vowel harmony.
 %
 \begin{figure}[htpb]
     \centering
@@ -245,7 +414,7 @@ In several of the preceding proofs we have used the fact that a strictly local g
 A finite language $L$ may not be in $\SL_k$ because a strictly $k$-local grammar that tries to generate $L$ will also end up generating other strings outside of $L$.
 But a strictly $k+1$-local grammar may be able to do a point landing and generate all and only those strings that are members of $L$.
 What this shows is that a strictly $k$-local grammar only has perfect precision within its locality domain of size $k$, beyond that it has to generalize.
-This generalization step is what allows strictly local grammars to generate infinite languages and thus the true source of their power.
+This generalization step is what allows strictly local grammars to generate infinite languages, making it the true source of their power.
 
 Crucially, though, strictly local grammars don't just generalize randomly, quite to the contrary: all strictly local grammars generalize in the same fashion, irrespective of the size of their locality domain.
 Their generalization strategy is already implicit in the definition of strictly local languages, which categorizes strings as well-formed or ill-formed according to their set of $k$-grams.
@@ -279,7 +448,7 @@ Let us look at a couple of examples first before wading through the proof of the
         \end{array}
     \]
     %
-    Notice how $x$ is a single symbol since its length must be $k-1 = 2 -1 = 1$.
+    Notice how $x$ is a single symbol since its length must be $k-1 = 2 - 1 = 1$.
     Also, we could have established the membership of $\String{ababab}$ more succinctly using just $\String{abab}$ or $\String{abababab}$.
     \[
         \begin{array}{rcll}
@@ -300,8 +469,8 @@ Let us look at a couple of examples first before wading through the proof of the
     \]
 \end{examplebox}
 %
-Since substring substitution closure fails if even a single string is missing from the set, it is usually not a good way to of showing that a language is strictly local --- if the language in question is infinite, one cannot show via specific substitutions that it is suffix substitution closed.
-However, suffix substitution closure is an excellent way of showing that a language is not strictly local by giving a single example for how one can find a missing string.
+Since substring substitution closure fails if even a single string is missing from the set, it is usually not a good way of showing that a language is strictly local --- if the language in question is infinite, one cannot show via specific substitutions that it is suffix substitution closed.
+However, suffix substitution closure is an excellent way of showing that a language is \textbf{not} strictly local by giving a single example of a missing string.
 %
 \begin{examplebox}[A Language that Fails Subtree Substitution Closure]
     Consider the language $(\String{aa})^+$, the variant of $(\String{ab})^+$ where all $b$s have been replaced by $a$s.
@@ -329,7 +498,7 @@ However, suffix substitution closure is an excellent way of showing that a langu
     \paragraph{Left to right}
     Note first that substring substitution closure is trivially satisfied if $L$ contains no strings of length strictly greater than $k-1$, for then all strings take the form $\emptystring \stringcat x \stringcat \emptystring$ with respect to $k$-local substring substitution.
     Suppose, then, that $s_1$ and $s_2$ are strings of $L$ with length strictly greater than $k-1$ such that $s \is u_1 \stringcat x \stringcat v_1$ and $s_2 \is u_2 \stringcat x \stringcat v_2$.
-    If $s_1 = s_2$, then $s_1 \stringcat x \stringcat v_2 = s_1 = s_2$, so substring substitution closure is not violated.
+    If $s_1 = s_2$, then $u_1 \stringcat x \stringcat v_2 = s_1 = s_2$, so substring substitution closure is not violated.
     If $s_1 \neq s_2$, then it must be the case that $\Bigrams[k](u_1 \stringcat x \stringcat v_2) \subseteq \Bigrams[k](s_1) \cup \Bigrams[k](s_2) \subseteq G$, where $G$ is a strictly $k$-local grammar with $L(G) = L$.
     It follows immediately that $s_1 \stringcat x \stringcat v_2$ is a member of $L(G)$ and thus a member of $L$. 
     This exhausts all possible cases, showing that $L$ is indeed closed under $k$-local substring substitution.
@@ -339,7 +508,7 @@ However, suffix substitution closure is an excellent way of showing that a langu
     It suffices to establish $L(G) = L$, which entails that $L$ is strictly $k$-local.
 
     It is easy to see from the definition of $G$ that $L \subseteq L(G)$.
-    Showing that $L(G) \subseteq L$ is requires a fairly lengthy proof that is omitted here.
+    Showing that $L(G) \subseteq L$ requires a fairly lengthy proof that is omitted here.
     The curious reader is referred to \citet[19--21]{Rogers07}.
 \end{proof}
 
@@ -357,7 +526,7 @@ In particular the basic set-theoretic operations of intersection, union, and rel
 
 Let us look at closure under intersection first.
 This one is particularly important because of the close correspondence that negative strictly local grammars establish between constraints on the one hand and languages on the other.
-If every $n$-gram corresponds to a well-formedness constraints, then one would expect that one can get the intersection of two languages by simply conjoining their respective well-formedness constraints.
+If every $k$-gram corresponds to a well-formedness constraints, then one would expect that one can get the intersection of two languages by simply conjoining their respective well-formedness constraints.
 That is indeed the case.
 %
 \begin{lemma}
@@ -375,14 +544,16 @@ That is indeed the case.
     These two facts jointly imply $L(G_1) \cap L(G_2) = L(G_1 \cap G_2)$.
 \end{proof}
 %
-% hw: spell out the second subset relation
+% fixme: hw: spell out the second subset relation
 %
-Closure under intersection can also be used to prove that a language is not strictly local.
-Suppose that we know that $L$ is strictly local, but we have a hard time showing that $L'$ is not strictly local.
+Closure under intersection, too, can be used to prove that a language is not strictly local.
+Suppose we know that $L$ is strictly local, but we have a hard time showing that $L'$ is not strictly local.
 Then we can instead try to show that $L \cap L'$ is not strictly local, as this immediately implies the non-locality of $L'$, too.
+%
+% fixme: example!
 
 One might expect that closure under union holds too since one can simply take the union of the grammars, but this does not work as expected.
-The union of two grammars $G_1$ and $G_2$ often generates a subset of the union of $L(G_1)$ and $L(G_2)$.
+The union of two grammars $G_1$ and $G_2$ often generates a superset of the union of $L(G_1)$ and $L(G_2)$.
 Do not even try to look for a smarter strategy to build a grammar for the union of two strictly local languages, there is none that works in all cases.
 %
 \begin{lemma}
@@ -394,7 +565,8 @@ Do not even try to look for a smarter strategy to build a grammar for the union 
     The proof can easily be adapted for arbitrary values of $k$.
 
     Let $L_1 \is \setof{\mathit{ab}}$ and $L_2 \is \setof{\mathit{b}, \mathit{bb}, \mathit{bbb}, \ldots}$.
-    Assume without loss of generality (w.l.o.g.) that all bigram grammars are positive.
+    \Note{``w.l.o.g.''\ is short for ``without loss of generality'' and is meant to indicate that the proof can easily be adapted to cases that are not covered by the assumption.}
+    Assume w.l.o.g.\ that all bigram grammars are positive.
     Then any bigram grammar that generates $L_1$ must contain the bigrams $\LeftEdge a$, $\mathit{ab}$, and $b \RightEdge$.
     Similarly, a bigram grammar generating $L_2$ must contain the bigrams $\LeftEdge b$, $\mathit{bb}$, and $b \RightEdge$.
     Therefore a bigram grammar that generates all strings in $L_1 \cup L_2$ must contain at least these bigrams.
@@ -410,11 +582,11 @@ If we take the union of these two sets, we get the set of strings that satisfy s
 If that set were intersected with some natural language's phonology --- which is an abstract way of saying that we force the constraint represented by that set onto the language --- then words in that language are well-formed as long as they obey sibiliant harmony or vowel harmony, but they need not obey both.
 This is extremely unnatural. If a language has two phonological processes, then words must usually obey both.
 It is not the case that satisfying one constraint grants you \emph{carte blanche} to ignore the other.
-The closure properties of strictly local languages can explain this fact: intersection (=constraint conjunction) always yields a potential natural language phonology, union (=constraint disjunction) may not.
+The closure properties of strictly local languages can explain this fact: intersection (= constraint conjunction) always yields a potential natural language phonology, union (=constraint disjunction) may not.
 The assumption that local phonological processes fit within the bounds of strictly local languages thus makes a typological prediction: if two constraints apply in a disjunctive fashion as indicated above, then these two constraints must be such that their union is also strictly local --- which rules out a great number of strictly local languages.
 %
-%hw: extend proof to case where both languages are infinite
-%hw: extend proof to arbitrary k
+%fixme: hw: extend proof to case where both languages are infinite
+%fixme: hw: extend proof to arbitrary k
 
 The previous two lemmata also imply that closure under relative complement does not hold.
 %
@@ -428,7 +600,7 @@ The previous two lemmata also imply that closure under relative complement does 
     Since closure under intersection holds while closure under union does not, closure under relative complement cannot hold, either.
 \end{proof}
 %
-%hw: give a proof by example
+%fixme: hw: give a proof by example
 You may find this result surprising because the complement of a strictly local grammar is a strictly local grammar.
 But in general $\complementof{L(G)}$ differs from $L(\complementof{G})$, just like $L(G_1) \cup L(G_2)$ is not guaranteed to be $L(G_1 \cup G_2)$.
 These differences illustrate why it is so important to distinguish between grammars and the languages they generate.
@@ -439,6 +611,8 @@ We finish with yet another missing closure property.
     The class of strictly local languages is not closed under relabelings.
 \end{lemma}
 %
+% fixme: define relabeling
+%
 \begin{proof}
     We have already seen that $(ab)^+$ is strictly 2-local whereas the relabeling $(aa)^+$ is not strictly local at all.
     But the former is the image of the latter under a relabeling that replaces all $b$s by $a$s.
@@ -448,7 +622,7 @@ This is a very important result as it ties directly into the abstractness debate
 Suppose that we are allowed to have all kinds of hidden structure in our phonological representation, e.g.\ a basic syllable template or feet.
 Then we could assume that the language $(aa)^+$ is underlyingly equipped with a CV-template, so that we should rather think of it as $(a_C a_V)^+$.
 This language is strictly local (it is a notational variant of $(ab)^+$), so $(aa)^+$ is strictly local under a mapping that removes unpronounced structure.
-In later lectures we will see that this is a very dangerous route to take: hidden structure pushes strictly local languages to a level of power where all phonological processes are equally simple.
+In Chapter~\ref{cha:REG} we will see that this is a very dangerous route to take: hidden structure pushes strictly local languages to a level of power where all phonological processes are equally simple.
 This eradicates all distinctions between processes and takes us back to the undesirable egalitarianism of the list phonology model.
 
 \section{Implications for Phonology}
@@ -456,7 +630,8 @@ Our mathematical expedition has taught us a surprising amount about phonology.
 First of all, all local phonological dependencies (including those spanning across word boundaries) can be handled by strictly local grammars, a very simple formalism with few cognitive requirements.
 The model comes with a minimal memory burden as it only requires the speaker to keep track of a small number of $k$-factors.
 It is also very fast: recognition via a scanner takes linear time and can be carried out in an incremental online fashion.
-Lookup of $k$-factors in the grammar takes at most logarithmic time using binary search, and even fast search methods can be implemented.
+Lookup of $k$-factors in the grammar takes at most logarithmic time using binary search, and even faster search methods can be implemented.
+With a hash table, lookup is instantaneous.
 
 But strictly local grammars also capture essential properties of phonological competence.
 They are analytic in nature and thus capable of generating infinite languages, which solves the problems the list phonology model had with linguistic creativity and nonce words.
@@ -468,4 +643,6 @@ The union or relative complement of a natural language's phonotactics is not gua
 The increase of power brought about by relabelings also cautions us against using hidden structures and highly abstracted alphabets, an issue that has been discussed at length in phonology and that will occupy us at various points for the rest of the course.
 
 
+%fixme:
 %hw: complete proof of positive-negative equivalence
+%hw: implement k to k+1 converter
