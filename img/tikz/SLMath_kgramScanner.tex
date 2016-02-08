@@ -1,0 +1,112 @@
+\begin{tikzpicture}
+    \begin{scope}[spy using outlines={rectangle, size = 5em}]
+        % input string    
+        \foreach \Name/\Symbol in { 0/$\LeftEdgeSymbol$,
+                                    1/$\LeftEdgeSymbol$,
+                                    2/$\LeftEdgeSymbol$,
+                                    3/$a$,
+                                    4/$b$,
+                                    5/$a$,
+                                    6/$b$,
+                                    7/$a$,
+                                    8/$b$,
+                                    9/$a$,
+                                    10/$b$,
+                                    11/$a$,
+                                    12/$b$,
+                                    13/$b$,
+                                    14/$\RightEdgeSymbol$,
+                                    15/$\RightEdgeSymbol$,
+                                    16/$\RightEdgeSymbol$
+                                  }
+            \node[text height=.75em] (\Name) at ($(\Name*1.5em,0)$) {\Symbol};
+
+        % arrow for scanner direction
+        \draw[blue,->] (5.north) to (9.north);
+
+        % list of bigrams
+        \node (bigrams) at (7.south)
+            [
+            yshift=-18em,
+            minimum width=7em,
+            minimum height=7.5em,
+            fill=red!5,
+            draw=red,
+            thick,
+            rounded corners
+            ]
+            {%
+                \begin{tabular}{l}
+                    \\[-.5em]
+                    $\LeftEdge \LeftEdge \LeftEdge a$\\
+                    $\LeftEdge \LeftEdge a b$\\
+                    $\LeftEdge a b a$\\
+                    $a b a b$\\
+                    $b a b a$\\
+                    $b a b \RightEdge$\\
+                    $a b \RightEdge \RightEdge$\\
+                    $b \RightEdge \RightEdge \RightEdge$\\
+                \end{tabular}%
+            };
+
+        % name of list of bigrams
+        \node (G) at (bigrams.north)
+            [
+            minimum width=7em,
+            fill=red,
+            draw=red,
+            thick,
+            rounded corners
+            ]
+            {\color{white}\textbf{Grammar}};
+
+        % frame for looking up first scanned bigram 
+        \draw[thick,gray,fill=gray!50,opacity=.3] ($(bigrams.west)+(1em,3.35em)$) rectangle ($(bigrams.east)+(-1em,2.35em)$);
+
+        % frame for failed looked up of second scanned bigram
+        \node[xshift=3em,yshift=-2em, thick,draw=gray,fill=gray!50,opacity=.3,align=center] (failed) at (bigrams.east) {\phantom{error}};
+        \node at (failed) {error};
+
+        % first scanner window
+        %---------------------
+        % create center coordinate for zoom target
+        \coordinate (zoomcenter-good) at ($(1.east) !.5! (4.west)$);
+
+        % spy on zoom target, create node (zoom) below
+        \spy[magnification=2,
+             blue,
+             width = 11em,
+             spy connection path={
+                \draw[dashed] (tikzspyonnode.north west) -- (tikzspyinnode.north west);
+                \draw[dashed] (tikzspyonnode.north east) -- (tikzspyinnode.north east);
+                \draw[dashed] (tikzspyonnode.south west) -- (tikzspyinnode.south west);
+                \draw[dashed] (tikzspyonnode.south east) -- (tikzspyinnode.south east);
+                \draw[dashed,gray] (tikzspyinnode.south) ..
+                                            controls +(245:8em) and +(170:3em) ..
+                                                ($(bigrams.west)+(1em,2.85em)$);
+            }]
+            on (zoomcenter-good) in node [fill=blue!5] (zoom-good) at ($(zoomcenter-good) - (0,8em)$);
+
+
+        % second scanner window
+        %----------------------
+        % create center coordinate for zoom target
+        \coordinate (zoomcenter-bad) at ($(10.east) !.5! (13.west)$);
+
+        % spy on zoom target, create node (zoom) below
+        \spy[magnification=2,
+             blue,
+             width = 11em,
+             spy connection path={
+                \draw[dashed] (tikzspyonnode.north west) -- (tikzspyinnode.north west);
+                \draw[dashed] (tikzspyonnode.north east) -- (tikzspyinnode.north east);
+                \draw[dashed] (tikzspyonnode.south west) -- (tikzspyinnode.south west);
+                \draw[dashed] (tikzspyonnode.south east) -- (tikzspyinnode.south east);
+                \draw[dashed,gray] (tikzspyinnode.south) ..
+                                            controls +(300:6em) and +(30:6em) ..
+                                                (failed.east);
+            }]
+            on (zoomcenter-bad) in node [fill=blue!5] (zoom-bad) at ($(zoomcenter-bad) - (0,8em)$);
+
+    \end{scope}
+\end{tikzpicture}
