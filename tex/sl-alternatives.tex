@@ -1,3 +1,190 @@
 \chapter{Alternative Views on Strict Locality}
 \label{cha:SLImplement}
 
+\section{Implementations of Strictly Local Grammars}
+
+\subsection{Prefix Trees Revisited}
+
+The discussion of the list phonology model in Ch.~\ref{cha:ListPhonology} spent quite some time on how such a list can be efficiently searched and stored.
+Prefix trees turned out to be ideal for this purpose as they provide a more compact representation but can also be searched very quickly --- finding an item only requires following one specific branch for each sound in the word.
+It doesn't take much ingenuity to realize that strictly local grammars, too, can be stored as prefix trees.
+%
+\begin{examplebox}[Prefix Tree for a Strictly 4-Local Grammar]
+    Consider the strictly $4$-local grammar, which was also used in Fig~.\ref{fig:SLMath_Scanner}.
+    %
+    \begin{center}
+        \begin{tabular}{lll}
+            $\LeftEdge \LeftEdge \LeftEdge a$
+            &
+            $a b a b$
+            &
+            $b a b \RightEdge$
+            \\
+            $\LeftEdge \LeftEdge a b$
+            &
+            $b a b a$
+            &
+            $a b \RightEdge \RightEdge$
+            \\
+            $\LeftEdge a b a$
+            &
+            &
+            $b \RightEdge \RightEdge \RightEdge$
+        \end{tabular}
+    \end{center}
+    %
+    This set corresponds to the prefix tree below, where nodes are numbered for the sake of exposition.
+    
+    \begin{tikzpicture}[
+        state/.style = {circle, fill=blue!15, inner sep = 0pt, minimum width = 2em},
+        final/.style = {circle, fill=red!15, inner sep = 0pt, minimum width= 2em},
+        keylabel/.style = {black},
+        arc/.style = {->,gray!75}
+        ]
+        \node[state] (root) {0};
+            \node[state] (L) [below left=of root] {1};
+                \node[state] (LL) [below left=of  L] {2};
+                    \node[state] (LLL) [below left=of LL] {3};
+                        \node[final] (LLLa) [below=of LLL] {4};
+                    \node[state] (LLa) [below=of LL] {5};
+                        \node[final] (LLab) [below=of LLa] {6};
+                \node[state] (La) [below=of L] {7};
+                    \node[state] (Lab) [below=of La] {8};
+                        \node[final] (Laba) [below=of Lab] {9};
+            \node[state] (a) [below=of root] {10};
+                \node[state] (ab) [below=of a] {11};
+                    \node[state] (aba) [below=of ab] {12};
+                        \node[final] (abab) [below=of aba] {13};
+                    \node[state] (abR) [below right=of ab] {14};
+                        \node[final] (abRR) [below=of abR] {15};
+            \node[state] (b) [below right=of root] {16};
+                \node[state] (ba) [below=of b] {17};
+                    \node[state] (bab) [below right=of ba] {18};
+                        \node[final] (baba) [below=of bab] {19};
+                        \node[final] (babR) [below right=of bab] {20};
+                \node[state] (bR) [below right=of b] {21};
+                    \node[state] (bRR) [below right=of bR] {22};
+                        \node[final] (bRRR) [below right=of bRR] {23};
+
+        \foreach \Source/\Target/\Label in {%
+            root/L/$\LeftEdge$,
+            L/LL/$\LeftEdge$,
+            LL/LLL/$\LeftEdge$,
+            LLL/LLLa/a,
+            LL/LLa/a,
+            LLa/LLab/b,
+            L/La/a,
+            La/Lab/b,
+            Lab/Laba/a,
+            root/a/a,
+            a/ab/b,
+            ab/aba/a,
+            aba/abab/b%
+            }
+            \draw[arc] (\Source) to node [left,keylabel] {\Label} (\Target);
+
+        \foreach \Source/\Target/\Label in {%
+            ab/abR/$\RightEdge$,
+            abR/abRR/$\RightEdge$,
+            root/b/b,
+            b/ba/a,
+            ba/bab/b,
+            bab/baba/a,
+            bab/babR/$\RightEdge$,
+            b/bR/$\RightEdge$,
+            bR/bRR/$\RightEdge$,
+            bRR/bRRR/$\RightEdge$%
+            }
+            \draw[arc] (\Source) to node [right,keylabel] {\Label} (\Target);
+    \end{tikzpicture}
+    
+    The prefix tree has lots of unary branches that can be compressed further to yield a radix tree.
+
+    \begin{tikzpicture}[
+        state/.style = {circle, fill=blue!15, inner sep = 0pt, minimum width = 2em},
+        final/.style = {circle, fill=red!15, inner sep = 0pt, minimum width= 2em},
+        keylabel/.style = {black},
+        arc/.style = {->,gray!75}
+        ]
+        \node[state] (root) {0};
+            \node[state] (L) [below left=4.5em of root] {1};
+                \node[state] (LL) [below left=of  L] {2};
+                    \node[final] (LLLa) [below left=of LL] {4};
+                    \node[final] (LLab) [below=of LL] {6};
+                \node[final] (Laba) [below=of L] {9};
+                \node[state] (ab) [below=of root] {11};
+                    \node[final] (abab) [below left=2em of ab] {13};
+                    \node[final] (abRR) [below right=2em of ab] {15};
+            \node[state] (b) [below right=4.5em of root] {16};
+                \node[state] (bab) [below=of b] {18};
+                        \node[final] (baba) [below=of bab] {19};
+                        \node[final] (babR) [below right=of bab] {20};
+                \node[final] (bRRR) [below right=of b] {23};
+
+        \foreach \Source/\Target/\Label in {%
+            root/L/$\LeftEdge$,
+            L/LL/$\LeftEdge$,
+            LL/LLLa/$\LeftEdge$a,
+            LL/LLab/ab,
+            L/Laba/aba,
+            root/ab/ab,
+            ab/abab/ab%
+            }
+            \draw[arc] (\Source) to node [left,keylabel] {\Label} (\Target);
+
+        \foreach \Source/\Target/\Label in {%
+            ab/abRR/$\RightEdge\RightEdge$,
+            root/b/b,
+            b/bab/ab,
+            bab/baba/a,
+            bab/babR/$\RightEdge$,
+            b/bRRR/$\RightEdge\RightEdge\RightEdge$%
+            }
+            \draw[arc] (\Source) to node [right,keylabel] {\Label} (\Target);
+    \end{tikzpicture}
+\end{examplebox}
+
+As you seen from the example above, the prefix\slash radix trees for strictly local grammars differ slightly from those for the list phonology model in that they have only leaf nodes as final states.
+% fixme: was final state mentioned before?
+So we do not need to encode the distinction between final and non-final states, saving us a tiny amount of memory (1 bit per node in the tree).
+
+You might have also noticed that some branches are duplicated.
+To give but one example, the nodes 11 and 21 in the prefix tree share the same sub-branch \RightEdge-\RightEdge.
+% fixme: add example reference
+We can combine these branches by first merging the nodes 14 and 22, and then 15 and 23.
+This does not change the grammar because the set of paths from a root to a leaf has not changed --- in particular, we have not lost the paths a-b-\RightEdge-\RightEdge and b-\RightEdge-\RightEdge-\RightEdge, and we have not gained any new paths.
+If we had merged 14 and 23 instead just because they both are reached via a \RightEdge arc, then we would have lost the path a-b-\RightEdge-\RightEdge and gained the path a-b-\RightEdge.
+This would have changed the grammar to an extent where it wouldn't even be strictly 4-local anymore according to our definition.
+So it is important to realize that nodes may only merged if that does not affect the set of paths from the root to a leaf.
+%
+\begin{examplebox}
+    
+\end{examplebox}
+
+Once we start merging trees, prefix trees are no longer trees because some nodes have more than one mother.
+Linguists call such trees \emph{multi-dominance trees}.
+This term ins unknown in computer science, and instead one speaks of \emph{directed acyclic graphs} (DAGs).
+DAGs are slightly more general than multi-dominance trees because they can have multiple roots.
+%
+\begin{definition}[DAG]
+    A \emph{graph} is a pair $\tuple{V,E}$ consisting of a set $V$ of \emph{vertices} and a set $E \subseteq V \times V $ of \emph{edges} connecting vertices.
+    We also speak of \emph{nodes} and \emph{branches}, respectively.
+    The reflexive, transitive closure of $E$ is denoted $E^*$.
+    A \emph{directed acyclic graph} is a graph that satisfies the following axiom:
+    %
+    \begin{description}
+        \item[no cycles] for all $u,v \in V$, $\tuple{u,v} \in E$ implies $\tuple{v,u} \notin E^*$.
+    \end{description}
+\end{definition}
+
+\subsection{Matrices}
+
+adjacency matrix
+matrix representation
+matrices in python
+    list comprehension
+
+\section{Automata}
+
+\section{Logic}
+    clearly brings out complementarity of positive and negative grammars
