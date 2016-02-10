@@ -353,8 +353,17 @@ It exploits the fact that every strictly $k$-local grammar is a finite set of st
 This is an interesting perspective: a strictly $k$-local grammar $G$ is a finite language $L_G$ coupled with a specific algorithm $A$ for creating a new language from $L_G$.
 If we try to generate $L_G$ via a second strictly $k$-local grammar, this grammar automatically uses the algorithm $A$, so for certain choices of $L_G$ the grammar generates additional strings via $A$ that do not belong to $L_G$.
 
-If you still find this horribly confusing, do not despair:
-there is a much simpler proof that uses the same trick that we already encountered in the proof of Lem.~\ref{lem:SLMath_SL-HierarchyProper}.
+Viewing grammars as languages will seem odd to many linguists, who think of the grammar as the knowledge the speaker has acquired about their language, whereas the language is the output produced from this knowledge.
+But that is an ontological distinction.
+It is a useful distinction to make when outlining the research program of linguistics, its goals, problems, and promises.
+It highlights that modern linguistics is about human cognition rather than merely describing individual languages as abstract systems of structures and rules that exist independent of the speaker's cognitive ability to use them.
+The latter view dates back to Structuralism, and there are good reasons why it was abandoned.
+As useful as the ontological mandate may be, though, it has no say over what mathematical tricks we may avail ourselves of.
+Equating grammars with languages can be useful in some cases.
+Here it furnishes a proof about the limits of strictly local languages, and in Ch.~\ref{cha:Derivations} it will open up completely new methods of constructing syntactic grammars.
+
+If you still find all of this horribly confusing, do not despair:
+there is a much simpler proof that does not blur the distinction between grammars and languages and instead uses the same trick that we already encountered in the proof of Lem.~\ref{lem:SLMath_SL-HierarchyProper}.
 %
 \begin{proof}
     Consider the finite language that consists only of the string $a^k$.
@@ -378,7 +387,7 @@ Remember the Keenan-Moss credo:
 \end{center}
 %
 This isn't restricted to definitions, it also extends to proofs.
-The more routes takes us towards a specific result, the better.
+The more routes take us towards a specific result, the better.
 
 One important point that both proofs share is that they presuppose that the size of the locality domain is fixed to some $k$.
 Hence they do not apply if we consider the whole class of strictly local languages, which turns out to properly subsume the class of finite languages.
