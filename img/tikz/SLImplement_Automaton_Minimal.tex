@@ -1,0 +1,21 @@
+\begin{tikzpicture}[
+    state/.style = {circle, fill=blue!15, inner sep = 0pt, minimum width = 2em},
+    final/.style = {circle, fill=red!15, inner sep = 0pt, minimum width= 2em},
+    keylabel/.style = {black},
+    arc/.style = {->,gray!75}
+    ]
+    \node[state] (LL) at (0,0) {$\String{\LeftEdge\LeftEdge}$};
+    \node[state] (La) [right=of LL] {$\String{\LeftEdge a}$};
+    \node[state] (ab) [right=of La] {$\String{ab}$};
+    \node[state] (ba) [above right=of ab] {$\String{ba}$}; 
+    \node[final] (bR) [below right=of ab] {$\String{b\RightEdge}$};
+
+    \foreach \Source/\Target/\Label in {%
+            LL/La/a,
+            La/ab/b,
+            ab/bR/\RightEdge}
+        \draw[arc] (\Source) to node [keylabel,above] {$\String{\Label}$} (\Target);
+
+    \draw[arc,bend left] (ab) to node [keylabel,above] {$\String{a}$} (ba);
+    \draw[arc,bend left] (ba) to node [keylabel,right] {$\String{b}$} (ab);
+\end{tikzpicture}

@@ -1,0 +1,54 @@
+\begin{tikzpicture}[
+    state/.style = {circle, fill=blue!15, inner sep = 0pt, minimum width = 2em},
+    final/.style = {circle, fill=red!15, inner sep = 0pt, minimum width= 2em},
+    keylabel/.style = {black},
+    arc/.style = {->,gray!75}
+    ]
+    \node[state] (root) {0};
+        \node[state] (L) [below left=of root] {1};
+            \node[state] (LL) [below=of  L] {2};
+                \node[state] (LLL) [below left=of LL] {3};
+                    \node[state] (LLLa) [below=of LLL] {\footnotesize 4,9,19};
+                \node[state] (LLa) [below=of LL] {\footnotesize 5,12};
+                    \node[state] (LLab) [below=of LLa] {\footnotesize 6,13};
+            \node[state] (La) [below left=of L] {7};
+                \node[state] (Lab) [below left=of La] {8};
+        \node[state] (a) [below=of root] {10};
+            \node[state] (ab) [below=of a] {11};
+        \node[state] (b) [below right=of root] {16};
+            \node[state] (ba) [below right=of b] {17};
+                \node[state] (bab) [below right=of ba] {18};
+            \node[state] (bR) [below=of b] {21};
+                \node[state] (bRR) [below right=of bR] {\footnotesize 14,22};
+                    \node[state] (bRRR) [below right=of bRR,align=center] {\footnotesize 15,20,\\\footnotesize23};
+
+    \foreach \Source/\Target/\Label in {%
+        root/L/$\LeftEdge$,
+        L/LL/$\LeftEdge$,
+        LL/LLL/$\LeftEdge$,
+        LLL/LLLa/a,
+        LL/LLa/a,
+        LLa/LLab/b,
+        L/La/a,
+        La/Lab/b,
+        Lab/LLLa/a,
+        root/a/a,
+        a/ab/b,
+        ab/LLa/a%
+        }
+        \draw[arc] (\Source) to node [left,keylabel] {\Label} (\Target);
+
+    \foreach \Source/\Target/\Label in {%
+        ab/bRR/$\RightEdge$,
+        root/b/b,
+        b/ba/a,
+        ba/bab/b,
+        bab/bRRR/$\RightEdge$,
+        b/bR/$\RightEdge$,
+        bR/bRR/$\RightEdge$,
+        bRR/bRRR/$\RightEdge$%
+        }
+        \draw[arc] (\Source) to node [right,keylabel] {\Label} (\Target);
+
+    \draw[arc,bend left=8] (bab) to node [below,keylabel] {a} (LLLa);
+\end{tikzpicture}

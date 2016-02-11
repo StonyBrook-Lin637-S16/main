@@ -1,0 +1,44 @@
+\begin{tikzpicture}[
+    state/.style = {circle, fill=blue!15, inner sep = 0pt, minimum width = 2em},
+    final/.style = {circle, fill=red!15, inner sep = 0pt, minimum width= 2em},
+    keylabel/.style = {black},
+    arc/.style = {->,gray!75}
+    ]
+    \node[state] (root) {0};
+        \node[state] (L) [below left=of root] {1};
+            \node[state] (LL) [below=of  L] {2};
+                \node[state] (LLLa) [below left=of LL,yshift=-4em] {\footnotesize 4,9,19};
+                \node[state] (LLa) [below=of LL] {\footnotesize 5,12};
+                    \node[state] (LLab) [below=of LLa] {\footnotesize 6,13};
+            \node[state] (Lab) [below left=8em of L] {8};
+        \node[state] (ab) [below=8em of root] {11};
+        \node[state] (b) [below right=of root] {16};
+            \node[state] (bab) [below right=10em of b] {18};
+            \node[state] (bRR) [below=7.5em of b] {\footnotesize 14,22};
+                \node[state] (bRRR) [below right=of bRR,align=center] {\footnotesize 15,20,\\\footnotesize23};
+
+    \foreach \Source/\Target/\Label in {%
+        root/L/$\LeftEdge$,
+        L/LL/$\LeftEdge$,
+        LL/LLLa/$\LeftEdge$a,
+        LL/LLa/a,
+        LLa/LLab/b,
+        L/Lab/ab,
+        Lab/LLLa/a,
+        root/ab/ab,
+        ab/LLa/a%
+        }
+        \draw[arc] (\Source) to node [left,keylabel] {\Label} (\Target);
+
+    \foreach \Source/\Target/\Label in {%
+        ab/bRR/$\RightEdge$,
+        root/b/b,
+        b/bab/ab,
+        bab/bRRR/$\RightEdge$,
+        b/bRR/$\RightEdge\RightEdge$,
+        bRR/bRRR/$\RightEdge$%
+        }
+        \draw[arc] (\Source) to node [right,keylabel] {\Label} (\Target);
+
+    \draw[arc,bend left=8] (bab) to node [below,keylabel] {a} (LLLa);
+\end{tikzpicture}
