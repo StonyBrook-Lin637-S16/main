@@ -1,6 +1,13 @@
 \chapter{Alternative Views on Strict Locality}
 \label{cha:SLImplement}
 
+The previous chapter was all about extending bigram grammars to strictly local grammars while changing as little about our perspective as possible.
+This chapter does the exact opposite.
+Following the Keenan-Moss credo of saying something in as many ways as possible, we take a look at several distinct characterizations of strict locality.
+We start out simple by exploring different methods to represent and store strictly local grammars.
+This reinforces the message of Ch.~\ref{cha:Formal} about Marr's levels of description: the further we move away from the computational level towards the algorithmic level, the more implementation details do we have to take care of that may have an effect on runtime behavior and overall performance but are ultimately immaterial for the computational properties we are interested in.
+The second half of the chapter then moves on to characterizations of strict locality that are less directly tied to grammars: automata and a specific fragment of propositional logic. 
+
 \section{Implementations of Strictly Local Grammars}
 
 \subsection{Prefix Trees Revisited}
@@ -11,6 +18,7 @@ It doesn't take much ingenuity to realize that strictly local grammars, too, can
 %
 \begin{examplebox}[Prefix Tree for a Strictly 4-Local Grammar]
     Consider the strictly $4$-local grammar, which was also used in Fig~.\ref{fig:SLMath_Scanner}.
+    \label{ex:SLImplement_PrefixTree}
     %
     \begin{center}
         \begin{tabular}{lll}
@@ -149,16 +157,32 @@ As you seen from the example above, the prefix\slash radix trees for strictly lo
 So we do not need to encode the distinction between final and non-final states, saving us a tiny amount of memory (1 bit per node in the tree).
 
 You might have also noticed that some branches are duplicated.
-To give but one example, the nodes 11 and 21 in the prefix tree share the same sub-branch \RightEdge-\RightEdge.
-% fixme: add example reference
+To give but one example, the nodes 11 and 21 in the prefix tree of example~\ref{ex:SLImplement_PrefixTree} share the same sub-branch \RightEdge-\RightEdge.
 We can combine these branches by first merging the nodes 14 and 22, and then 15 and 23.
 This does not change the grammar because the set of paths from a root to a leaf has not changed --- in particular, we have not lost the paths a-b-\RightEdge-\RightEdge and b-\RightEdge-\RightEdge-\RightEdge, and we have not gained any new paths.
 If we had merged 14 and 23 instead just because they both are reached via a \RightEdge arc, then we would have lost the path a-b-\RightEdge-\RightEdge and gained the path a-b-\RightEdge.
 This would have changed the grammar to an extent where it wouldn't even be strictly 4-local anymore according to our definition.
-So it is important to realize that nodes may only merged if that does not affect the set of paths from the root to a leaf.
+Nor is it licit to merge 7 and 17 because they both can be continued by the sub-path b-a.
+If we did that, we would lose no paths, but suddenly \LeftEdge-a-b-\RightEdge would be a possible path and the grammar would be able to generate $\String{ab}$.
+So it is important to verify that nodes are merged only if that does not affect the set of paths from the root to a leaf.
 %
-\begin{examplebox}
-    
+\begin{examplebox}[DAG for Strictly $4$-Local Grammar]
+    The prefix tree from example~\ref{ex:SLImplement_PrefixTree} can be converted into the graph shown below.
+    \label{ex:SLImplement_DAG}
+    Note that nodes are no longer color-coded to distinguish final from non-final states since all leaf nodes are final, and only those.
+    %
+    \begin{center}
+        \input{./img/tikz/SLImplement_DAG.tex}
+    \end{center}
+    %
+    This graph can be compacted even further by removing unary branching nodes in the same fashion that converts a prefix tree into a radix tree.
+    %
+    \begin{center}
+        \input{./img/tikz/SLImplement_DAGradix.tex}
+    \end{center}
+    %
+    Note that the graph differs from the one one would obtain from the radix tree in example~\ref{ex:SLImplement_PrefixTree} by merging nodes.
+    In particular, the former has 12 nodes and the latter 13.
 \end{examplebox}
 
 Once we start merging trees, prefix trees are no longer trees because some nodes have more than one mother.
@@ -173,18 +197,239 @@ DAGs are slightly more general than multi-dominance trees because they can have 
     A \emph{directed acyclic graph} is a graph that satisfies the following axiom:
     %
     \begin{description}
-        \item[no cycles] for all $u,v \in V$, $\tuple{u,v} \in E$ implies $\tuple{v,u} \notin E^*$.
+        \item[No cycles] for all $u,v \in V$, $\tuple{u,v} \in E$ implies $\tuple{v,u} \notin E^*$.
     \end{description}
+    %
+    A graph\slash DAG is \emph{edge-labeled} iff it comes equipped with a function $\LabelFunc: E \rightarrow \Omega$ that assigns each edge $e \in E$ some symbol drawn from the alphabet $\Omega$ of edge labels.
 \end{definition}
+%
+\begin{techinfo}[Closure of a Relation]
+    In Cha.~\ref{cha:SLMath} we encountered the notion of \emph{closure} in the sense that a given object may be closed under some operation.
+    A slightly different sense of \emph{closure} is commonly used to construct new relations from old ones.
+    Suppose $R$ is some relation over set $S$, i.e.\ $R \subseteq S \times S$.
+    Then for $P$ some property of relations, the $P$-closure of $R$ is the smallest relation $R'$ such that $R \subseteq R' \subseteq S \times S$ and $R'$ satisfies property $P$.
+    Here are three common properties that are used in this connection:
+    %
+    \begin{description}
+        \item[reflexive] $\tuple{u,u} \in R$ (for all $u \in S$)
+        \item[symmetric] $\tuple{u,v} \in R$ implies $\tuple{v,u} \in R$ (for all $u,v \in S$)
+        \item[transitive] $\tuple{u,v} \in R$ and $\tuple{v,w} \in R$ jointly imply $\tuple{u,w} \in R$ (for all $u,v,w \in S$)
+    \end{description}
+    %
+    The linguistic notion of proper dominance in a tree, for example, is the transitive closure of the mother-of relation.
+    Reflexive dominance, on the other hand, is the reflexive transitive closure of the mother-of relation.
+\end{techinfo}
 
 \subsection{Matrices}
 
-adjacency matrix
-matrix representation
-matrices in python
-    list comprehension
+While tree-based representations are very convenient for humans, it is far from obvious how one could implement them in some programming language.
+There exist specialized libraries for Python (search for \emph{py-dag} and \emph{marisa-trie}), but in general it is prudent to keep the number of dependencies for a program as small as possible without sacrificing essential functionality.
+In many cases, a simpler solution is to switch to a different representation format that is easier to use.
+For graphs there already is a well-known strategy: reencode them as \emph{adjacency matrices}.
+An adjacency matrix has a row and a column for each node, and the value in row $i$ and column $j$ is $x$ iff the graph contains an edge that spans from $i$ to $j$ and is labeled $x$.
+%
+\begin{examplebox}[Adjacency Matrix for a Radix Tree]
+    The radix-like DAG from example~\ref{ex:SLImplement_DAG} corresponds to the adjacency matrix below.
+    \label{ex:SLImplement_AdjacencyMatrix}
+    %
+    {
+    \small
+        \[
+        \begin{blockarray}{rcccccccccccc}
+            & 0 & 1 & 2 & 4,9,19 & 5,12 & 6,13 & 8 & 11 & 14,22 & 15,20,23 & 16 & 18\\ 
+            \begin{block}{r(cccccccccccc)}
+                0 & & \LeftEdge & & & & & & \String{ab} & & & \String{b}\\
+                1 & & & \LeftEdge & & & & \String{ab}\\
+                2 & & & & \String{\LeftEdge a} & \String{a}\\
+                4,9,19 & \\
+                5,12 & & & & & & \String{b}\\
+                6,13 & \\
+                8 & & & & \String{a}\\
+                11 & & & & & \String{a} & & & & \String{\RightEdge}\\
+                14,22 & & & & & & & & & & \String{\RightEdge}\\
+                15,20,23 & \\
+                16 & & & & & & & & & & & & \String{ab}\\
+                18 & & & & & & & & & & \String{\RightEdge}\\
+            \end{block}
+        \end{blockarray}
+        \]
+    }
+\end{examplebox}
+%
+While Python does not include matrices as a basic data type (in contrast to \emph{R}), a 2-dimensional matrix can be treated as a list of lists.
+Listing~\ref{code:SLImplement_Graph2Matrix} gives a Python function for converting graphs into this format and gives an example of how such lists can be queried.
+%
+\begin{listing}[tbph]
+\pythonfile[firstline=5]{./code/matrices/graph2matrix.py}
+
+\medskip
+\begin{pythoncode}
+    >>> graph = {
+    ...     ['A', 'B', 'C'],
+    ...     [
+    ...         ('A', 'B', 'e'),
+    ...         ('A', 'C', 'f'),
+    ...         ('B', 'B', 'g'),
+    ...         ('C', 'A', 'h'),
+    ...         ('C', 'C', 'i')
+    ...     ]
+    ... ]
+    >>> graph2matrix(graph)
+    [['', 'e', 'f'], ['', 'g', ''], ['h', '', 'i']]
+    >>> graph2matrix(graph)[graph[0].index('A')][graph[0].index('B')]
+    'e'
+\end{pythoncode}
+\caption{Python function for converting graphs to adjacency matrices}
+\label{code:SLImplement_Graph2Matrix}
+\end{listing}
+
+While definitely useful, adjacency matrices make it very hard for humans to determine at a glance what grammar they encode.
+It is far from obvious that the table in example~\ref{ex:SLImplement_AdjacencyMatrix} encodes the same information as the set of $4$-grams we started out with at the beginning of the chapter.
+That's not surprising, as the matrix is the output of a long chain of information-preserving transformations: from a set of $4$-grams to a prefix tree to a DAG to a compacted DAG to an adjacency matrix.
+%
+\Note{%
+    \begin{center}
+        \includegraphics[width=.8\linewidth]{./img/pic/boole}
+
+        \noindent
+        \textbf{George Boole}
+    \end{center}
+
+    The term Boolean was coined in honor of \emph{George Boole}, one of the founding fathers of mathematical logic whose work is the theoretical foundation of the switching circuits used in computer hardware.
+    Like many great thinkers, he died prematurely.
+    Unlike most great thinkers, he has his wife to blame for that.
+}
+%
+A slightly more intuitive route directly translates a strictly $k$-local grammar into a $k$-dimensional \emph{Boolean matrix}.
+A Boolean matrix requires each cell to have the value True\slash 1 or False\slash 0.
+The idea is that we can map each symbol of our alphabet to a unique natural number such that if the Boolean matrix has a 1 in cell $i_1, \ldots, i_k$, then the grammar contains a $k$-gram $s_1 \cdots s_k$ iff $i_j$ is the natural number assigned to symbol $s_j$ for all $1 \leq j \leq k$.
+That is quite a mouthful, but hopefully a quick example will make things clearer.
+%
+\begin{examplebox}[Strictly $k$-Local Grammar as $k$-Dimensional Matrix]
+    Suppose that our alphabet contains only the symbols $a$ and $b$, plus the two edge markers.
+    We randomly assign all four symbols natural numbers.
+    The assignment below will work just fine for our purposes:
+    %
+    \begin{center}
+        \begin{tabular}{ccc}
+            $\LeftEdge$  & $\mapsto$ & 0\\
+            $a$          & $\mapsto$ & 1\\
+            $b$          & $\mapsto$ & 2\\
+            $\RightEdge$ & $\mapsto$ & 4
+        \end{tabular}
+    \end{center}
+    %
+    Now consider the familiar strictly $2$-local grammar $\setof{\String{\LeftEdge a}, \String{ab}, \String{ba}, \String{b \RightEdge}}$ for the string language $(\String{ab})^+$.
+    We can represent this grammar as a $2$-dimensional Boolean matrix.
+    %
+    \[
+        \begin{pmatrix}
+            0 & 1 & 0 & 0\\
+            0 & 0 & 1 & 0\\
+            0 & 1 & 0 & 1\\
+            0 & 0 & 0 & 0\\
+        \end{pmatrix}
+    \]
+    %
+    Here rows represent the first symbol of the bigrams, columns the second symbol.
+    The first column is completely filled by 0s because no bigram in the grammar contains $\LeftEdge$ in the second position.
+    The second column represents the possibility of $a$ occurring in second position.
+    As it has the form $(1,0,1,0)$, $a$ may occur in second position only if the first position is filled by $\LeftEdge$ or $b$.
+    The remaining two columns encode the possible combinations for $b$ and $\RightEdge$ in second position.
+
+    Alternatively, we could have gone through the matrix row by row rather than column by column.
+    In that case, the $i$-th row tells us whether the symbol mapped to index $i$ can occur in first position depending on the second symbol.
+\end{examplebox}
+%
+Boolean matrices have several technical advantages which we will not discuss here.
+Quite simply, they constitute a very restricted and well-understood type of matrix, and consequently there are many efficient algorithms for working with them.
+For our purposes, this is yet another way of looking at strictly local grammars, but one that will gel exceptionally well with certain (probabilistic) extensions presented in Ch.~\ref{cha:PSL}.
 
 \section{Automata}
 
+Our initial discussion of strictly $2$-local grammars in Ch.~\ref{cha:SL} was quick to point out that a grammar by itself only defines the set of well-formed structures --- determining whether a specific input belongs to that set requires a recognizer.
+We picked scanners as the recognizers for strictly local grammars.
+But that does not mean that scanners are the only conceivable type of recognizer for these grammars.
+If one combines our previous discussion of graphs with our knowledge of scanners, one quickly discovers another type of recognizer: \emph{automata}.
+
+Automata can be viewed as yet another type of graph, one that is obtained by dropping the \textbf{No cycle} axiom for edge-labeled DAGs while adopting the prefix tree distinction between final and non-final nodes.
+Strictly local grammars correspond to a very specific subtype of automata.
+%
+\begin{definition}[Strictly Local Automaton]
+    A \emph{strictly $k$-local automaton} over alphabet $\Sigma$ is an edge-labeled graph $\tuple{V, F, E, \LabelFunc}$ such that
+    \label{ex:SLImplement_Automaton}
+    %
+    \begin{itemize}
+        \item $V \subseteq (\Sigma \cup \setof{\LeftEdge, \RightEdge})^k$,
+        \item $F \subseteq V$ is the set of final nodes,
+        \item $\LabelFunc$ assigns each edge some symbol in $\Sigma \cup \setof{\RightEdge}$,
+        \item $\tuple{u,v} \in E$ iff $u = u_1 u_2 \cdots u_k$, $v = u_2 \cdots u_k \sigma$, and $\LabelFunc(\tuple{u,v}) = \sigma$,
+        \item $u \in V$ is the root iff $u =  \LeftEdge^{k}$
+        \item $u$ is a final node only if $u = \sigma \RightEdge^{k-1}$ and $\sigma \in \Sigma \cup \setof{\LeftEdge}$.
+    \end{itemize}
+    %
+    A string $w$ is recognized by the automaton iff $\augmented{w}$ is identical to a path from a root of the automaton to some final node.
+\end{definition}
+%
+This is arguably one of the longest definitions we have encountered so far, and it also distributes a very simple idea across several clauses.
+Intuitively, the nodes of a strictly local automaton correspond to strings that a corresponding scanner might see in its search window.
+An edge connects nodes $u$ and $v$ iff reading in the next symbol can change the content of the search window from $u$ to $v$.
+We can take a strictly $k$-local scanner to always start out with a search window initialized to $k$ left edges before reading in the first symbol of the string.
+Hence the root of automaton must have the very same shape.
+And because the last content of a scanner window always consists of a symbol followed by $k-1$ right edge markers, all final nodes must follow this pattern, too.
+Overall, then, an automaton is an abstract encoding of how the contents of the scanner window may change with each step while moving through the input strings from left to right.
+%
+\begin{examplebox}[A Strictly $2$-Local Automaton]
+    The graph below shows a strictly $2$-local automaton that recognizes $(\String{ab})^+$.
+    %
+    \begin{center}
+        \input{./img/tikz/SLImplement_Automaton_Minimal.tex}
+    \end{center}
+    %
+    The direct correspondence between the nodes of the automaton and our canonical positive strictly $2$-local grammar for $(\String{ab})^+$ is apparent.
+    However, just like there are multiple strictly $2$-local grammars for this language, there are multiple strictly $2$-local automata that generate this language.
+    And just like the additional grammars just add useless bigrams to the canonical grammar that can never occur in a well-formed string, these additional automata add nodes and branches that are never used in the recognition of a well-formed string.
+    One of these automata is depicted here.
+    %
+    \begin{center}
+        \input{./img/tikz/SLImplement_Automaton_Large.tex}
+    \end{center}
+\end{examplebox}
+%
+It is easy to infer that every positive strictly local grammar can be translated into a strictly local automaton that recognizes the same language.
+The conversion in the other direction is a little trickier.
+It is not enough to simply equate the nodes of the automaton with the set of $k$-grams for the grammar.
+If we did this with the second automaton in example~\ref{ex:SLImplement_Automaton}, we would get a strictly $2$-local grammar that not only generates $(\String{ab}^+$ also generates the empty string (because of the bigram $\LeftEdge\RightEdge$) and all strings of $(\String{ab}^+\String{a}$ (because of the bigram $\String{a\RightEdge}$).
+To avoid this, we must construct the \emph{minimal strictly local automaton} by removing all useless nodes.
+These are exactly the nodes that cannot be reached from the root or from which one cannot reach a final state.
+The full proof that every minimal strictly local automaton recognizes some strictly local language is omitted here as it is rather involved without teaching us much that isn't already obvious from the intuitive discussion.
+
+In sum, strictly local automata provide yet another characterization of the strictly local languages.
+At this point they seem to offer little advantage over positive strictly local grammars since they aren't more compact and we already have scanners as a recognition model that is easily implemented in Python.
+Just like Boolean matrices, they will be useful at a later point (Ch.~\ref{cha:REG}) when we deal with a specific generalization of strictly local grammars.
+
+
+
 \section{Logic}
+
+    to be done
+
     clearly brings out complementarity of positive and negative grammars
+
+\section{Equivalent Characterizations of Strict Locality}
+
+\begin{theorem}
+    Let $L$ be some string language over alphabet $\Sigma$.
+    Then the following are equivalent:
+    %
+    \begin{itemize}
+        \item $L$ is strictly $k$-local,
+        \item $L$ is closed under $k$-local substring substitution closure,
+        \item $L$ is generated by a positive strictly $k$-local language,
+        \item $L$ is generated by a negative strictly $k$-local language,
+        \item $L$ is recognized by a strictly $k$-local scanner,
+        \item $L$ is recognized by a strictly $k$-local automaton,
+        \item $L$ is the set of models for a disjunction of positive literals,
+        \item $L$ is the set of models for a conjunction of negative literals.
+    \end{itemize}
+\end{theorem}
