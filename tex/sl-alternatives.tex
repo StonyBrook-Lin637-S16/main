@@ -7,12 +7,13 @@ Following the Keenan-Moss credo of saying something in as many ways as possible,
 We start out simple by exploring different methods to represent and store strictly local grammars.
 This reinforces the message of Ch.~\ref{cha:Formal} about Marr's levels of description: the further we move away from the computational level towards the algorithmic level, the more implementation details do we have to take care of that may have an effect on runtime behavior and overall performance but are ultimately immaterial for the computational properties we are interested in.
 The second half of the chapter then moves on to characterizations of strict locality that are less directly tied to grammars: automata and a specific fragment of propositional logic. 
+These perspectives still add some new facets to our already well-developed understanding of strictly local languages, and they will become even more useful when we explore extensions and generalizations in the upcoming chapters.
 
 \section{Implementations of Strictly Local Grammars}
 
 \subsection{Prefix Trees Revisited}
 
-The discussion of the list phonology model in Ch.~\ref{cha:ListPhonology} spent quite some time on how such a list can be efficiently searched and stored.
+The discussion of the list phonology model in Ch.~\ref{cha:ListPhonology} spent quite some time on how a list of surface forms can be efficiently searched and stored.
 Prefix trees turned out to be ideal for this purpose as they provide a more compact representation but can also be searched very quickly --- finding an item only requires following one specific branch for each sound in the word.
 It doesn't take much ingenuity to realize that strictly local grammars, too, can be stored as prefix trees.
 %
@@ -22,22 +23,22 @@ It doesn't take much ingenuity to realize that strictly local grammars, too, can
     %
     \begin{center}
         \begin{tabular}{lll}
-            $\LeftEdge \LeftEdge \LeftEdge a$
+            $\String{\LeftEdge \LeftEdge \LeftEdge a}$
             &
-            $a b a b$
+            $\String{a b a b}$
             &
-            $b a b \RightEdge$
+            $\String{b a b \RightEdge}$
             \\
-            $\LeftEdge \LeftEdge a b$
+            $\String{\LeftEdge \LeftEdge a b}$
             &
-            $b a b a$
+            $\String{b a b a}$
             &
-            $a b \RightEdge \RightEdge$
+            $\String{a b \RightEdge \RightEdge}$
             \\
-            $\LeftEdge a b a$
+            $\String{\LeftEdge a b a}$
             &
             &
-            $b \RightEdge \RightEdge \RightEdge$
+            $\String{b \RightEdge \RightEdge \RightEdge}$
         \end{tabular}
     \end{center}
     %
@@ -152,7 +153,23 @@ It doesn't take much ingenuity to realize that strictly local grammars, too, can
     \end{tikzpicture}
 \end{examplebox}
 
-As you seen from the example above, the prefix\slash radix trees for strictly local grammars differ slightly from those for the list phonology model in that they have only leaf nodes as final states.
+In general, one might expect the prefix trees of strictly local grammars to be much smaller than those of a list phonology grammar, which probably needs to contain over 500,000 surface forms.
+But this is actually far from obvious.
+Suppose we have a language with 50 different phones, which is a rather conservative estimate --- some languages have over 100.
+Then a strictly $3$-local grammar can contain $50^3 = 125,000$ trigrams, and a strictly $5$-local one 312.5 million!
+\Note{In order to estimate the average number of $k$-grams used in a natural language, we would need fully worked out formal descriptions of many highly distinct languages.
+    Unfortunately these are excessively rare, although phonology is still better of in this respect than syntax.}
+We can cut that number in half by converting from a positive grammar to a negative one, or the other way round.
+Remember, one is built by removing the $k$-grams of the other from the set of all possible $k$-grams, so the bigger the positive grammar the smaller the negative grammar, and the other way round.
+But 156.25 million $5$-grams is still a shockingly large number.
+Are any natural language grammars actually this big?
+At this point, we simply do not know.
+Intuitively, though, it seems that individual phonotactic constraints are rather simple and can be captured with very small grammars.
+Also keep in mind that few processes require more than bigrams and trigrams, so if we have one grammar for each process and then enforce them all in parallel, we can reduce storage needs enormously compared to one monolithic strictly $5$-local grammar.
+This is one of the many cases where factorization pays off in a big way, and thanks to closure under union we know that factorization is safe in the sense that it does not miss any strings or suddenly create new ones.
+
+While factorization will save a lot of memory, it is also prudent to consider what minor optimizations are possible.
+As you can see in example~\ref{ex:SLImplement_PrefixTree} above, the prefix\slash radix trees for strictly local grammars differ slightly from those for the list phonology model in that they have only leaf nodes as final states.
 % fixme: was final state mentioned before?
 So we do not need to encode the distinction between final and non-final states, saving us a tiny amount of memory (1 bit per node in the tree).
 
@@ -223,7 +240,7 @@ DAGs are slightly more general than multi-dominance trees because they can have 
 \subsection{Matrices}
 
 While tree-based representations are very convenient for humans, it is far from obvious how one could implement them in some programming language.
-There exist specialized libraries for Python (search for \emph{py-dag} and \emph{marisa-trie}), but in general it is prudent to keep the number of dependencies for a program as small as possible without sacrificing essential functionality.
+There exist specialized libraries for Python (search for \emph{py-dag}, \emph{biopython} or \emph{marisa-trie}), but in general it is prudent to keep the number of dependencies for a program as small as possible without sacrificing essential functionality.
 In many cases, a simpler solution is to switch to a different representation format that is easier to use.
 For graphs there already is a well-known strategy: reencode them as \emph{adjacency matrices}.
 An adjacency matrix has a row and a column for each node, and the value in row $i$ and column $j$ is $x$ iff the graph contains an edge that spans from $i$ to $j$ and is labeled $x$.
@@ -256,7 +273,7 @@ An adjacency matrix has a row and a column for each node, and the value in row $
     }
 \end{examplebox}
 %
-While Python does not include matrices as a basic data type (in contrast to \emph{R}), a 2-dimensional matrix can be treated as a list of lists.
+While Python does not include matrices as a basic data type (in contrast to other languages such as \emph{R} or \emph{Octave}), a 2-dimensional matrix can be treated as a list of lists.
 Listing~\ref{code:SLImplement_Graph2Matrix} gives a Python function for converting graphs into this format and gives an example of how such lists can be queried.
 %
 \begin{listing}[tbph]
@@ -297,7 +314,7 @@ That's not surprising, as the matrix is the output of a long chain of informatio
 
     The term Boolean was coined in honor of \emph{George Boole}, one of the founding fathers of mathematical logic whose work is the theoretical foundation of the switching circuits used in computer hardware.
     Like many great thinkers, he died prematurely.
-    Unlike most great thinkers, he has his wife to blame for that.
+    Unlike most great thinkers, he has \href{https://en.wikipedia.org/wiki/George_Boole\#Death}{his wife to blame for that}.
 }
 %
 A slightly more intuitive route directly translates a strictly $k$-local grammar into a $k$-dimensional \emph{Boolean matrix}.
@@ -353,25 +370,24 @@ But that does not mean that scanners are the only conceivable type of recognizer
 If one combines our previous discussion of graphs with our knowledge of scanners, one quickly discovers another type of recognizer: \emph{automata}.
 
 Automata can be viewed as yet another type of graph, one that is obtained by dropping the \textbf{No cycle} axiom for edge-labeled DAGs while adopting the prefix tree distinction between final and non-final nodes.
-Strictly local grammars correspond to a very specific subtype of automata.
+Strictly local grammars correspond to a very specific automaton type. 
 %
 \begin{definition}[Strictly Local Automaton]
     A \emph{strictly $k$-local automaton} over alphabet $\Sigma$ is an edge-labeled graph $\tuple{V, F, E, \LabelFunc}$ such that
     \label{ex:SLImplement_Automaton}
     %
     \begin{itemize}
-        \item $V \subseteq (\Sigma \cup \setof{\LeftEdge, \RightEdge})^k$,
-        \item $F \subseteq V$ is the set of final nodes,
-        \item $\LabelFunc$ assigns each edge some symbol in $\Sigma \cup \setof{\RightEdge}$,
-        \item $\tuple{u,v} \in E$ iff $u = u_1 u_2 \cdots u_k$, $v = u_2 \cdots u_k \sigma$, and $\LabelFunc(\tuple{u,v}) = \sigma$,
-        \item $u \in V$ is the root iff $u =  \LeftEdge^{k}$
-        \item $u$ is a final node only if $u = \sigma \RightEdge^{k-1}$ and $\sigma \in \Sigma \cup \setof{\LeftEdge}$.
+        \item $V$ is a set of $k$-grams over $\Sigma \cup \setof{\LeftEdge, \RightEdge})^k$,
+        \item $F \is \setof{ \sigma \RightEdge^{k-1} \in V \mid \sigma \in \Sigma \cup \setof{\LeftEdge}}$ is the set of final nodes,
+        \item $\tuple{u,v} \in E$ iff $u = u_1 u_2 \cdots u_k$, $v = u_2 \cdots u_k \sigma$,
+        \item for $u$ and $v$ as above, $\LabelFunc(\tuple{u,v}) = \sigma$,
+        \item there is a unique root $u \in V$, which must be $\LeftEdge^{k}$.
     \end{itemize}
     %
-    A string $w$ is recognized by the automaton iff $\augmented{w}$ is identical to a path from a root of the automaton to some final node.
+    A string $w$ is recognized by the automaton iff $\augmented{w}$ is identical to a path from the root of the automaton to some final node.
 \end{definition}
 %
-This is arguably one of the longest definitions we have encountered so far, and it also distributes a very simple idea across several clauses.
+This is one of the most convoluted definitions we have encountered so far, and it also distributes a very simple idea across several clauses.
 Intuitively, the nodes of a strictly local automaton correspond to strings that a corresponding scanner might see in its search window.
 An edge connects nodes $u$ and $v$ iff reading in the next symbol can change the content of the search window from $u$ to $v$.
 We can take a strictly $k$-local scanner to always start out with a search window initialized to $k$ left edges before reading in the first symbol of the string.
@@ -387,22 +403,22 @@ Overall, then, an automaton is an abstract encoding of how the contents of the s
     \end{center}
     %
     The direct correspondence between the nodes of the automaton and our canonical positive strictly $2$-local grammar for $(\String{ab})^+$ is apparent.
-    However, just like there are multiple strictly $2$-local grammars for this language, there are multiple strictly $2$-local automata that generate this language.
-    And just like the additional grammars just add useless bigrams to the canonical grammar that can never occur in a well-formed string, these additional automata add nodes and branches that are never used in the recognition of a well-formed string.
-    One of these automata is depicted here.
-    %
-    \begin{center}
-        \input{./img/tikz/SLImplement_Automaton_Large.tex}
-    \end{center}
+    % However, just like there are multiple strictly $2$-local grammars for this language, there are multiple strictly $2$-local automata that generate this language.
+    % And just like the additional grammars add useless bigrams to the canonical grammar that can never occur in a well-formed string, these additional automata add nodes and branches that are never used in the recognition of a well-formed string.
+    % One of these automata is depicted here.
+    % %
+    % \begin{center}
+    %     \input{./img/tikz/SLImplement_Automaton_Large.tex}
+    % \end{center}
 \end{examplebox}
 %
 It is easy to infer that every positive strictly local grammar can be translated into a strictly local automaton that recognizes the same language.
-The conversion in the other direction is a little trickier.
-It is not enough to simply equate the nodes of the automaton with the set of $k$-grams for the grammar.
-If we did this with the second automaton in example~\ref{ex:SLImplement_Automaton}, we would get a strictly $2$-local grammar that not only generates $(\String{ab}^+$ also generates the empty string (because of the bigram $\LeftEdge\RightEdge$) and all strings of $(\String{ab}^+\String{a}$ (because of the bigram $\String{a\RightEdge}$).
-To avoid this, we must construct the \emph{minimal strictly local automaton} by removing all useless nodes.
-These are exactly the nodes that cannot be reached from the root or from which one cannot reach a final state.
-The full proof that every minimal strictly local automaton recognizes some strictly local language is omitted here as it is rather involved without teaching us much that isn't already obvious from the intuitive discussion.
+Proving the equivalence in the other direction is a little trickier, but since the proof has little additional insight to offer it is omitted here.
+% It is not enough to simply equate the nodes of the automaton with the set of $k$-grams for the grammar.
+% If we did this with the second automaton in example~\ref{ex:SLImplement_Automaton}, we would get a strictly $2$-local grammar that not only generates $(\String{ab}^+$ also generates the empty string (because of the bigram $\LeftEdge\RightEdge$) and all strings of $(\String{ab}^+\String{a}$ (because of the bigram $\String{a\RightEdge}$).
+% To avoid this, we must construct the \emph{minimal strictly local automaton} by removing all useless nodes.
+% These are exactly the nodes that cannot be reached from the root or from which one cannot reach a final state.
+% The full proof that every minimal strictly local automaton recognizes some strictly local language is omitted here as it is rather involved without teaching us much that isn't already obvious from the intuitive discussion.
 
 In sum, strictly local automata provide yet another characterization of the strictly local languages.
 At this point they seem to offer little advantage over positive strictly local grammars since they aren't more compact and we already have scanners as a recognition model that is easily implemented in Python.
@@ -412,11 +428,121 @@ Just like Boolean matrices, they will be useful at a later point (Ch.~\ref{cha:R
 
 \section{Logic}
 
-    to be done
+Just like scanners, strictly local automata give us a view of strict locality that is rooted in serial recognition.
+The scanner reads an input string from left to right and eventually declares the input to be well-formed or ill-formed.
+The automaton slightly abstracts away from the actual processing by representing all scans of all well-formed strings in a single graph.
+But by virtue of encoding scans, the automaton is still about recognition.
+Strictly local grammars, on the other hand, completely forego recognition and just talk about licit substrings.
+Another perspective that directly focuses on well-formedness without specifying recognition is furnished by logical formulas.
 
-    clearly brings out complementarity of positive and negative grammars
+A negative strictly local grammar lists all the $k$-grams that may not occur in a string.
+For instance, $\negG{G} \is \setof{\String{\LeftEdge a}, \String{ab}, \String{ba}, \String{b \RightEdge}}$ defines the complement of $(\String{ab})^+$.
+Now let us say that a string satisfies the property $p_G$ iff it contains the $k$-gram $p$ of grammar $G$.
+So the ill-formed string $\String{bab}$ would satisfy the properties $\String{ab}$, $\String{ba}$, and $\String{b \RightEdge}$ of $\negG{G}$, but not $\String{\LeftEdge a}$.
+More succinctly we could write this as $\String{ab} \wedge \String{ba} \wedge \String{b \RightEdge} \wedge \neg \String{\LeftEdge a}$, where $\wedge$ means \emph{and} while $\neg$ is short for \emph{not}.
+Upon reflection, the strings that are well-formed with respect to $\negG{G}$ must be exactly those for which the following holds:
+%
+\[
+    \neg \String{\LeftEdge a}
+    \wedge
+    \neg \String{ab}
+    \wedge
+    \neg \String{ba}
+    \wedge
+    \neg \String{b\RightEdge}
+\]
+%
+This statement is a formula of \emph{propositional logic}, where each $k$-gram corresponds to a proposition, also called a \emph{literal}.
+A literal is true of a string iff the string contains the $k$-gram.
+Full propositional logic would allow us to build logical formulas by stringing together propositions via various logical connectors.
+But for negative strictly local grammars, all we need is $\wedge$ and $\neg$.
+And the same holds in reverse: as long as a propositional formula only negates literals with $\neg$ and then connects them with $\wedge$, it can be recast as a negative strictly local grammar.
+So the class of negative strictly local grammars corresponds exactly to the set of formulas of propositional logic that are conjunctions of negative literals.
+
+One advantage of this perspective is that it brings out the connection between positive and negative grammars more clearly.
+For the positive grammar $\posG{G} \is \setof{\String{\LeftEdge a}, \String{ab}, \String{ba}, \String{b \RightEdge}}$ a string is well-formed iff it contains $\String{\LeftEdge a}$ or $\String{ab}$ or $\String{ba}$ or $\String{b \RightEdge}$.
+You might point out that a well-formed string must always contain $\String{\LeftEdge a}$ and $\String{b \RightEdge}$ and $\String{ab}$, so we should not list them in a disjunction like that because that suggests that they are optional.
+But the obligatoriness of these bigrams can be inferred from what strings look like and hence need not be explicitly specified.
+So the statement might not be as informative as possible, but it is as informative as necessary.
+
+Using $\vee$ as the propositional symbol for \emph{or}, the disjunction can be recast as the formula below:
+%
+\[
+    \String{\LeftEdge a}
+    \vee
+    \String{ab}
+    \vee
+    \String{ba}
+    \vee
+    \String{b\RightEdge}
+\]
+%
+By DeMorgan's law, $\neg (a \vee b) = \neg a \wedge \neg b$.
+Using these laws, a pleasing equivalence obtains:
+%
+\begin{align*}
+    \neg (
+    \String{\LeftEdge a}
+    \vee
+        (\String{ab}
+        \vee
+            (\String{ba}
+            \vee
+            \String{b\RightEdge}
+            )
+        )
+    )
+    & = 
+    \neg
+    \String{\LeftEdge a}
+    \wedge
+        \neg 
+        (\String{ab}
+        \vee
+            (\String{ba}
+            \vee
+            \String{b\RightEdge}
+            )
+        )
+    \\
+    & = 
+    \neg
+    \String{\LeftEdge a}
+    \wedge
+        \neg 
+        \String{ab}
+        \wedge
+            \neg
+            (\String{ba}
+            \vee
+            \String{b\RightEdge}
+            )
+    \\
+    & = 
+    \neg
+    \String{\LeftEdge a}
+    \wedge
+        \neg 
+        \String{ab}
+        \wedge
+            \neg
+            \String{ba}
+            \wedge
+            \neg
+            \String{b\RightEdge}
+\end{align*}
+%
+So the negation of a positive grammar yields a negative grammar.
+This reveals the deep logical connection between positive and negative grammars that our set-based translation captured only indirectly.
+
+The logical perspective has many other advantages that we will learn to appreciate in later chapters.
+In particular once we reach higher levels of expressivity that coincide with first-order logic, it becomes incredibly useful in modeling specific linguistic proposals.
+
 
 \section{Equivalent Characterizations of Strict Locality}
+
+This chapter has yielded a plethora of new views on strict locality.
+We now have a variety of descriptions of one and the same class of languages that we can switch between as we see fit.
 
 \begin{theorem}
     Let $L$ be some string language over alphabet $\Sigma$.
@@ -433,3 +559,5 @@ Just like Boolean matrices, they will be useful at a later point (Ch.~\ref{cha:R
         \item $L$ is the set of models for a conjunction of negative literals.
     \end{itemize}
 \end{theorem}
+%
+% fixme: didn't mention models

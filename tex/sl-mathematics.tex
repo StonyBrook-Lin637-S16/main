@@ -68,7 +68,7 @@ The concept of bigram languages is generalized in the same fashion to $k$-gram l
 \end{definition}
 %
 Intuitively, a language is strictly local iff all its well-formedness conditions are restricted to a locality domain of finitely bounded size.
-\Note{At first glance it seems that the grammars in Fig.~\ref{fig:SL_Scanner} and~\ref{fig:SLMath_Scanner} generate the same language, but that is not the case.
+\Note{At first glance it seems that the grammars in Fig.~\ref{Fig:SL_Scanner} and~\ref{fig:SLMath_Scanner} generate the same language, but that is not the case.
 What is the difference between the respective languages?}
 This also means that every strictly local language can be recognized by a scanner that can adapt the size of its search window to any finite size depending on the grammar the scanner operates with.
 Figure~\ref{fig:SLMath_Scanner} shows such a scanner working with a positive strictly $4$-local grammar.
@@ -131,7 +131,7 @@ So this example of a restricted syllable template does note exceed the power of 
 
 If desired, the negative strictly local grammar can be converted into a positive one using our standard procedure.
 \Note{Why does equivalence of positive and negative grammars break down for strictly $0$-local grammars?}
-Go back to the proof of our theorem that positive and negative bigram grammars are equivalent, and you will see that it does not rely on the length of the $k$-grams being $2$.
+Go back to the proof of our theorem that positive and negative strictly $2$-local grammars are equivalent, and you will see that it does not rely on the length of the $k$-grams being $2$.
 Therefore the theorem can be trivially generalized to all strictly $k$-local grammars ($k \geq 1$).
 
 We could spend much more time designing strictly local grammars for other local processes in phonology, e.g.\ assimilation across word boundaries, vowel harmony, umlaut, or spirantization.
@@ -566,23 +566,38 @@ The union of two grammars $G_1$ and $G_2$ often generates a superset of the unio
 Do not even try to look for a smarter strategy to build a grammar for the union of two strictly local languages, there is none that works in all cases.
 %
 \begin{lemma}
-    The class of strictly local languages is not closed under union. 
+    The class of strictly $k$-local languages is not closed under union. 
 \end{lemma}
 %
 \begin{proof}
-    We give an example of two bigram languages whose union is not a bigram language.
+    We give an example of two strictly $2$-local languages whose union is not strictly $2$-local.
     The proof can easily be adapted for arbitrary values of $k$.
 
     Let $L_1 \is \setof{\mathit{ab}}$ and $L_2 \is \setof{\mathit{b}, \mathit{bb}, \mathit{bbb}, \ldots}$.
     \Note{``w.l.o.g.''\ is short for ``without loss of generality'' and is meant to indicate that the proof can easily be adapted to cases that are not covered by the assumption.}
-    Assume w.l.o.g.\ that all bigram grammars are positive.
-    Then any bigram grammar that generates $L_1$ must contain the bigrams $\LeftEdge a$, $\mathit{ab}$, and $b \RightEdge$.
-    Similarly, a bigram grammar generating $L_2$ must contain the bigrams $\LeftEdge b$, $\mathit{bb}$, and $b \RightEdge$.
-    Therefore a bigram grammar that generates all strings in $L_1 \cup L_2$ must contain at least these bigrams.
+    Assume w.l.o.g.\ that all strictly $2$-local grammars are positive.
+    Then any strictly $2$-local grammar that generates $L_1$ must contain the bigrams $\LeftEdge a$, $\mathit{ab}$, and $b \RightEdge$.
+    Similarly, a strictly $2$-local grammar generating $L_2$ must contain the bigrams $\LeftEdge b$, $\mathit{bb}$, and $b \RightEdge$.
+    Therefore a strictly $2$-local grammar that generates all strings in $L_1 \cup L_2$ must contain at least these bigrams.
     But such a grammar also generates the string $\mathit{abb}$, which is not part of $L_1 \cup L_2$.
-    Hence there is no bigram grammar that generates all the strings in $L_1 \cup L_2$ and nothing else, so $L_1 \cup L_2$ is not a bigram language.
+    Hence there is no strictly $2$-local grammar that generates all the strings in $L_1 \cup L_2$ and nothing else, so $L_1 \cup L_2$ is not a strictly $2$-local language.
 \end{proof}
 %
+The proof above only shows that the union of two strictly $k$-local languages is not guaranteed to be strictly $k$-local.
+However, it will still be strictly $k+1$-local.
+So it is still conceivable that the whole class of strictly local languages is closed under union, that is to say, the union of two strictly $k$-local languages may still be strictly $m$-local for some $m > k$.
+But this is not always the case, either.
+Intuitively, union can give rise to long-distance dependencies that cannot be enforced with strictly local grammars.
+%
+\begin{lemma}
+    The class of strictly local languages is not closed under union.
+\end{lemma}
+%
+\begin{proof}
+    Consider the two strictly $2$-local languages $L \is \String{ab^+}$ and $L' \is \String{b^+ a}$.
+    Their union is not closed under $k$-local substring substitution closure for any $k \in \NatNum$ since $a b^k a \notin L \cup L'$, so it is not strictly local.
+\end{proof}
+
 Abstract as it may be, this result is of immediate importance for our investigation of phonology.
 If the union of two arbitrary strictly local languages were also strictly local, then we would expect that phonological processes can always apply disjunctively.
 Consider the following example: some languages have sibilant harmony, while others have vowel harmony.
@@ -614,16 +629,41 @@ You may find this result surprising because the complement of a strictly local g
 But in general $\complementof{L(G)}$ differs from $L(\complementof{G})$, just like $L(G_1) \cup L(G_2)$ is not guaranteed to be $L(G_1 \cup G_2)$.
 These differences illustrate why it is so important to distinguish between grammars and the languages they generate.
 
+Another property not enjoyed by strictly local languages is closure under concatenation.
+Given two languages $L_1$ and $L_2$, their concatenation contains all strings that can be obtained by concatenating a string of $L_1$ with a string of $L_2$.
+In mathematical jargon: $L_1 \stringcat L_2 \is \setof{ u \stringcat v \mid u \in L_1, v \in L_2}$.
+%
+\begin{lemma}
+    The class of strictly local languages is not closed under concatenation.
+\end{lemma}
+%
+\begin{proof}
+    Consider the strictly $2$-local languages $L_1 \is \String{(a^+ c)^+}$ and $L_2 \is \String{(a^+ d)^+}$.
+    Their concatenation is not closed under $k$-local substring substitution closure:
+    \[
+        \begin{array}{rcll}
+            \String{a^{k-1}cad} & a^{k-1} & \String{d}    & \in L_1 \stringcat L_2\\
+                          & a^{k-1} & \String{cada^{k-1}d} & \in L_1 \stringcat L_2\\\hline
+            \String{a^{k-1}cad} & a^{k-1} & \String{cada^{k-1}d} & \notin L_1 \stringcat L_2
+        \end{array}
+    \]
+\end{proof}
+%
+Closure under string concatenation is yet another unnatural closure property since it implies that the rules of a grammar can switch completely at some point in the string.
+The fact that English and French are natural languages would make the ludicrous prediction that a system where the first part of the word follows the rules of English phonology and the second part the French rules is a possible natural language phonology.
+Lack of closure under string concatenation thus is a very robust universal of the class of natural languages and one that we do not want in our formalism, either.
+
 We finish with yet another missing closure property.
+A relabeling of a language is a function that replaces each symbol in all strings by some other symbol.
+More precisely, let $\Sigma$ and $\Omega$ be two alphabets and $r: \Sigma \rightarrow \Omega$ be a total function (that is to say, it produces some output for every symbol of $\Sigma$).
+Then for every string $w = w_1 w_2 \cdots w_n$, we let $r(w) \is r(w_1) r(w_2) \cdots r(w_n)$ and $r(L) \is \setof{ r(w) \mid w \in L}$.
 %
 \begin{lemma}
     The class of strictly local languages is not closed under relabelings.
 \end{lemma}
 %
-% fixme: define relabeling
-%
 \begin{proof}
-    We have already seen that $(ab)^+$ is strictly 2-local whereas the relabeling $(aa)^+$ is not strictly local at all.
+    We have already seen that $(ab)^+$ is strictly 2-local whereas the relabeling $(aa)^+$ is not strictly $k$-local for any $k \in \NatNum$.
     But the former is the image of the latter under a relabeling that replaces all $b$s by $a$s.
 \end{proof}
 %
@@ -634,13 +674,33 @@ This language is strictly local (it is a notational variant of $(ab)^+$), so $(a
 In Chapter~\ref{cha:REG} we will see that this is a very dangerous route to take: hidden structure pushes strictly local languages to a level of power where all phonological processes are equally simple.
 This eradicates all distinctions between processes and takes us back to the undesirable egalitarianism of the list phonology model.
 
+A summary of all the (non-)closure properties is given in Tab.~\ref{tab:SLMath_ClosureProperties}.
+Notice that the closure properties of strictly local languages is closely in line with what we see natural languages, whereas the finite languages get almost everything wrong.
+%
+\begin{table}
+\centering
+    \begin{tabular}{rcccl}
+        \toprule
+        \textbf{Closure under\ldots} & \textbf{FIN} & \textbf{SL} & \textbf{Natural} & \textbf{Typological Issue}\\
+        \midrule
+        Intersection & \yes & \yes & \yes (?) & all constraints can apply conjunctively\\
+        Union & \yes & \no & \no & all constraints can apply disjunctively\\
+        Complement & \yes & \no & \no & constraint opposites are possible constraints\\
+        Concatenation & \yes & \no & \no & distinct constraints for word halves\\
+        Relabeling & \yes & \no & \no (?) & abstractness debate\\
+        \bottomrule
+    \end{tabular}
+\caption{Comparison of closure properties and their linguistic relevance}
+\label{tab:SLMath_ClosureProperties}
+\end{table}
+
 \section{Implications for Phonology}
 Our mathematical expedition has taught us a surprising amount about phonology.
 First of all, all local phonological dependencies (including those spanning across word boundaries) can be handled by strictly local grammars, a very simple formalism with few cognitive requirements.
 The model comes with a minimal memory burden as it only requires the speaker to keep track of a small number of $k$-factors.
 It is also very fast: recognition via a scanner takes linear time and can be carried out in an incremental online fashion.
 Lookup of $k$-factors in the grammar takes at most logarithmic time using binary search, and even faster search methods can be implemented.
-With a hash table, lookup is instantaneous.
+With a hash table or prefix tree, lookup is practically instantaneous.
 
 But strictly local grammars also capture essential properties of phonological competence.
 They are analytic in nature and thus capable of generating infinite languages, which solves the problems the list phonology model had with linguistic creativity and nonce words.
