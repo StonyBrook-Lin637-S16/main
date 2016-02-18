@@ -33,7 +33,7 @@ So strictly local grammars do offer a nativist account of how local phonological
 
 \section{Machine Learning versus Learnability}
 
-The question of how grammars can be learned is also of great in computational linguistics and NLP\@.
+The question of how grammars can be learned is also of great importance in computational linguistics and NLP\@.
 On a purely practical level, it isn't feasible to hand-write grammars for all the languages in the world, not even if we only focus on their phonology.
 And even if that were possible, hard-coded grammars cannot adapt to local dialects or ongoing changes in the speech community.
 So it is preferable to have an algorithm that constructs and modifies grammars based on the input it gets.
@@ -44,19 +44,20 @@ So it is often more insightful to study a more abstract problem: given a possibl
 This question is studied in \emph{learnability}.
 
 Just like the difference between computational linguistics and NLP, the difference between learnability and machine learning is often subtle.
-The most important distinction, however, is that learnability is not about learning but rather about studying the structural properties of language classes and how one they facilitate generalization.
+The most important distinction, however, is that learnability is not directly about learning\slash language acquisition but rather about studying the structural properties of language classes and how they facilitate generalization.
 
-In a certain sense, learnability is linguistics as the level of languages rather than the objects these languages describe.
-In linguistics, we identify structural generalizations for sentences and words, encoded via a grammar, that can be invoked to determine well-formedness and make typological predictions.
+In a certain sense, learnability is linguistics at the level of languages rather than the objects these languages describe.
+In linguistics, we identify structural generalizations for sentences and words --- encoded via a grammar --- that can be invoked to determine well-formedness and make typological predictions.
 In learnability, we also identify structural generalizations, but we do not look at the objects within a language but rather at all languages within a given class.
+The goal is to identify structural properties of the class of languages that are to be learned.
 More formally, linguistics looks at sets of objects, and learnability looks at sets of such sets.
 This point of view highlights that learnability is not directly concerned with learning as such, although its result have important ramifications for learning (just like computational linguistics is not about processing language with computers but its results can be applied this way).
 
 Machine learning, on the other hand, is about solving any kind of problem that involves a learning component.
 This naturally makes it a much messier affair.
-If you want to teach a computer to filter spam mails, that is a learning problem, but it is not obvious how one could formalize this learning problem or what it even means for the learner to work correctly --- although it is very easy to tell for the user when their spam filter screwed up.
+If you want to teach a computer to filter spam mails, that is a learning problem, but it is not immediately obvious how one could formalize this as a language learning problem or what it even means for the learner to work correctly --- although it is very easy to tell for the user when their spam filter screwed up.
 At any rate the problem certainly isn't approached in terms of, say, a space of spam languages and how its properties can be exploited for learning.
-That's not so say that such considerations never factor into the initial design of the learning algorithm, but they are not the central object of study.
+That's not to say that such considerations never factor into the initial design of the learning algorithm, but they are not the central object of study.
 
 There are also huge methodological differences between learnability and machine learning.
 Learnability is all about mathematical theorems and proofs, whereas experiments and simulations are much more common in machine learning.
