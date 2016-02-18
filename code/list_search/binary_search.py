@@ -30,7 +30,7 @@ def binary_search(search_list, item, start=None, end=None):
         return False
 
     # find middle of the current range
-    middle = start + (end - start)/2
+    middle = int(start + (end - start)/2)
 
     # Case 1: our item is to the left of the item at the midpoint
     if item < search_list[middle]:
