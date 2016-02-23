@@ -460,12 +460,12 @@ And the same holds in reverse: as long as a propositional formula only negates l
 So the class of negative strictly local grammars corresponds exactly to the set of formulas of propositional logic that are conjunctions of negative literals.
 
 One advantage of this perspective is that it brings out the connection between positive and negative grammars more clearly.
-For the positive grammar $\posG{G} \is \setof{\String{\LeftEdge a}, \String{ab}, \String{ba}, \String{b \RightEdge}}$ a string is well-formed iff it contains $\String{\LeftEdge a}$ or $\String{ab}$ or $\String{ba}$ or $\String{b \RightEdge}$.
+For the positive grammar $\posG{G} \is \setof{\String{\LeftEdge a}, \String{ab}, \String{ba}, \String{b \RightEdge}}$ a string is well-formed iff it contains $\String{\LeftEdge a}$ or $\String{ab}$ or $\String{ba}$ or $\String{b \RightEdge}$, and nothing else.
 You might point out that a well-formed string must always contain $\String{\LeftEdge a}$ and $\String{b \RightEdge}$ and $\String{ab}$, so we should not list them in a disjunction like that because that suggests that they are optional.
 But the obligatoriness of these bigrams can be inferred from what strings look like and hence need not be explicitly specified.
 So the statement might not be as informative as possible, but it is as informative as necessary.
 
-Using $\vee$ as the propositional symbol for \emph{or}, the disjunction can be recast as the formula below:
+Using $\vee$ as the propositional symbol for \emph{or}, the disjunction part of the statement above can be recast as the formula below:
 %
 \[
     \String{\LeftEdge a}
@@ -533,7 +533,84 @@ Using these laws, a pleasing equivalence obtains:
 \end{align*}
 %
 So the negation of a positive grammar yields a negative grammar.
-This reveals the deep logical connection between positive and negative grammars that our set-based translation captured only indirectly.
+This is \textbf{not} the negative grammar that generates the same language as the positive one.
+Nonetheless the effect of negation reveals the deep logical connection between positive and negative grammars that our set-based translation captured only indirectly.
+
+Notice that the disjunctive formula is not equivalent to the actual positive grammar.
+That's because the formula does not incorporate the \emph{and nothing else} part.
+If we add this important additional restriction, we get a conjunction of two disjunctions that can be simplified quite a bit:
+%
+\begin{align*}
+    &
+    (
+    \String{\LeftEdge a}
+    \vee
+    \String{ab}
+    \vee
+    \String{ba}
+    \vee
+    \String{b\RightEdge}
+    )
+    \wedge
+    \neg
+    (
+    \String{\LeftEdge b}
+    \vee
+    \String{\LeftEdge \RightEdge}
+    \vee
+    \String{aa}
+    \vee
+    \String{bb}
+    \vee
+    \String{a\RightEdge}
+    )
+    \\
+    =
+    &
+    (
+    \String{\LeftEdge a}
+    \vee
+    \String{ab}
+    \vee
+    \String{ba}
+    \vee
+    \String{b\RightEdge}
+    )
+    \wedge
+    (
+    \neg \String{\LeftEdge b}
+    \wedge
+    \neg \String{\LeftEdge \RightEdge}
+    \wedge
+    \neg \String{aa}
+    \wedge
+    \neg \String{bb}
+    \wedge
+    \neg \String{a\RightEdge}
+    )
+    \\
+    =
+    &
+    \neg \String{\LeftEdge b}
+    \wedge
+    \neg \String{\LeftEdge \RightEdge}
+    \wedge
+    \neg \String{aa}
+    \wedge
+    \neg \String{bb}
+    \wedge
+    \neg \String{a\RightEdge}
+\end{align*}
+%
+The second line is obtained from the first one using once again DeMorgan's law that $\neg (a \vee b) = \neg a \wedge \neg b$.
+The third line is not a universally valid inference of propositional logic, but it is true in this case: a string of a strictly $2$-local language over alphabet $\setof{a,b}$ that does not contain the bigrams $\String{\LeftEdge b}$, $\String{\LeftEdge\RightEdge}$, $\String{aa}$, $\String{bb}$ or $\String{a \RightEdge}$ must necessarily contain $\String{\LeftEdge a}$, $\String{ab}$, $\String{ba}$, or $\String{b\RightEdge}$.
+Since the truth of the second conjunct implies the truth of the first conjunct, the latter can be completely omitted, leaving us with the much shorter formula on the third line.
+But this formula is a conjunction of negative literals, which we just identified as the logical equivalent of negative strictly local grammars!
+\Note{%
+    Show that if we negate the formula including the \emph{and nothing else} part, we still get a propositional formula characterizing some negative strictly local grammar.
+}
+What does this mean?
+It means that from a logical perspective, negative grammars are more basic than positive grammars because the logical formula characterizing a positive grammar must already include the negative grammar as part of the description (the second conjunct in the first line above).
 
 The logical perspective has many other advantages that we will learn to appreciate in later chapters.
 In particular once we reach higher levels of expressivity that coincide with first-order logic, it becomes incredibly useful in modeling specific linguistic proposals.
