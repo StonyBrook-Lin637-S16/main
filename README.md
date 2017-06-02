@@ -5,31 +5,31 @@ Computational Linguistics 2
 Overview
 --------
 
-This is the primary course website for Computational Linguistics 2 (Lin 637), offered by the [Department of Linguistics] [department] at [Stony Brook University] [sbu].
-For a brief list of topics, check the [syllabus] [syllabus].
+This is the primary course website for Computational Linguistics 2 (Lin 637), offered by the [Department of Linguistics][department] at [Stony Brook University][sbu].
+For a brief list of topics, check the [syllabus][syllabus].
 
 This repository is publicly accessible and hosts the LaTeX source code for the lecture notes.
-Compiled pdfs of each chapter are available in the [pdf] [pdf] folder.
+Compiled pdfs of each chapter are available in the [pdf][pdf] folder.
 
 
 Prerequisites
 -------------
 
 This course assumes a certain degree of familiarity with generative syntax, phonology, and basic mathematics (sets, functions, relations, first-order logic).
-Please take the [online survey] [survey] to ensure that you satisfy the prerequisites.
-If you have weaknesses, consult the relevant material suggested in the [readings repository] [readings] (access restricted to enrolled students).
+Please take the [online survey][survey] to ensure that you satisfy the prerequisites.
+If you have weaknesses, consult the relevant material suggested in the [readings repository][readings] (access restricted to enrolled students).
 
 In addition, you will have to use Python, markdown and LaTeX at various points during this course.
 The [link list](#link-list) at the end of this document has some useful tutorials.
 
-If you don't want to deal with installing Python and git, you can download our [virtual machine] [vm] that already comes with everything preconfigured.
+If you don't want to deal with installing Python and git, you can download our [virtual machine][vm] that already comes with everything preconfigured.
 Access is restricted to Stony Brook affiliates.
 
 
 Readings
 --------
 
-Course readings are made available through the private [readings repository] [readings].
+Course readings are made available through the private [readings repository][readings].
 You must be enrolled in this class in order to get access.
 
 
